@@ -1,0 +1,2121 @@
+/****************************************Copyright (c)**************************************************
+**                       		     北	京	交	通	大	学
+**                                        电气工程学院
+**                                         614实验室
+**
+**                              
+**
+**--------------文件信息--------------------------------------------------------------------------------
+**文   件   名: DCDC_interface.c
+**创   建   人: 
+**最后修改日期: 
+**描        述: DCDC变换器外设控制程序
+				包括对eeprom,sci,spi,ad,da的控制程序
+**              
+**--------------历史版本信息----------------------------------------------------------------------------
+** 创建人: 
+** 版  本: 
+** 日　期: 
+** 描　述: 
+**
+**--------------当前版本修订------------------------------------------------------------------------------
+** 修改人: 
+** 日　期: 
+** 描　述: 
+**
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+#include "DSP2833x_Device.h"     // Headerfile Include File
+#include "DSP2833x_Examples.h"   // Examples Include File
+//函数声明
+Uint16 		CheckCode(Uint16 index);
+Uint16 		SciDatpro(void);
+/*********************************************************************************************************
+** 函数名称: EeStart
+** 功能描述: 开始对eeprom的操作
+** 输　入: 
+** 输　出:        
+** 注  释: 	 时钟线高时数据线下降沿为开始
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void EeStart(void)
+{
+	EALLOW;
+    GpioDataRegs.GPBSET.bit.GPIO32 = 1;     	 //数据高
+	GpioCtrlRegs.GPBDIR.bit.GPIO32 = 1;  		//数据线变为输出口
+	EDIS;
+	DELAY_US(DELAY_EE);
+    GpioDataRegs.GPBSET.bit.GPIO33 = 1;     	//时钟高
+	DELAY_US(DELAY_EE);
+	GpioDataRegs.GPBCLEAR.bit.GPIO32 = 1;		 	//数据低
+	DELAY_US(DELAY_EE);
+   	GpioDataRegs.GPBCLEAR.bit.GPIO33 = 1;     	//时钟低
+	DELAY_US(DELAY_EE);
+}
+/*********************************************************************************************************
+** 函数名称: EeStop
+** 功能描述: 结束对eeprom的操作
+** 输　入: 
+** 输　出:        
+** 注  释: 	 时钟线高时数据线上升沿为结束
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void EeStop(void)
+{
+	EALLOW;
+    GpioDataRegs.GPBCLEAR.bit.GPIO32 = 1;     	 //数据低
+	GpioCtrlRegs.GPBDIR.bit.GPIO32 = 1;  		//数据线变为输出口
+	EDIS;
+	DELAY_US(DELAY_EE);
+    GpioDataRegs.GPBSET.bit.GPIO33 = 1;     	//时钟高
+	DELAY_US(DELAY_EE);
+    GpioDataRegs.GPBSET.bit.GPIO32 = 1;     	 //数据高
+	DELAY_US(DELAY_EE);
+   	GpioDataRegs.GPBCLEAR.bit.GPIO33 = 1;     	//时钟低
+	EALLOW;
+	GpioCtrlRegs.GPBDIR.bit.GPIO32= 0;			//数据线变为输入口
+	EDIS;
+	DELAY_US(DELAY_EE);
+}
+
+/*********************************************************************************************************
+** 函数名称: EeWrite
+** 功能描述: 将number个字节数据（不包括地址）连续写入到eeprom（一般要求在同一页面）
+** 输　入: 	 number,表示要写的字节数
+** 输　出:        
+** 注  释: 	 EEPROM.data[0]:写控制字;
+**			 EEPROM.data[1-2]:待写数据地址; 
+**			 EEPROM.data[3-x]:待写数据;
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void EeWrite(unsigned char number)
+{
+	int16 i,j;
+//----------------------------------------------//发送起始位
+	EeStart();
+//----------------------------------------------//开始发送数据
+	for(j=0;j<number+3;j++)						//先发低字节
+	{
+		for(i=0;i<8;i++)						//每个字节先发高字位
+		{
+			if((EEPROM.data[j] & ONEBYTE[i])==0)	//要发0
+			{
+				GpioDataRegs.GPBCLEAR.bit.GPIO32 =1;	//数据低
+				DELAY_US(DELAY_EE);					
+    			GpioDataRegs.GPBSET.bit.GPIO33 = 1; //时钟高
+				DELAY_US(DELAY_EE);				
+   	   		    GpioDataRegs.GPBCLEAR.bit.GPIO33 = 1;//时钟低
+				DELAY_US(DELAY_EE);				
+			}
+			else									//要发1
+			{
+				GpioDataRegs.GPBSET.bit.GPIO32 =1;	//数据高
+				DELAY_US(DELAY_EE);				
+   				GpioDataRegs.GPBSET.bit.GPIO33 = 1;     	//时钟高
+				DELAY_US(DELAY_EE);				
+   	   		    GpioDataRegs.GPBCLEAR.bit.GPIO33 = 1;     	//时钟低
+				DELAY_US(DELAY_EE);				
+			}
+		}
+//----------------------------------------------//发完一个字节		
+		EALLOW;
+		GpioCtrlRegs.GPBDIR.bit.GPIO32= 0;		//数据线变为输入口
+		EDIS;
+    	GpioDataRegs.GPBSET.bit.GPIO33 = 1;     	//时钟高
+		DELAY_US(DELAY_EE);
+		
+		if(GpioDataRegs.GPBDAT.bit.GPIO32==1)	//如果数据线读到1表示没有应答
+		{
+			M_SetFlag(SL_EE_NOACK);				//置无应答标志
+		}
+		
+   	    GpioDataRegs.GPBCLEAR.bit.GPIO33 = 1;     	//时钟低
+
+		EALLOW;
+		GpioDataRegs.GPBCLEAR.bit.GPIO32= 1;		//数据低
+		GpioCtrlRegs.GPBDIR.bit.GPIO32= 1;		//数据线变为输出口
+		EDIS;
+		DELAY_US(DELAY_EE);
+	}
+//----------------------------------------------//发送停止位
+	EeStop();
+}
+
+/*********************************************************************************************************
+** 函数名称: EeRead
+** 功能描述: 从eeprom连续读出number个字节数据
+** 输　入: 	 number,表示要读的字节数
+** 输　出:   EEPROM.data[0-1]:读出的数据     
+** 注  释: 	 先写写控制字,再写待读数据地址,再写读控制字,在读出数据
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void EeRead(unsigned char number)
+{
+	int16 i,j;
+	
+//----------------------------------------------//发送起始位
+	EeStart();
+//----------------------------------------------//开始发送地址数据
+	for(j=0;j<3;j++)							//先发低字节
+	{
+		for(i=0;i<8;i++)						//每个字节先发高字位
+		{
+			if((EEPROM.data[j] & ONEBYTE[i])==0)	//要发0
+			{
+				GpioDataRegs.GPBCLEAR.bit.GPIO32 =1;	//数据低
+				DELAY_US(DELAY_EE);				
+   				GpioDataRegs.GPBSET.bit.GPIO33 = 1;     	//时钟高
+				DELAY_US(DELAY_EE);				
+   	    		GpioDataRegs.GPBCLEAR.bit.GPIO33 = 1;     	//时钟低
+				DELAY_US(DELAY_EE);				
+			}
+			else									//要发1
+			{
+				GpioDataRegs.GPBSET.bit.GPIO32 =1;	//数据高
+				DELAY_US(DELAY_EE);				
+    			GpioDataRegs.GPBSET.bit.GPIO33 = 1;     	//时钟高
+				DELAY_US(DELAY_EE);				
+   	   		    GpioDataRegs.GPBCLEAR.bit.GPIO33 = 1;     	//时钟低
+				DELAY_US(DELAY_EE);				
+			}
+		}
+//----------------------------------------------//发完一个字节		
+		EALLOW;
+		GpioCtrlRegs.GPBDIR.bit.GPIO32= 0;		//数据线变为输入口
+		EDIS;
+   	    GpioDataRegs.GPBSET.bit.GPIO33 = 1;     	//时钟高
+		DELAY_US(DELAY_EE);
+		
+		if(GpioDataRegs.GPBDAT.bit.GPIO32==1)	//如果数据线读到1表示没有应答
+		{
+			M_SetFlag(SL_EE_NOACK);				//置无应答标志
+		}
+		
+   	    GpioDataRegs.GPBCLEAR.bit.GPIO33 = 1;     	//时钟低
+		
+		EALLOW;
+		GpioDataRegs.GPBCLEAR.bit.GPIO32 =1;		//数据低
+		GpioCtrlRegs.GPBDIR.bit.GPIO32= 1;		//数据线变为输出口
+		EDIS;
+		
+		DELAY_US(DELAY_EE);
+	}
+	
+//----------------------------------------------//再次发送起始位
+	EeStart();
+//----------------------------------------------//再次发送起始位
+	EEPROM.data[0] |= 0x01;						//改为读指令
+	for(i=0;i<8;i++)							//先发高字位
+	{
+		if((EEPROM.data[0] & ONEBYTE[i])==0)		//要发0
+		{
+			GpioDataRegs.GPBCLEAR.bit.GPIO32 =1;		//数据低
+			DELAY_US(DELAY_EE);					
+   		    GpioDataRegs.GPBSET.bit.GPIO33 = 1;     	//时钟高
+			DELAY_US(DELAY_EE);					
+   	  	    GpioDataRegs.GPBCLEAR.bit.GPIO33 = 1;     	//时钟低
+			DELAY_US(DELAY_EE);					
+		}
+		else										//要发1
+		{
+			GpioDataRegs.GPBSET.bit.GPIO32 =1;		//数据高	
+			DELAY_US(DELAY_EE);					
+   		    GpioDataRegs.GPBSET.bit.GPIO33 = 1;     	//时钟高
+			DELAY_US(DELAY_EE);					
+   	        GpioDataRegs.GPBCLEAR.bit.GPIO33 = 1;     	//时钟低
+			DELAY_US(DELAY_EE);					
+		}
+	}
+//----------------------------------------------//发完一个字节
+	EALLOW;
+	GpioCtrlRegs.GPBDIR.bit.GPIO32 =0;			//数据线变为输入口
+	EDIS;
+    GpioDataRegs.GPBSET.bit.GPIO33 = 1;     	//时钟高
+	DELAY_US(DELAY_EE);
+	
+	if(GpioDataRegs.GPBDAT.bit.GPIO32==1)		//如果数据线读到1表示没有应答
+	{
+		M_SetFlag(SL_EE_NOACK);					//置无应答标志
+	}
+	
+   	GpioDataRegs.GPBCLEAR.bit.GPIO33 = 1;     	//时钟低
+	DELAY_US(DELAY_EE);
+//----------------------------------------------//开始读数据
+	for(j=0;j<number;j++)						//先读低字节
+	{
+		EEPROM.data[j]=0;
+		for(i=0;i<8;i++)						//每个字节先读高位
+		{
+   		    GpioDataRegs.GPBSET.bit.GPIO33 = 1;     	//时钟高
+			DELAY_US(DELAY_EE);	
+			if(GpioDataRegs.GPBDAT.bit.GPIO32==1)//数据为1
+			{
+				EEPROM.data[j] |= ONEBYTE[i];	//为零则不变
+			}
+   	   	    GpioDataRegs.GPBCLEAR.bit.GPIO33 = 1;     	//时钟低
+			DELAY_US(DELAY_EE);
+		}
+//----------------------------------------------//收完一个字节
+		if(j!=number-1)							//最后一个字节不发出应答
+		{
+			EALLOW;
+			GpioDataRegs.GPBCLEAR.bit.GPIO32 =1;	//输出低来应答
+			GpioCtrlRegs.GPBDIR.bit.GPIO32= 1;	//数据线为输出口
+			EDIS;
+			DELAY_US(DELAY_EE);
+		}
+   	    GpioDataRegs.GPBSET.bit.GPIO33 = 1;     	//时钟高
+		DELAY_US(DELAY_EE);
+   	    GpioDataRegs.GPBCLEAR.bit.GPIO33 = 1;     	//时钟低
+		EALLOW;
+		GpioCtrlRegs.GPBDIR.bit.GPIO32= 0;		//数据线为输入口
+		EDIS;
+		DELAY_US(DELAY_EE);		
+	}
+//----------------------------------------------//接收完毕,发送停止位
+	EeStop();
+}
+/*********************************************************************************************************
+** 函数名称: EeWpre
+** 功能描述: 准备写入EEPROM的地址和数据
+** 输　入: 	 index:待写入变量的序号
+** 输　出:   EEPROM.data[0-4]:写控制字、待写数据的地址和待写数据    
+** 注  释: 	 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void EeWpre(unsigned char index)
+{
+	EEPROM.data[0]=0xA0;									//Slave ADdress
+	EEPROM.data[1]=((index<<1)&0xFF00)>>8;					//MSB ADdress
+	EEPROM.data[2]=(index<<1)&0xFF;							//LSB ADdress
+	EEPROM.data[3]=*(FUNC[index].para_add) & 0x00ff;		//低8位数据
+	EEPROM.data[4]=(*(FUNC[index].para_add) & 0xff00)>>8;	//高8位数据
+}
+/*********************************************************************************************************
+** 函数名称: EeRpre
+** 功能描述: 准备读取EEPROM数据的地址
+** 输　入: 	 index:待读取变量的序号
+** 输　出:   EEPROM.data[0-2]:读控制字和待读取数据的地址    
+** 注  释: 	 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void EeRpre(unsigned char index)
+{
+	EEPROM.data[0]=0xA0;							//Slave ADdress
+	EEPROM.data[1]=((index<<1)&0xFF00)>>8;			//MSB ADdress
+	EEPROM.data[2]=(index<<1)&0xFF;					//LSB ADdress
+}
+/*********************************************************************************************************
+** 函数名称: EeWrword
+** 功能描述: 写一个字的数据到EEPROM并读出来校验
+** 输　入: 	 index:待写变量的序号
+** 输　出:   
+** 注  释: 	 先将待写数据写入eeprom再读出来检验
+**			 如果检验不对在置标志位SL_EE_FAIL
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void EeWrword(unsigned char index)
+{
+	Uint16 data_rd;
+	
+	EeWpre(index);									
+	EeWrite(2);											//写入2字节数据
+	EeRead(2);											//将2字节数据读出
+	
+	data_rd=(EEPROM.data[1]<<8) | EEPROM.data[0];		//data_rd为读出的数据
+	
+	if(data_rd!=*(FUNC[index].para_add))
+		M_SetFlag(SL_EE_FAIL);
+}
+/*********************************************************************************************************
+** 函数名称: InitEeprom
+** 功能描述: 初始化eeprom
+** 输　入: 	 
+** 输　出:   
+** 注  释: 	 先将eeprom中的原有数据读出并进行检验
+**			 如果出现数据错误则将eeprom中数据全部初始化
+**			 检测在初始化过程中是否出现eeprom操作错误
+**			 如果没有错误则置SL_CODEOK表示eeprom工作正常,否则清SL_CODEOK表示eeprom工作错误
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void InitEeprom(void)
+{
+	Uint16 i,j;
+//	Uint16 j;
+	if(DEBUG_OPER==0)
+	{
+//----------------------------------------------//将eeprom的数据全部读入ram
+		for(i=0;i<PARA_NUM;i++)					
+		{
+			EeRpre(i);								//控制字和地址填入EEPROM.data[]
+			EeRead(2);
+												//读出的数据放入RAM
+			*FUNC[i].para_add=(EEPROM.data[1]<<8) | EEPROM.data[0];	
+		
+			if(CheckCode(i)==1)						//检查程序的返回值=1则表示有错误
+			{
+				for(j=0;j<PARA_NUM;j++)
+				{
+					*FUNC[j].para_add=FUNC[j].init;	//RAM数据恢复初值
+					EeWrword(j);					//写入2字节数据
+				}
+				break;								//数据校验有错则跳出
+			}
+		}
+	}
+	else
+	{
+//-----------------------------------------//调试时直接将EEPROM初始化!!!
+		for(j=0;j<PARA_NUM;j++)
+		{
+			*FUNC[j].para_add=FUNC[j].init;	//RAM数据恢复初值
+			EeWrword(j);					//写入2字节数据
+		}
+	}
+//-----------------------------------------	
+	if(M_ChkFlag(SL_EE_FAIL)==0)					
+		M_SetFlag(SL_CODEOK);					//EEPROM正常
+	else
+		M_ClrFlag(SL_CODEOK);					//EEPROM故障
+}
+/*********************************************************************************************************
+** 函数名称: CheckCode
+** 功能描述: 检验eeprom中数据是否正确
+** 输　入: 	 index,待检验数据的序号
+** 输　出:   j,j=1表示数据错误;j=0表示数据正确
+** 注  释: 	 检验数据是否在指定的范围之内
+**			 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+Uint16 CheckCode(Uint16 index)						
+{
+	Uint16 j,data,max,min;
+	int16  temp,max_temp,min_temp;
+	
+	data=*FUNC[index].para_add;
+//----------------------------------------------//判断该数据的属性	
+	if((FUNC[index].attr & MAX_PT)==1)			//具有最大值指针属性 
+		max=*FUNC[index].max_add;
+	else										//不具有最大值指针属性 
+		max=FUNC[index].max;					//读出这个量的最大值
+//----------------------------------------------//具有最小值指针属性			
+	if((FUNC[index].attr & MIN_PT)==1)
+		min=*FUNC[index].min_add;
+	else 										//不具有最小值指针属性
+		min=FUNC[index].min;					//读出这个量的最小值
+//----------------------------------------------//开始校验
+	j=0;										//置无故障标志
+	if((FUNC[index].attr & SIG)==0)				//无符号数
+	{
+		if(data>max)				
+			j=1;								//大于最大值，有错
+		else if(data<min)						//小于最小值
+		{
+			if((FUNC[index].attr & VA0)==0)		
+				j=1;							//又不具有VA0属性，有错
+			else if(data!=0)					//具有VA0属性但又不为零，有错
+				j=1;
+		}
+	}					
+	else										//有符号数
+	{
+		temp=(int)data;							//全部转为有符号数
+		max_temp=(int)max;
+		min_temp=(int)min;
+		if(temp>max_temp)						//大于最大值，有错
+			j=1;
+		else if(temp<min_temp)					//小于最小值，有错
+			j=1;								//有符号数没有VA0属性
+	}
+//----------------------------------------------//返回值为j	
+	return j;
+}
+/*********************************************************************************************************
+** 函数名称: EeCtrl
+** 功能描述: 程序运行过程中对eeprom数据的操作
+** 输　入: 	 
+** 输　出:   
+** 注  释: 	 在eeprom正确的前提下，检测标志位
+**			 SL_INIEE:		是否需要进行初始化eeprom操作;
+							如果是则置SL_EEBUSY_INIEE,全部初始化完以后再清SL_INIEE和SL_EEBUSY_INIEE
+**			 SL_MCODE:		是否需要修改功能码值
+							如果是则置SL_EEBUSY_MCODE,将EEPROM.mcode中指定的数据写入eeprom
+							操作完成后再清SL_MCODE和SL_EEBUSY_MCODE
+**			 SL_ERRSAVE:	是否需要保存故障信息
+							如果是则置SL_EEBUSY_ERRSAVE,将TAB_ERR中的数据写入eeprom
+							操作完成后再清SL_ERRSAVE和SL_EEBUSY_ERRSAVE
+**			 SL_POFSAVE:	是否需要保存掉电信息
+							如果是则置SL_EEBUSY_POFSAVE,将TAB_POF中的数据写入eeprom
+							操作完成后再清SL_POFSAVE和SL_EEBUSY_POFSAVE
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void EeCtrl(void)
+{
+	if(M_ChkFlag(SL_EE_FAIL)==0)					//EEPROM无故障?
+	{
+//----------------------------------------------//恢复出厂参数进行中
+		if(M_ChkFlag(SL_EEBUSY_INI)!=0)			//RAM数据恢复初值
+		{
+			*FUNC[EEPROM.point].para_add=FUNC[EEPROM.point].init;	
+			EeWrword(EEPROM.point);				//写入2字节数据
+			EEPROM.point++;
+			
+			if(EEPROM.point>=PARA_NUM)			//操作完成?
+			{
+				EEPROM.point=0;
+				M_ClrFlag(SL_EEBUSY_INI);
+				M_ClrFlag(SL_EEASK_INI);
+			}
+		}
+//----------------------------------------------//修改功能码进行中
+		else if(M_ChkFlag(SL_EEBUSY_MCODE)!=0)
+		{
+			EeWrword(EEPROM.mcode);				//写入2字节数据
+			M_ClrFlag(SL_EEBUSY_MCODE);
+			M_ClrFlag(SL_EEASK_MCODE);
+		}
+//----------------------------------------------//保存故障信息进行中
+		else if(M_ChkFlag(SL_EEBUSY_ERRSAVE)!=0)
+		{
+			EeWrword(TAB_ERR[EEPROM.point]);	//写入2字节数据
+			EEPROM.point++;
+			
+			if(EEPROM.point>=ERRO_NUM)			//操作完成?
+			{
+				EEPROM.point=0;
+				M_ClrFlag(SL_EEBUSY_ERRSAVE);
+				M_ClrFlag(SL_EEASK_ERRSAVE);
+			}
+		}
+//----------------------------------------------//是否存在保存掉电信息请求
+/*
+		else if(M_ChkFlag(SL_EEBUSY_POFSAVE)!=0)
+		{
+			EeWrword(TAB_POF[EEPROM.point]);	//写入2字节数据
+			EEPROM.point++;
+			
+			if(EEPROM.point>=POFF_NUM)		//操作完成?
+			{
+				EEPROM.point=0;
+				M_ClrFlag(SL_EEBUSY_POFSAVE);
+				M_ClrFlag(SL_EEASK_POFSAVE);
+			}
+		}		
+*/
+//----------------------------------------------//EEPROM没有操作进行中
+		else
+		{
+			EEPROM.point=0;
+			if(M_ChkFlag(SL_EEASK_INI)!=0)			//是否存在恢复出厂参数请求
+				M_SetFlag(SL_EEBUSY_INI);
+			else if(M_ChkFlag(SL_EEASK_MCODE)!=0)	//是否存在修改功能码请求
+				M_SetFlag(SL_EEBUSY_MCODE);
+			else if(M_ChkFlag(SL_EEASK_ERRSAVE)!=0)	//是否存在保存故障信息请求
+				M_SetFlag(SL_EEBUSY_ERRSAVE);
+//			else if(M_ChkFlag(SL_EEASK_POFSAVE)!=0)	//是否存在保存掉电信息请求
+//				M_SetFlag(SL_EEBUSY_POFSAVE);
+		}
+	}
+}
+/*********************************************************************************************************
+** 函数名称: SetRtimer
+** 功能描述: 实时时钟设定
+** 输　入: 	 
+** 输　出:   
+** 注  释: 	 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void SetRtimer(void)
+{
+	Uint16 temp;
+	
+//----------------------------------------------//写入时间值	
+	EEPROM.data[0]=0xDE;						//Slave ADdress
+	EEPROM.data[1]=0;							//MSB ADdress
+	EEPROM.data[2]=0x3F;						//LSB ADdress
+	EEPROM.data[3]=0x02;						//STATUS register
+	EeWrite(1);									//写允许
+	
+	EEPROM.data[0]=0xDE;						//Slave ADdress
+	EEPROM.data[1]=0;							//MSB ADdress
+	EEPROM.data[2]=0x3F;						//LSB ADdress
+	EEPROM.data[3]=0x06;						//STATUS register
+	EeWrite(1);									//写寄存器允许
+	
+	EEPROM.data[0]=0xDE;						//Slave ADdress
+	EEPROM.data[1]=0;							//MSB ADdress
+	EEPROM.data[2]=0x30;						//LSB ADdress
+	
+	temp=RTIMER.time[0]/10;
+	EEPROM.data[3]=(RTIMER.time[0]-temp*10)|(temp<<4);	//秒
+	
+	
+	temp=RTIMER.time[1]/10;
+	EEPROM.data[4]=(RTIMER.time[1]-temp*10)|(temp<<4);	//分
+	
+	temp=RTIMER.time[2]/10;
+	EEPROM.data[5]=0x80 | ((RTIMER.time[2]-temp*10)|(temp<<4));	//时
+	
+	temp=RTIMER.time[3]/10;
+	EEPROM.data[6]=(RTIMER.time[3]-temp*10)|(temp<<4);	//日
+	
+	temp=RTIMER.time[4]/10;
+	EEPROM.data[7]=(RTIMER.time[4]-temp*10)|(temp<<4);	//月
+	
+	temp=RTIMER.time[5]/10;
+	EEPROM.data[8]=(RTIMER.time[5]-temp*10)|(temp<<4);	//年
+	
+	EEPROM.data[9]=0x05;						//星期
+	EEPROM.data[10]=0x20;						//19/20
+	EeWrite(8);									//写入时间值
+
+	EEPROM.data[0]=0xDE;						//Slave ADdress
+	EEPROM.data[1]=0;							//MSB ADdress
+	EEPROM.data[2]=0x3F;						//LSB ADdress
+	EEPROM.data[3]=0x0;							//STATUS register
+	EeWrite(1);									//禁止写入
+}
+/*********************************************************************************************************
+** 函数名称: RtRead
+** 功能描述: 实时时钟读取
+** 输　入: 	 
+** 输　出:   RTIMER.time[0~5]--[秒 分 时 日 月 年]
+** 注  释: 	 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void RtRead(void)
+{
+	Uint16 i;
+
+	if(M_ChkFlag(SL_SETRTIMER)!=0)				//需要校正实时时钟?
+	{
+		SetRtimer();
+		M_ClrFlag(SL_SETRTIMER);
+	}
+	else
+	{
+		//----------------------------------------------//读取时间值到data[0~7]
+		EEPROM.data[0]=0xDE;						//Slave ADdress
+		EEPROM.data[1]=0;							//MSB ADdress
+		EEPROM.data[2]=0x30;						//LSB ADdress
+		EeRead(8);
+		//----------------------------------------------
+		M_ClrBit(EEPROM.data[2],0x80);				//清除24小时设置位
+	
+		for(i=0;i<6;i++)
+		{
+			RTIMER.time[i]=((EEPROM.data[i] & 0xF0)>>4)*10+(EEPROM.data[i] & 0x0F);
+		}
+	}
+}
+/*********************************************************************************************************
+** 函数名称: InitRtimer
+** 功能描述: 实时时钟初始化
+** 输　入: 	 
+** 输　出:   
+** 注  释: 	 只在实时时钟初始化的时候将需要设定的时间值设定到相应位置
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void InitRtimer(void)
+{
+//----------------------------------------------//写入控制字
+	EEPROM.data[0]=0xDE;						//Slave ADdress
+	EEPROM.data[1]=0;							//MSB ADdress
+	EEPROM.data[2]=0x3F;						//LSB ADdress
+	EEPROM.data[3]=0x0;							//STATUS register
+	EeWrite(1);									//禁止写入
+
+	EEPROM.data[0]=0xDE;						//Slave ADdress
+	EEPROM.data[1]=0;							//MSB ADdress
+	EEPROM.data[2]=0x3F;						//LSB ADdress
+	EEPROM.data[3]=0x02;						//STATUS register
+	EeWrite(1);									//写允许
+
+	EEPROM.data[0]=0xDE;						//Slave ADdress
+	EEPROM.data[1]=0;							//MSB ADdress
+	EEPROM.data[2]=0x3F;						//LSB ADdress
+	EEPROM.data[3]=0x06;						//STATUS register
+	EeWrite(1);									//写寄存器允许
+
+	EEPROM.data[0]=0xDE;						//Slave ADdress
+	EEPROM.data[1]=0;							//MSB ADdress
+	EEPROM.data[2]=0x10;						//LSB ADdress
+	EEPROM.data[3]=0x0;							//Control register 0
+	EEPROM.data[4]=0x0;							//Control register 1
+	EEPROM.data[5]=0x0;							//Control register 2
+	EEPROM.data[6]=0x0;							//Control register 3
+	EeWrite(4);									//写入4字节控制字
+	
+	DELAY_US(10000L);							//延时10ms
+
+//----------------------------------------------//写入时间值	
+	EEPROM.data[0]=0xDE;						//Slave ADdress
+	EEPROM.data[1]=0;							//MSB ADdress
+	EEPROM.data[2]=0x3F;						//LSB ADdress
+	EEPROM.data[3]=0x0;							//STATUS register
+	EeWrite(1);									//禁止写入
+
+	EEPROM.data[0]=0xDE;						//Slave ADdress
+	EEPROM.data[1]=0;							//MSB ADdress
+	EEPROM.data[2]=0x3F;						//LSB ADdress
+	EEPROM.data[3]=0x02;						//STATUS register
+	EeWrite(1);									//写允许
+	
+	EEPROM.data[0]=0xDE;						//Slave ADdress
+	EEPROM.data[1]=0;							//MSB ADdress
+	EEPROM.data[2]=0x3F;						//LSB ADdress
+	EEPROM.data[3]=0x06;						//STATUS register
+	EeWrite(1);									//写寄存器允许
+	
+	EEPROM.data[0]=0xDE;						//Slave ADdress
+	EEPROM.data[1]=0;							//MSB ADdress
+	EEPROM.data[2]=0x30;						//LSB ADdress
+	EEPROM.data[3]=50;							//秒
+	EEPROM.data[4]=0x47;						//分
+	EEPROM.data[5]=0x80 | 0x16;					//时(0x80指的是24小时模式)
+	EEPROM.data[6]=0x22;						//日
+	EEPROM.data[7]=0x12;						//月
+	EEPROM.data[8]=0x04;						//年
+	EEPROM.data[9]=0x05;						//星期
+	EEPROM.data[10]=0x20;						//19/20
+	EeWrite(8);									//写入时间值
+
+	EEPROM.data[0]=0xDE;						//Slave ADdress
+	EEPROM.data[1]=0;							//MSB ADdress
+	EEPROM.data[2]=0x3F;						//LSB ADdress
+	EEPROM.data[3]=0x0;							//STATUS register
+	EeWrite(1);									//禁止写入
+	
+//----------------------------------------------//读取时间值到data[0~7]
+	EEPROM.data[0]=0xDE;						//Slave ADdress
+	EEPROM.data[1]=0;							//MSB ADdress
+	EEPROM.data[2]=0x30;						//LSB ADdress
+	EeRead(8);
+}
+/*********************************************************************************************************
+** 函数名称: Sci485_TxInit
+** 功能描述: 485发送初始化
+** 输　入: 	 
+** 输　出:   
+** 注  释: 	 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void Sci485_TxInit(void)
+{
+	Uint32 temp32;
+	Uint16 temp16;
+	
+	M_EN485TXD();
+	M_EnTxb();
+	temp32=LSPCLK/8;
+	temp16=temp32/_SCIB_BAUD-1;				// LSPCLK/(8*BAUD)-1
+//----------------------------------------------------------------------------
+	SciaRegs.SCIFFTX.all=0xC000;			// Reset TX FIFO's
+	SciaRegs.SCICCR.all = 0x0007;			// 1 stop bit, No parity, 8-bit character, No loopback
+	
+	SciaRegs.SCIHBAUD = (temp16&0xFF00)>>8;	// BAUDRATE
+	SciaRegs.SCILBAUD = temp16&0x00FF;
+	
+	SciaRegs.SCIFFTX.bit.TXFIFOXRESET=1;	// Re-enable TX FIFO operation
+	
+	//M_EnTxbInt();
+	SciaRegs.SCICTL1.all =0x0022;     		// Relinquish SCI from Reset
+//----------------------------------------------------------------------------
+}
+/*********************************************************************************************************
+** 函数名称: Sci485_RxInit
+** 功能描述: 485接收初始化
+** 输　入: 	 
+** 输　出:   
+** 注  释: 	 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void Sci485_RxInit(void)
+{
+//----------------------------------------------------------------------------
+	M_EN485RXD();
+	M_EnRxb();
+	SciaRegs.SCIFFRX.all=0x000A;			// Reset RX FIFO's
+	//ScibRegs.SCICCR.all = 0x0007;			// 1 stop bit, No parity, 8-bit character, No loopback
+	
+	SciaRegs.SCIFFRX.bit.RXFIFORESET=1;		// Re-enable RX FIFO operation
+	
+	M_ClrRxFifoOvr();
+	
+	//M_EnRxbInt();
+	SciaRegs.SCICTL1.all =0x0021;     		// Relinquish SCI from Reset
+//----------------------------------------------------------------------------
+}
+/*********************************************************************************************************
+** 函数名称: ScibDatpro
+** 功能描述: 对sci接收到的数据进行解析校验
+** 输　入: 	 
+** 输　出:   response=0表示需要不需要回复;response=1表示需要立即回复;response=2表示不立即回复,进程完后再回复(如恢复出厂参数)
+** 注  释: 	 通信协议说明如下
+				SCI.rxb[0]:报头(0x7E)
+				SCI.rxb[1]:下位机地址
+				SCI.rxb[2]:命令字(低字节)
+				SCI.rxb[3]:命令字(高字节)
+				SCI.rxb[4]:功能码序号
+				SCI.rxb[5]:功能码数值(低字节)
+				SCI.rxb[6]:功能码数值(高字节)
+				SCI.rxb[7]:状态字(低字节)
+				SCI.rxb[8]:状态字(高字节)
+				SCI.rxb[9]:异或校验
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+Uint16 ScibDatpro(void)
+{
+	Uint16 response,i,xor_data,opration_fail;
+	Uint16 rx_command,rx_funcnum,rx_funcval,rx_state;
+	Uint16 tx_state;
+	
+	if(SCI.rxb[0] == COM_HEAD)									//报头=COM_HEAD?
+	{
+		//发送数准备(报头字节 地址字节)
+		SCI.txb[0] = COM_HEAD;									//报头字节
+		SCI.txb[1] = SCI.rxb[1];								//地址字节
+		
+		//地址判断
+		if(((SCI.rxb[1]&COM_OPERATOR)!=COM_OPERATOR)&&(SCI.rxb[1]!=_SCIB_ADDR))		//上位机&节点地址不符?
+			response=0;											//非发送给本机的命令,不进行处理回复,等待下一帧数据
+		else													//操作器控制或上位机控制且节点地址相符
+		{
+			if(SCI.rxb[1]==0)									//广播模式?
+				response=0;										//广播模式不回复
+			else
+				response=1;										//立即回复
+			
+			xor_data=SCI.rxb[0];								//异或校验
+			for(i=1;i<9;i++)
+				xor_data ^= SCI.rxb[i];
+			
+			if(xor_data != SCI.rxb[9])							//异或校验符合?
+				opration_fail=1;								//置操作失败标志
+			else
+			{
+				opration_fail=0;								//清操作失败标志
+				
+				//诱数据转存
+				rx_command=SCI.rxb[3];							//保存命令字
+				rx_command=((rx_command<<8)&0xFF00)|SCI.rxb[2];
+				
+				rx_funcnum=SCI.rxb[4];							//保存功能码序号
+				
+				rx_funcval=SCI.rxb[6];							//保存功能码值
+				rx_funcval=(SCI.rxb[6]<<8)|SCI.rxb[5];
+				
+				rx_state=SCI.rxb[8];							//保存状态字
+				rx_state=(SCI.rxb[8]<<8)|SCI.rxb[7];
+				
+//				if((rx_state&COM_KEYFWD)==COM_KEYFWD)			//上位机要求充电
+//				{
+//					M_SetFlag(SL_UPSTART);						//置启动标志
+//				}
+//			    if((rx_state&COM_KEYREV)==COM_KEYREV)		    //上位机要求放电
+//				{
+//					M_SetFlag(SL_UPSTART);						//置启动标志
+//				}
+//				if((rx_state&COM_KEYSTOP)==COM_KEYSTOP)			//上位机要求停止?
+//				{
+//					M_ClrFlag(SL_UPSTART);						//清启动标志
+//				}
+					
+				
+				//命令字处理
+				//if((((rx_command&COM_NEEDSTOP)==COM_NEEDSTOP)&&(M_ChkFlag(SL_RUNING)!=0))||(rx_funcnum>PARA_NUM)||((rx_state&COM_UPNORM)!=COM_UPNORM))	//命令需要停机&正在运行 或 功能码序号超限 或 上位机不正常?
+				if((((rx_command&COM_NEEDSTOP)==COM_NEEDSTOP)&&(M_ChkFlag(SL_RUN)!=0))||(rx_funcnum>PARA_NUM)||((rx_state&COM_UPNORM)!=COM_UPNORM))	//命令需要停机&正在运行 或 功能码序号超限 或 上位机不正常? Modified by ljd 05-12-7
+					opration_fail=1;							//置操作失败标志
+				else
+				{
+					switch (rx_command&0xFFEF)					//命令解析
+					{
+						case COM_RD:							//读取功能码(读取下位机EEPROM中的功能码值写入到上位机RAM中)
+							if((rx_funcnum>=BANK_FIRST)&&(rx_funcnum<=BANK_END))	//属于监控变量?
+							{
+								i=*FUNC[rx_funcnum].para_add;			//直接将RAM中的数据发送
+								EEPROM.data[0]=i&0x00FF;
+								EEPROM.data[1]=(i&0xFF00)>>8;
+							}
+//							else if((rx_funcnum>=TAB_ERR_FIRST)&&(rx_funcnum<=TAB_ERR_END))	//属于故障变量?
+//							{
+//								i=*FUNC[rx_funcnum].para_add;			//直接将RAM中的数据发送
+//								EEPROM.data[0]=i&0x00FF;
+//								EEPROM.data[1]=(i&0xFF00)>>8;
+//							}
+							else										//普通变量
+							{
+								EeRpre(rx_funcnum);						//控制字和地址填入EEPROM.data[]
+								EeRead(2);								//读出两字节
+								*FUNC[rx_funcnum].para_add=(EEPROM.data[1]<<8) | EEPROM.data[0];	//修改RAM中功能码数据
+							}
+							
+							SCI.txb[2]=SCI.rxb[2];						//准备发送数据(操作成功)
+							SCI.txb[3]=SCI.rxb[3]|COM_SUCCESS;
+							SCI.txb[4]=SCI.rxb[4];
+							SCI.txb[5]=EEPROM.data[0];
+							SCI.txb[6]=EEPROM.data[1];
+							
+							break;
+							
+						case COM_WR:									//修改功能码(修改下位机RAM中的功能码值)
+							//if(((FUNC[rx_funcnum].attr&RDO)==RDO)||(((FUNC[rx_funcnum].attr&WR1)==WR1)&&(M_ChkFlag(SL_RUNING)!=0)))		//只读或运行中不可修改?
+							if(((FUNC[rx_funcnum].attr&RDO)==RDO)||(((FUNC[rx_funcnum].attr&WR1)==WR1)&&(M_ChkFlag(SL_RUN)!=0)))		//只读或运行中不可修改? Modified by ljd 05-12-7
+							{
+								opration_fail=1;						//置操作失败标志
+							}
+							else
+							{
+								*FUNC[rx_funcnum].para_add=rx_funcval;	//修改RAMRAM中的功能码值
+								
+								SCI.txb[2]=SCI.rxb[2];					//准备发送数据(操作成功)
+								SCI.txb[3]=SCI.rxb[3]|COM_SUCCESS;
+								SCI.txb[4]=SCI.rxb[4];
+								SCI.txb[5]=SCI.rxb[5];
+								SCI.txb[6]=SCI.rxb[6];
+							}
+							
+							break;
+							
+						case COM_SAVE:									//修改功能码并存储(修改下位机RAM中的功能码值并保存到下位机的EEPROM)
+							//if(((FUNC[rx_funcnum].attr&RDO)==RDO)||(((FUNC[rx_funcnum].attr&WR1)==WR1)&&(M_ChkFlag(SL_RUNING)!=0)))		//只读或运行中不可修改?
+							if(((FUNC[rx_funcnum].attr&RDO)==RDO)||(((FUNC[rx_funcnum].attr&WR1)==WR1)&&(M_ChkFlag(SL_RUN)!=0)))		//只读或运行中不可修改? Modified by ljd 05-12-7
+								opration_fail=1;						//置操作失败标志
+							else
+							{
+								*FUNC[rx_funcnum].para_add=rx_funcval;	//修改RAM中的功能码值
+								
+								if((rx_funcnum>=TIME_FIRST)&&(rx_funcnum<=TIME_END))
+									M_SetFlag(SL_SETRTIMER);			//设实时时钟需要重新设置标志
+								else
+								{
+									EEPROM.mcode=rx_funcnum;			//写入2字节数据
+									M_SetFlag(SL_EEASK_MCODE);			//设EEPROM修改功能码请求标志
+								}
+								
+								SCI.txb[2]=SCI.rxb[2];					//准备发送数据(操作成功)
+								SCI.txb[3]=SCI.rxb[3]|COM_SUCCESS;
+								SCI.txb[4]=SCI.rxb[4];
+								SCI.txb[5]=SCI.rxb[5];
+								SCI.txb[6]=SCI.rxb[6];
+							}
+							
+							break;
+							
+						case COM_RESUME:								//恢复出厂参数
+						//	if(rx_funcval==RESUME_KEY)					//恢复出厂参数校验码正确?
+						//	{
+								M_SetFlag(SL_RESUME);					//设恢复出厂参数进行中标志
+								
+								EEPROM.point=0;							//写入2字节数据
+								M_SetFlag(SL_EEASK_INI);				//设EEPROM修改功能码请求标志
+								
+								SCI.txb[2]=SCI.rxb[2];					//准备发送数据(操作成功)
+								SCI.txb[3]=SCI.rxb[3]|COM_SUCCESS;
+								SCI.txb[4]=SCI.rxb[4];
+								SCI.txb[5]=SCI.rxb[5];
+								SCI.txb[6]=SCI.rxb[6];
+								
+								response=2;								//恢复出厂参数不立即回复,恢复进行完才回复
+						//	}
+						//	else
+						//		opration_fail=1;						//置操作失败标志
+							
+							break;
+							
+						case COM_SAVEALL:								//修改功能码并存储(包括只读功能码)
+							*FUNC[rx_funcnum].para_add=rx_funcval;		//修改RAM中的功能码值
+							
+							EEPROM.mcode=rx_funcnum;					//写入2字节数据
+							M_SetFlag(SL_EEASK_MCODE);					//设EEPROM修改功能码请求标志
+							
+							SCI.txb[2]=SCI.rxb[2];						//准备发送数据(操作成功)
+							SCI.txb[3]=SCI.rxb[3]|COM_SUCCESS;
+							SCI.txb[4]=SCI.rxb[4];
+							SCI.txb[5]=SCI.rxb[5];
+							SCI.txb[6]=SCI.rxb[6];
+							
+							break;
+/*						
+						case COM_VGIVE:									//修改DCDC电压给定值
+							if((rx_funcnum == GIVE_FIRST)&&(rx_funcval<=FUNC[NO_VCER].max))
+							{
+								_DC_VREF2 = rx_funcval;
+								SCI.txb[2]=SCI.rxb[2];					//准备发送数据(操作成功)
+							    SCI.txb[3]=SCI.rxb[3]|COM_SUCCESS;
+								SCI.txb[4]=SCI.rxb[4];
+								SCI.txb[5]=SCI.rxb[5];
+								SCI.txb[6]=SCI.rxb[6];
+							}
+							else
+							{
+								opration_fail=1;						//置操作失败标志
+							}
+							
+							break;
+						
+						case COM_IGIVE:									//修改DCDC电流给定值
+							if((rx_funcnum == (GIVE_FIRST+1))&&(rx_funcval<=FUNC[NO_ICER].max))
+							{
+								_DC_IREF2 = rx_funcval;
+								SCI.txb[2]=SCI.rxb[2];					//准备发送数据(操作成功)
+								SCI.txb[3]=SCI.rxb[3]|COM_SUCCESS;
+								SCI.txb[4]=SCI.rxb[4];
+								SCI.txb[5]=SCI.rxb[5];
+								SCI.txb[6]=SCI.rxb[6];
+							}
+							else
+							{
+								opration_fail=1;						//置操作失败标志
+							}
+							
+							break;
+*/								
+						default:
+							SCI.txb[2]=SCI.rxb[2];						//准备发送数据(操作成功)
+							SCI.txb[3]=SCI.rxb[3]|COM_SUCCESS;
+							SCI.txb[4]=SCI.rxb[4];
+							SCI.txb[5]=SCI.rxb[5];
+							SCI.txb[6]=SCI.rxb[6];
+					}
+				}
+				
+				//操作失败的处理
+				if(opration_fail==1)									//操作失败?
+				{
+					SCI.txb[3]=SCI.rxb[3];								//准备发送数据(操作失败)
+					SCI.txb[4]=SCI.rxb[4];
+					SCI.txb[5]=SCI.rxb[5];
+					SCI.txb[6]=SCI.rxb[6];
+				}
+				
+				//下位机反馈状态字处理
+				tx_state=0;
+				
+				if(M_ChkFlag(SL_ERROR)==0)								//工作中无故障?
+					tx_state |= COM_SLAVENORM;							//设下位机正常位
+				if(M_ChkFlag(SL_CODEOK)!=0)
+					tx_state |= COM_SLAVEINIT;							//设下位机初始化完成位
+				if(M_ChkFlag(SL_RUN)!=0)								//SL_RUN作为总运行标志位
+					tx_state |= COM_SLAVERUN;							//设下位机运行位
+//				if(_WORK_MODE==1)										//充电
+//					tx_state |= COM_SLAVEFWD;							
+//				if(_WORK_MODE==2)										//放电
+//					tx_state |= COM_SLAVEREV;							
+//				if(_WORK_MODE==3)										
+//					tx_state |= COM_SLAVEDEB;							//调试
+				
+				SCI.txb[7]=tx_state&0x00FF;
+				SCI.txb[8]=(tx_state&0xFF00)>>8;
+				
+				//异或校验字节
+				xor_data=SCI.txb[0];									//异或校验
+				for(i=1;i<9;i++)
+					xor_data ^= SCI.txb[i];
+				
+				SCI.txb[9] = xor_data;
+			}
+		}
+	}
+	
+	return response;
+}
+
+/*********************************************************************************************************
+** 函数名称: Sci485Ctrl
+** 功能描述: 对sci的接收发送进行综合控制
+** 输　入: 	 
+** 输　出:   
+** 注  释: 	 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void Sci485Ctrl(void)
+{
+	Uint16 i,response;
+	
+	if(M_ChkCounter(SCI.cnt_sciover,DELAY_SCIOVER)>=0)				//发送/接收超时?
+	{
+		SCI.cnt_sciover=0;
+		M_ClrFlag(SL_TX);
+		M_ClrFlag(SL_RX);
+		Sci485_RxInit();											//485接收初始化
+	}
+	else if(M_ChkFlag(SL_TX)!=0)									//发送?
+	{
+		if(SciaRegs.SCIFFTX.bit.TXFFST == 0)						//发送完成?
+		{
+			SCI.cnt_sciover=0;										//清除发送/接收超时定时器
+			if(SciaRegs.SCICTL2.bit.TXEMPTY==1)						//发送寄存器为空?
+		 	{
+				M_ClrFlag(SL_TX);
+				Sci485_RxInit();									//485接收初始化
+			}
+		}
+	}
+	else															//接收
+	{
+		if(SciaRegs.SCIFFRX.bit.RXFFST == 0)						//未开始接收或接收完成?
+		{
+			SCI.cnt_sciover=0;										//清除发送/接收超时定时器
+			M_ClrRxFifoOvr();
+			
+			if(M_ChkFlag(SL_RX)!=0)									//接收完成?
+			{
+				if(M_ChkCounter(SCI.cnt_scispace,DELAY_SCISPACE)>=0)//接收到发送间隔到时?
+	    		{
+					if(M_ChkFlag(SL_RESUME)!=0)						//恢复出厂参数进行中?
+					{
+						if(M_ChkFlag(SL_EEASK_INI)==0)				//EEPROM修改功能码操作完成?
+						{
+							M_ClrFlag(SL_RESUME);					//清恢复出厂参数进行中标志
+							M_SetFlag(SL_TX);						//置发送任务标志位
+							M_ClrFlag(SL_RX);
+							
+							Sci485_TxInit();						//485发送初始化
+							
+							for(i=0;i<SCI485NUM;i++)
+								SciaRegs.SCITXBUF=SCI.txb[i];
+						}
+					}
+					else
+					{
+						response=ScibDatpro();						//调用数据解析程序
+						
+						if(response==1)								//表示要立即回复
+						{
+							M_SetFlag(SL_TX);						//置发送任务标志位
+							M_ClrFlag(SL_RX);
+							
+							Sci485_TxInit();						//485发送初始化
+							
+							//for(i=0;i<SCI485NUM;i++)				//发送缓存等于接收缓存(调试用)
+							//	SCI.txb[i]=SCI.rxb[i];
+							
+							for(i=0;i<SCI485NUM;i++)
+								SciaRegs.SCITXBUF=SCI.txb[i];
+						}
+						else if(response==0)						//不需要回复
+						{
+							M_ClrFlag(SL_RX);
+							Sci485_RxInit();						//485接收初始化
+						}
+					}
+				}
+			}
+		}
+		else if((SciaRegs.SCIFFRX.bit.RXFFST >= 1)&&(M_ChkFlag(SL_HEADOK)==0))	//开始接收且还没有收到报头?
+		{
+			SCI.rxb[0]=SciaRegs.SCIRXBUF.all&0x00FF;
+			if(SCI.rxb[0]==COM_HEAD)
+				M_SetFlag(SL_HEADOK);
+			else
+				Sci485_RxInit();									//485接收初始化
+		}
+		else if(SciaRegs.SCIFFRX.bit.RXFFST >= SCI485NUM-1)			//接收完成?
+		{
+			SCI.cnt_sciover=0;										//清除发送/接收超时定时器
+			M_DisTxRxb();
+			M_ClrRxFifoOvr();
+			
+			for(i=1;i<SCI485NUM;i++)								//读出接收缓存(不包括报头)
+				SCI.rxb[i]=SciaRegs.SCIRXBUF.all&0x00FF;
+			
+			M_ClrFlag(SL_HEADOK);
+			M_SetFlag(SL_RX);										//置接收完成标志位
+			SCI.cnt_scispace=0;										//清除接收到发送间隔定时器
+		}
+	}
+}
+/*********************************************************************************************************
+** 函数名称: AdDatpro
+** 功能描述: 处理AD转换数据
+** 输　入: 	 index(0-15):	待处理数据的索引
+**           attr(0-1):     0=>AC, 1=>DC 
+**			 step1(0-16):	信号滤波步数
+**			 average(0-1):	需要求绝对值
+**			 step2(0-16):	平均值滤波步数
+** 输　出:   
+** 注  释: 	 交流量转换结果放在AD_RESULT中，平均值放在AD_AVERAGE中
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void Ad8364Datpro(const Uint16 index,const Uint16 attr,const Uint16 step1,const Uint16 average,const Uint16 step2)
+{
+	Uint32 temp32;
+
+//----------------------------信号滤波------------------------------
+	temp32 = AD.dat[index];
+	temp32=((Uint32)AD.fil[index]<<16)+AD.sp1[index]+(temp32<<(16-step1))-((Uint32)AD.fil[index]<<(16-step1));
+	AD.fil[index] = temp32>>16;									//高16位为结果
+	AD.sp1[index] = temp32;										//低16位为碎片
+//---------------------------信号滤波结束---------------------------
+
+//----------------------------信号获取------------------------------
+	AD.result[index] = AD.fil[index]-AD_BIAS;					//-10~+10 => -32768~32767
+//--------------------------信号获取结束----------------------------	
+
+	if((attr==1)&&(AD.result[index]<0))		AD.result[index]=0;	//NO NEGATIVE VALUE FOR DC
+
+//----------------------------平均值计算----------------------------
+	if(average==1)
+	{
+		temp32=abs(AD.result[index]);
+		temp32=((Uint32)AD.avr[index]<<16)+AD.sp2[index]+(temp32<<(16-step2))-((Uint32)AD.avr[index]<<(16-step2));
+		AD.avr[index] = temp32>>16;								//高16位为结果
+		AD.sp2[index] = temp32;									//低16位为碎片
+	}
+//--------------------------平均值计算结束--------------------------
+}
+/*********************************************************************************************************
+** 函数名称: Ad8364Ctrl
+** 功能描述: 读取并处理前一次的转换结果，同时启动下一次AD转换
+** 输　入: 	 
+** 输　出:   
+** 注  释: 	 每次都运行
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void Ad8364Ctrl(void)
+{
+
+//------------------------------数据读取(共18路)---------------------------------
+	AD.dat[0] = *AD_ASTART + AD_BIAS;								//该组AD数据是100us之前的结果
+	AD.dat[1] = *(AD_ASTART+1) + AD_BIAS;
+	AD.dat[2] = *(AD_ASTART+2) + AD_BIAS;
+	AD.dat[3] = *(AD_ASTART+3) + AD_BIAS;
+	AD.dat[4] = *(AD_ASTART+4) + AD_BIAS;
+	AD.dat[5] = *(AD_ASTART+5) + AD_BIAS;
+
+	AD.dat[6]  = *AD_BSTART + AD_BIAS;
+	AD.dat[7]  = *(AD_BSTART+1) + AD_BIAS;
+	AD.dat[8]  = *(AD_BSTART+2) + AD_BIAS;
+	AD.dat[9]  = *(AD_BSTART+3) + AD_BIAS;
+	AD.dat[10] = *(AD_BSTART+4) + AD_BIAS;
+	AD.dat[11] = *(AD_BSTART+5) + AD_BIAS;
+
+	AD.dat[12] = *AD_CSTART + AD_BIAS;
+	AD.dat[13] = *(AD_CSTART+1) + AD_BIAS;
+	AD.dat[14] = *(AD_CSTART+2) + AD_BIAS;
+	AD.dat[15] = *(AD_CSTART+3) + AD_BIAS;
+	AD.dat[16] = *(AD_CSTART+4) + AD_BIAS;
+	AD.dat[17] = *(AD_CSTART+5) + AD_BIAS;
+
+//----------------------------数据读取结束------------------------------
+												
+//------------------------------数据处理--------------------------------
+
+	Ad8364Datpro(0,0,3,1,12);										//0 ia1
+	Ad8364Datpro(17, 0,3,1,12);										//17  ib1
+	Ad8364Datpro(15, 0,3,1,12);										//15  ic1
+
+	Ad8364Datpro(11,0,3,1,12);										//11  ia2
+	Ad8364Datpro(9,0,3,1,12);										//9  ib2
+	Ad8364Datpro(7,0,3,1,12);										//7  ic2
+
+	Ad8364Datpro(12, 0,0,1,12);										//12  uab1
+	Ad8364Datpro(10,0,0,1,12);										//10 ubc1
+
+	Ad8364Datpro(8,0,0,1,12);										//8 uab2
+	Ad8364Datpro(6, 0,0,1,12);										//6  ubc2
+
+	Ad8364Datpro(16,1,4,0,0);										//16 udc1
+	Ad8364Datpro(14,1,4,0,0);										//14 udc2
+
+	ADFINAL.ia1  = AD.dat[0]- AD_BIAS;								//32767对应交流峰值
+	ADFINAL.ib1  = AD.dat[17] - AD_BIAS;								//32767对应交流峰
+	ADFINAL.ic1  = AD.dat[15] - AD_BIAS;								//32767对应交流峰值
+
+	ADFINAL.ia2  = AD.dat[11] - AD_BIAS;								//32767对应交流峰值
+	ADFINAL.ib2  = AD.dat[9] - AD_BIAS;								//32767对应交流峰值
+	ADFINAL.ic2  = AD.dat[7] - AD_BIAS;								//32767对应交流峰值
+	ADFINAL.ia2  = - ADFINAL.ia2;									//32767对应交流峰值 以电动电流为正
+	ADFINAL.ib2  = - ADFINAL.ib2;									//32767对应交流峰值
+	ADFINAL.ic2  = - ADFINAL.ic2;									//32767对应交流峰值
+
+	ADFINAL.uab1 = AD.result[12];									//32767对应交流峰值
+	ADFINAL.ubc1 = AD.result[10];									//32767对应交流峰值
+	ADFINAL.ub1  = (ADFINAL.ubc1 - ADFINAL.uab1)/3;					//由线压算相压
+	ADFINAL.ua1  = ADFINAL.ub1 + ADFINAL.uab1;
+	ADFINAL.uc1  = - ADFINAL.ua1 - ADFINAL.ub1;
+
+	ADFINAL.uab2 = AD.result[8];									//32767对应交流峰值
+	ADFINAL.ubc2 = AD.result[6];									//32767对应交流峰值
+	ADFINAL.ub2  = (ADFINAL.ubc2 - ADFINAL.uab2)/3;					//由线压算相压
+	ADFINAL.ua2  = ADFINAL.ub2 + ADFINAL.uab2;
+	ADFINAL.uc2  = - ADFINAL.ua2 - ADFINAL.ub2;
+
+	ADFINAL.udc  = AD.result[16];									//0-32767对应0-中间直流电压检测峰值
+	ADFINAL.udc2  = AD.result[14];									//0-32767对应0-中间直流电压检测峰值
+
+	*AD_DA_CTRL  = AD8364_CONVERT;									//启动下一AD转换
+	AD.cputime	 = CpuTimer0Regs.TIM.half.LSW - AD_CONV_TIME;		//
+}
+/*********************************************************************************************************
+** 函数名称: Protect
+** 功能描述: 保护值计算
+** 输　入: 	 
+** 输:   
+** 注  释: 	 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void Protect(void)
+{
+	Uint32 temp;
+	
+//----------------------------并网电流瞬时值保护---------------------------
+	if(abs(ADFINAL.ia1)>abs(ADFINAL.ib1))
+	{
+		if(abs(ADFINAL.ia1)>abs(ADFINAL.ic1))		temp=abs(ADFINAL.ia1);
+		else										temp=abs(ADFINAL.ic1);
+	}
+	else
+	{
+		if(abs(ADFINAL.ib1)>abs(ADFINAL.ic1))		temp=abs(ADFINAL.ib1);
+		else										temp=abs(ADFINAL.ic1);
+	}
+
+	PRO.iac1 = temp * IAC_ADFULL>>15;								//基准电流的百分值
+
+//----------------------------定子电流瞬时值保护---------------------------
+	if(abs(ADFINAL.ia2)>abs(ADFINAL.ib2))
+	{
+		if(abs(ADFINAL.ia2)>abs(ADFINAL.ic2))		temp=abs(ADFINAL.ia2);
+		else										temp=abs(ADFINAL.ic2);
+	}
+	else
+	{
+		if(abs(ADFINAL.ib2)>abs(ADFINAL.ic2))		temp=abs(ADFINAL.ib2);
+		else										temp=abs(ADFINAL.ic2);
+	}
+
+	PRO.iac2 = temp * IAC_ADFULL>>15;								//基准电流的百分值
+	
+//------------------------中间直流电压保护值计算-----------------------------
+	temp     = (Uint32)ADFINAL.udc * UDC_MAX;
+	PRO.udc  = temp>>15;											//单位V
+
+//---------------------------线电压有效值计算-------------------------------
+	temp     = (Uint32)AD.avr[12] * AD_RMSGAIN;						//单位V
+	temp     = temp>>15;
+	temp	 = temp * UAC_MAX;
+	PRO.uab1 = temp>>15;
+	
+	temp     = (Uint32)AD.avr[10] * AD_RMSGAIN;						//单位V
+	temp     = temp>>15;
+	temp	 = temp * UAC_MAX;
+	PRO.ubc1 = temp>>15;
+	
+	temp     = (Uint32)AD.avr[8] * AD_RMSGAIN;						//单位V
+	temp     = temp>>15;
+	temp	 = temp * UAC_MAX;
+	PRO.uab2 = temp>>15;
+
+	temp     = (Uint32)AD.avr[6] * AD_RMSGAIN;						//单位V
+	temp     = temp>>15;
+	temp	 = temp * UAC_MAX;
+	PRO.ubc2 = temp>>15;
+}
+/*********************************************************************************************************
+** 函数名称: Display
+** 功能描述: 显示值计算
+** 输　入: 	 
+** 输出:   
+** 注  释: 	 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void Display(void)
+{
+	Uint32 temp;
+	int32 temp1;
+//----------------------------Slow AD----------------------------------------
+	Ad8364Datpro(0,1,3,0,0);										//0  tempa1
+	Ad8364Datpro(2,1,3,0,0);										//2  tempb1
+	Ad8364Datpro(4,1,3,0,0);										//4  tempc1
+	Ad8364Datpro(13,1,3,0,0);										//13 tempa2
+	Ad8364Datpro(15,1,3,0,0);										//15 tempb2
+	Ad8364Datpro(17,1,3,0,0);										//17 tempc2
+
+	ADFINAL.ta1 = AD.result[0];										//0-32767对应0-最高温度
+	ADFINAL.tb1 = AD.result[2];										//0-32767对应0-最高温度
+	ADFINAL.tc1 = AD.result[4];										//0-32767对应0-最高温度
+	ADFINAL.ta2 = AD.result[13];									//0-32767对应0-最高温度
+	ADFINAL.tb2 = AD.result[15];									//0-32767对应0-最高温度
+	ADFINAL.tc2 = AD.result[17];									//0-32767对应0-最高温度
+
+//------------------------中间直流电压及指令值显示值计算-----------------------------
+	DISP.udc = PRO.udc;												//单位V
+	DISP.urf  = RUN.urf * UDC_MAX>>15;								//单位V												//单位V
+	DISP.irf  = RUN.irf * IAC_MAX >>15;												//单位V
+//---------------------------相电压显示值计算-------------------------------
+	DISP.uab1 = PRO.uab1;											//单位V
+	DISP.ubc1 = PRO.ubc1;											//单位V
+	DISP.uab2 = PRO.uab2;											//单位V
+	DISP.ubc2 = PRO.ubc2;											//单位V
+
+//---------------------------瞬时电流显示值计算-------------------------------
+	DISP.iai1 = ADFINAL.ia1 * IAC_MAX >>15;						//单位A
+	DISP.ibi1 = ADFINAL.ib1 * IAC_MAX >>15;						//单位A
+	DISP.ici1 = ADFINAL.ic1 * IAC_MAX >>15;						//单位A
+	DISP.iai2 = ADFINAL.ia2 * IAC_MAX >>15;						//单位A
+	DISP.ibi2 = ADFINAL.ib2 * IAC_MAX >>15;						//单位A
+	DISP.ici2 = ADFINAL.ic2 * IAC_MAX >>15;						//单位A
+	
+//------------------------并网总电流显示值计算------------------------------
+	if(AD.avr[0]<=AD_IA1B)	temp = 0;
+	else					temp = AD.avr[0]-AD_IA1B;
+	temp      = temp * AD_RMSGAIN>>15;								//单位A
+	temp	  = temp * IAC_MAX>>15;
+	DISP.iar1 = temp;
+	 
+	if(AD.avr[17]<=AD_IB1B)	temp = 0;
+	else					temp = AD.avr[17]-AD_IB1B;
+	temp      = temp * AD_RMSGAIN>>15;								//单位A
+	temp	  = temp * IAC_MAX>>15;
+	DISP.ibr1 = temp;
+	
+	if(AD.avr[15]<=AD_IC1B)	temp = 0;
+	else					temp = AD.avr[15]-AD_IC1B;
+
+	temp      = temp * AD_RMSGAIN>>15;								//单位A
+	temp	  = temp * IAC_MAX>>15;
+	DISP.icr1 = temp;
+
+	if(AD.avr[11]<=AD_IA2B)	temp = 0;
+	else					temp = AD.avr[11]-AD_IA2B;
+	temp      = temp * AD_RMSGAIN>>15;								//单位A
+	temp	  = temp * IAC_MAX>>15;
+	DISP.iar2 = temp;
+	
+	if(AD.avr[9]<=AD_IB2B)	temp = 0;
+	else					temp = AD.avr[9]-AD_IB2B;
+	temp      = temp * AD_RMSGAIN>>15;								//单位A
+	temp	  = temp * IAC_MAX>>15;
+	DISP.ibr2 = temp;
+	
+	if(AD.avr[7]<=AD_IC2B)	temp = 0;
+	else					temp = AD.avr[7]-AD_IC2B;
+	temp      = temp * AD_RMSGAIN>>15;								//单位A
+	temp	  = temp * IAC_MAX>>15;
+	DISP.icr2 = temp;
+
+//------------------------------频率显示-------------------------------------
+	DISP.freq = CAP1.freq;
+	DISP.speed= 60 * CAP2.freq / POLE;								//单位：转/分；POLE=pole * 5
+
+//-------------------------------温度显示值计算------------------------------
+	temp1     = (int32)ADFINAL.ta1 * TEMP_MAX;						//单位度
+	DISP.ta1  = temp1>>15;
+
+	temp1     = (int32)ADFINAL.tb1 * TEMP_MAX;						//单位度
+	DISP.tb1  = temp1>>15;
+
+	temp1     = (int32)ADFINAL.tc1 * TEMP_MAX;						//单位度
+	DISP.tc1  = temp1>>15;
+
+	temp1     = (int32)ADFINAL.ta2 * TEMP_MAX;						//单位度
+	DISP.ta2  = temp1>>15;
+
+	temp1     = (int32)ADFINAL.tb2 * TEMP_MAX;						//单位度
+	DISP.tb2  = temp1>>15;
+
+	temp1     = (int32)ADFINAL.tc2 * TEMP_MAX;						//单位度
+	DISP.tc2  = temp1>>15;
+}
+/*********************************************************************************************************
+** 函数名称: Cal_speed(cap4)
+** 功能描述: 网压捕获中断
+** 输　入:
+** 输　出:   
+** 注  释: 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+ void Cal_speed(void)
+{
+	Uint32	temp;
+
+	temp=ECap4Regs.CAP2;											//记录捕获值
+	
+	if(temp>0)
+	{
+		CAP2.time = temp;										//记录捕获值 
+		CAP2.freq1   = POLE * C_SPEED2 / CAP2.time;						//计算网压的频率*100
+	}
+
+	if((CAP2.freq1 < FREQ2)&&(CAP2.freq1 > FREQ3))											//如果频率正常则采用6.4
+	{
+		CAP2.freq   = CAP2.freq1;
+		CAP2.afreq  = CAP2.freq * 10 / C_ANG;					//由频率计算角频率
+		CAP2.delta  = 65536 * CAP2.freq / 10000;				//由频率计算网压网流100us角度增量(6553600*f*0.1ms/100=65536*f/10000)
+		M_ClrFlag(SL_FFAIL2);									//清频率失败标志
+	}
+	else	M_SetFlag(SL_FFAIL2);								//否则频率有误累加计数器加1		
+} 
+/*********************************************************************************************************
+** 函数名称: Cal_freq(cap2)
+** 功能描述: 网压捕获中断
+** 输　入:
+** 输　出:   
+** 注  释: 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+ void Cal_freq(void)
+{
+	Uint32	temp;
+
+	temp=ECap2Regs.CAP2;											//记录捕获值
+	
+	if(temp>0)
+	{
+		CAP1.captime = temp/100;										//记录捕获值
+		CAP1.freq1   = C_SPEED1/CAP1.captime;						//计算网压的频率*100
+	}
+
+	if (abs(CAP1.freq1-FREQ1)<FREQ_BAND)						//如果频率正常则采用
+	{
+		CAP1.freq   = CAP1.freq1;
+		CAP1.afreq  = CAP1.freq * 10 / C_ANG;					//由频率计算角频率
+		CAP1.delta  = 65536 * CAP1.freq / 10000;				//由频率计算网压网流100us角度增量(6553600*f*0.1ms/100=65536*f/10000)
+		M_SetFlag(SL_CAPOC1);									//置捕获发生标志
+		M_ClrFlag(SL_FFAIL1);									//清频率失败标志
+	}
+	else	M_SetFlag(SL_FFAIL1);								//否则频率有误累加计数器加1		
+}
+/*********************************************************************************************************
+** 函数名称: Output
+** 功能描述: 16路信号输出; 4路LED显示输出
+** 输　入: 	 
+** 输　出:   
+** 注  释: 	 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void Output(void)
+{
+//------------------------------数据输出-----------------------------------
+	*OUT1_ADDR = _OUT1_DATA;
+	*OUT2_ADDR = _OUT2_DATA;
+
+//-----------------------------显示灯输出----------------------------------
+	if(M_ChkFlag(SL_DISPLAY0)!=0) 	GpioDataRegs.GPBCLEAR.bit.GPIO56 = 1;
+	else							GpioDataRegs.GPBSET.bit.GPIO56 = 1;
+
+	if(M_ChkFlag(SL_DISPLAY1)!=0)  	GpioDataRegs.GPBCLEAR.bit.GPIO57 = 1;
+	else							GpioDataRegs.GPBSET.bit.GPIO57 = 1;
+	
+	if(M_ChkFlag(SL_DISPLAY2)!=0) 	GpioDataRegs.GPBCLEAR.bit.GPIO58 = 1;
+	else							GpioDataRegs.GPBSET.bit.GPIO58 = 1;
+
+	if(M_ChkFlag(SL_DISPLAY3)!=0)  	GpioDataRegs.GPBCLEAR.bit.GPIO59 = 1;
+	else							GpioDataRegs.GPBSET.bit.GPIO59 = 1;
+
+	if(M_ChkFlag(SL_DISPLAY4)!=0) 	GpioDataRegs.GPBCLEAR.bit.GPIO60 = 1;
+	else							GpioDataRegs.GPBSET.bit.GPIO60 = 1;
+
+	if(M_ChkFlag(SL_DISPLAY5)!=0)  	GpioDataRegs.GPBCLEAR.bit.GPIO61 = 1;
+	else							GpioDataRegs.GPBSET.bit.GPIO61 = 1;
+
+	if(M_ChkFlag(SL_DISPLAY6)!=0) 	GpioDataRegs.GPBCLEAR.bit.GPIO62 = 1;
+	else							GpioDataRegs.GPBSET.bit.GPIO62 = 1;
+
+	if(M_ChkFlag(SL_DISPLAY7)!=0)  	GpioDataRegs.GPBCLEAR.bit.GPIO63 = 1;
+	else							GpioDataRegs.GPBSET.bit.GPIO63 = 1;
+
+	DELAY_US(100L);
+
+//------------------------------数据输出-----------------------------------	
+	*OUT1_ADDR = _OUT1_DATA;
+	*OUT2_ADDR = _OUT2_DATA;
+
+//-----------------------------显示灯输出----------------------------------
+	if(M_ChkFlag(SL_DISPLAY0)!=0) 	GpioDataRegs.GPBCLEAR.bit.GPIO56 = 1;
+	else							GpioDataRegs.GPBSET.bit.GPIO56 = 1;
+
+	if(M_ChkFlag(SL_DISPLAY1)!=0)  	GpioDataRegs.GPBCLEAR.bit.GPIO57 = 1;
+	else							GpioDataRegs.GPBSET.bit.GPIO57 = 1;
+	
+	if(M_ChkFlag(SL_DISPLAY2)!=0) 	GpioDataRegs.GPBCLEAR.bit.GPIO58 = 1;
+	else							GpioDataRegs.GPBSET.bit.GPIO58 = 1;
+
+	if(M_ChkFlag(SL_DISPLAY3)!=0)  	GpioDataRegs.GPBCLEAR.bit.GPIO59 = 1;
+	else							GpioDataRegs.GPBSET.bit.GPIO59 = 1;
+
+	if(M_ChkFlag(SL_DISPLAY4)!=0) 	GpioDataRegs.GPBCLEAR.bit.GPIO60 = 1;
+	else							GpioDataRegs.GPBSET.bit.GPIO60 = 1;
+
+	if(M_ChkFlag(SL_DISPLAY5)!=0)  	GpioDataRegs.GPBCLEAR.bit.GPIO61 = 1;
+	else							GpioDataRegs.GPBSET.bit.GPIO61 = 1;
+
+	if(M_ChkFlag(SL_DISPLAY6)!=0) 	GpioDataRegs.GPBCLEAR.bit.GPIO62 = 1;
+	else							GpioDataRegs.GPBSET.bit.GPIO62 = 1;
+
+	if(M_ChkFlag(SL_DISPLAY7)!=0)  	GpioDataRegs.GPBCLEAR.bit.GPIO63 = 1;
+	else							GpioDataRegs.GPBSET.bit.GPIO63 = 1;
+}
+/*********************************************************************************************************
+** 函数名称: Input
+** 功能描述: 16路信号输入; 4路拨码开关输入
+** 输　入: 	 
+** 输　出:   
+** 注  释: 	 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void Input(void)
+{
+	Uint16 tempa,tempb,tempc,tempd;
+	Uint32 temp;
+
+//--------------------------------数据输入----------------------------------
+	tempa = *IN1_ADDR;
+	tempb = *IN2_ADDR;
+	tempc = *IN3_ADDR;
+	tempd = *IN4_ADDR;
+
+
+//------------------------------模式设定输入--------------------------------
+	temp  = GpioDataRegs.GPBDAT.all&0x00FC0000;
+	
+	DELAY_US(100L);
+
+//--------------------------------数据输入----------------------------------	
+	if(tempa==*IN1_ADDR)		_IN1_DATA=tempa;
+	if(tempb==*IN2_ADDR)		_IN2_DATA=tempb;
+	if(tempc==*IN3_ADDR)		_IN3_DATA=tempc;
+	if(tempd==*IN4_ADDR)		_IN4_DATA=tempd;
+
+
+//------------------------------模式设定输入--------------------------------	
+	if(temp==(GpioDataRegs.GPBDAT.all&0x00FC0000))
+	{
+		if(GpioDataRegs.GPBDAT.bit.GPIO50==0)		M_SetFlag(SL_MODE0);
+		else										M_ClrFlag(SL_MODE0);
+			
+		if(GpioDataRegs.GPBDAT.bit.GPIO51==0)		M_SetFlag(SL_MODE1);
+		else										M_ClrFlag(SL_MODE1);
+
+		if(GpioDataRegs.GPBDAT.bit.GPIO52==0)		M_SetFlag(SL_MODE2);
+		else										M_ClrFlag(SL_MODE2);
+
+		if(GpioDataRegs.GPBDAT.bit.GPIO53==0)		M_SetFlag(SL_MODE3);
+		else										M_ClrFlag(SL_MODE3);
+
+		if(GpioDataRegs.GPBDAT.bit.GPIO54==0)		M_SetFlag(SL_MODE4);
+		else										M_ClrFlag(SL_MODE4);
+		
+		if(GpioDataRegs.GPBDAT.bit.GPIO55==0)		M_SetFlag(SL_MODE5);
+		else										M_ClrFlag(SL_MODE5);
+
+	}
+	if(M_ChkFlag(SL_UPSTART)!=0)
+	{
+		M_SetFlag(SL_START);
+		M_ClrFlag(SL_STOP);
+	}
+	else if(M_ChkFlag(SL_UPSTOP)!=0)
+	{
+		M_ClrFlag(SL_START);
+		M_SetFlag(SL_STOP);
+	}
+}
+/*********************************************************************************************************
+** 函数名称: Disepwmio_A
+** 功能描述: 
+** 输　入: 	 
+** 输　出:   
+** 注  释: 	 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void Disepwmio_A(void)
+{
+	EALLOW;
+	
+    GpioDataRegs.GPACLEAR.bit.GPIO0 = 1;  //
+    GpioCtrlRegs.GPAMUX1.bit.GPIO0 = 0;  //
+    GpioCtrlRegs.GPADIR.bit.GPIO0 = 1;  // 
+	
+	GpioDataRegs.GPACLEAR.bit.GPIO1 = 1;  //
+    GpioCtrlRegs.GPAMUX1.bit.GPIO1 = 0;  //
+    GpioCtrlRegs.GPADIR.bit.GPIO1 = 1;  // 
+	
+	GpioDataRegs.GPACLEAR.bit.GPIO2 = 1;  //
+    GpioCtrlRegs.GPAMUX1.bit.GPIO2 = 0;  //
+    GpioCtrlRegs.GPADIR.bit.GPIO2 = 1;  // 
+	
+	GpioDataRegs.GPACLEAR.bit.GPIO3 = 1;  //
+    GpioCtrlRegs.GPAMUX1.bit.GPIO3 = 0;  //
+    GpioCtrlRegs.GPADIR.bit.GPIO3 = 1;  // 
+   
+    GpioDataRegs.GPACLEAR.bit.GPIO4 = 1;  //
+    GpioCtrlRegs.GPAMUX1.bit.GPIO4 = 0;  //
+    GpioCtrlRegs.GPADIR.bit.GPIO4 = 1;  // 
+	
+	GpioDataRegs.GPACLEAR.bit.GPIO5 = 1;  //
+    GpioCtrlRegs.GPAMUX1.bit.GPIO5 = 0;  //
+    GpioCtrlRegs.GPADIR.bit.GPIO5 = 1;  // 
+
+	EDIS;
+}  
+/*********************************************************************************************************
+** 函数名称: Disepwmio_B
+** 功能描述: 
+** 输　入: 	 
+** 输　出:   
+** 注  释: 	 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void Disepwmio_B(void)
+{
+	EALLOW;
+	
+    GpioDataRegs.GPACLEAR.bit.GPIO6 = 1;  //
+    GpioCtrlRegs.GPAMUX1.bit.GPIO6 = 0;  //
+    GpioCtrlRegs.GPADIR.bit.GPIO6 = 1;  // 
+	
+	GpioDataRegs.GPACLEAR.bit.GPIO7 = 1;  //
+    GpioCtrlRegs.GPAMUX1.bit.GPIO7 = 0;  //
+    GpioCtrlRegs.GPADIR.bit.GPIO7 = 1;  // 
+	
+	GpioDataRegs.GPACLEAR.bit.GPIO8 = 1;  //
+    GpioCtrlRegs.GPAMUX1.bit.GPIO8 = 0;  //
+    GpioCtrlRegs.GPADIR.bit.GPIO8 = 1;  // 
+	
+	GpioDataRegs.GPACLEAR.bit.GPIO9 = 1;  //
+    GpioCtrlRegs.GPAMUX1.bit.GPIO9 = 0;  //
+    GpioCtrlRegs.GPADIR.bit.GPIO9 = 1;  // 
+   
+    GpioDataRegs.GPACLEAR.bit.GPIO10 = 1;  //
+    GpioCtrlRegs.GPAMUX1.bit.GPIO10 = 0;  //
+    GpioCtrlRegs.GPADIR.bit.GPIO10 = 1;  // 
+	
+	GpioDataRegs.GPACLEAR.bit.GPIO11 = 1;  //
+    GpioCtrlRegs.GPAMUX1.bit.GPIO11 = 0;  //
+    GpioCtrlRegs.GPADIR.bit.GPIO11 = 1;  //  
+
+	EDIS;
+}  
+/*********************************************************************************************************
+** 函数名称: Enepwmio_A
+** 功能描述: 
+** 输　入: 	 
+** 输　出:   
+** 注  释: 	 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void Enepwmio_A(void)
+{
+	EALLOW;
+	
+	GpioCtrlRegs.GPAMUX1.bit.GPIO0 = 1;  // GPIO0 = PWM1A    
+	GpioCtrlRegs.GPAMUX1.bit.GPIO1 = 1;  // GPIO1 = PWM1B    
+	GpioCtrlRegs.GPAMUX1.bit.GPIO2 = 1;  // GPIO2 = PWM2A    
+	GpioCtrlRegs.GPAMUX1.bit.GPIO3 = 1;  // GPIO3 = PWM2B    
+	GpioCtrlRegs.GPAMUX1.bit.GPIO4 = 1;  // GPIO4 = PWM3A    
+	GpioCtrlRegs.GPAMUX1.bit.GPIO5 = 1;  // GPIO5 = PWM3B    
+
+	EDIS;
+}  
+/*********************************************************************************************************
+** 函数名称: Enepwmio_B
+** 功能描述: 
+** 输　入: 	 
+** 输　出:   
+** 注  释: 	 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void Enepwmio_B(void)
+{
+	EALLOW;
+	
+	GpioCtrlRegs.GPAMUX1.bit.GPIO6 = 1;  // GPIO6 = PWM4A    
+	GpioCtrlRegs.GPAMUX1.bit.GPIO7 = 1;  // GPIO7 = PWM4B    
+	GpioCtrlRegs.GPAMUX1.bit.GPIO8 = 1;  // GPIO8 = PWM5A    
+	GpioCtrlRegs.GPAMUX1.bit.GPIO9 = 1;  // GPIO9 = PWM5B    
+	GpioCtrlRegs.GPAMUX1.bit.GPIO10 = 1;  // GPIO10 = PWM6A  
+	GpioCtrlRegs.GPAMUX1.bit.GPIO11 = 1;  // GPIO11 = PWM6B  
+
+	EDIS;
+}    
+/*********************************************************************************************************
+** 函数名称: EnPwm
+** 功能描述: 脉冲允许
+** 输　入: 	 
+** 输　出:   
+** 注  释: 	 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void EnPwm(void)						
+{
+	Uint32 temp;
+	
+	Disepwmio();
+//-----------------------------计算开关频率和最小导通时间------------------	
+//	temp 		= (Uint32)HSPCLK * 50000 / _SW_FR;					//_SWITCH_FR*1000 double edge
+	temp 		= (int32)HSPCLK * 50000 / _SW_FR;					//_SWITCH_FR*1000 double edge
+	duty_min 	= _MINONTIME * HSPCLK>>1;
+	duty_max    = (int32)temp  - duty_min;	
+//	duty_max    = (Uint16)temp  - duty_min;	
+	dead_comp  = (_DEADTIME + 7) * HSPCLK;							//计算死区补偿比较值，7us为CPLD加入的死区时间
+	EALLOW;
+	
+    EPwm1Regs.TBPRD = (Uint16)temp;           // 
+    EPwm2Regs.TBPRD = (Uint16)temp;           // 
+	EPwm3Regs.TBPRD = (Uint16)temp;           // 
+    EPwm4Regs.TBPRD = (Uint16)temp;           // 
+    EPwm5Regs.TBPRD = (Uint16)temp;           // 
+    EPwm6Regs.TBPRD = (Uint16)temp;           // 
+
+// Active high complementary PWMs - Setup the deadband
+    EPwm1Regs.DBCTL.bit.OUT_MODE = DB_FULL_ENABLE;
+    EPwm1Regs.DBCTL.bit.POLSEL = DB_ACTV_HIC;
+    EPwm1Regs.DBCTL.bit.IN_MODE = DBA_ALL;
+    EPwm1Regs.DBRED = _DEADTIME * HSPCLK;
+    EPwm1Regs.DBFED = _DEADTIME * HSPCLK;
+
+    EPwm2Regs.DBCTL.bit.OUT_MODE = DB_FULL_ENABLE;
+    EPwm2Regs.DBCTL.bit.POLSEL = DB_ACTV_HIC;
+    EPwm2Regs.DBCTL.bit.IN_MODE = DBA_ALL;
+    EPwm2Regs.DBRED = _DEADTIME * HSPCLK;
+    EPwm2Regs.DBFED = _DEADTIME * HSPCLK;
+
+    EPwm3Regs.DBCTL.bit.OUT_MODE = DB_FULL_ENABLE;
+    EPwm3Regs.DBCTL.bit.POLSEL = DB_ACTV_HIC;
+    EPwm3Regs.DBCTL.bit.IN_MODE = DBA_ALL;
+    EPwm3Regs.DBRED = _DEADTIME * HSPCLK;
+    EPwm3Regs.DBFED = _DEADTIME * HSPCLK;
+
+	EPwm4Regs.DBCTL.bit.OUT_MODE = DB_FULL_ENABLE;
+    EPwm4Regs.DBCTL.bit.POLSEL = DB_ACTV_HIC;
+    EPwm4Regs.DBCTL.bit.IN_MODE = DBA_ALL;
+    EPwm4Regs.DBRED = _DEADTIME * HSPCLK;
+    EPwm4Regs.DBFED = _DEADTIME * HSPCLK;
+
+    EPwm5Regs.DBCTL.bit.OUT_MODE = DB_FULL_ENABLE;
+    EPwm5Regs.DBCTL.bit.POLSEL = DB_ACTV_HIC;
+    EPwm5Regs.DBCTL.bit.IN_MODE = DBA_ALL;
+    EPwm5Regs.DBRED = _DEADTIME * HSPCLK;
+    EPwm5Regs.DBFED = _DEADTIME * HSPCLK;
+
+    EPwm6Regs.DBCTL.bit.OUT_MODE = DB_FULL_ENABLE;
+    EPwm6Regs.DBCTL.bit.POLSEL = DB_ACTV_HIC;
+    EPwm6Regs.DBCTL.bit.IN_MODE = DBA_ALL;
+    EPwm6Regs.DBRED = _DEADTIME * HSPCLK;
+    EPwm6Regs.DBFED = _DEADTIME * HSPCLK;
+ 	 	   
+    EPwm1Regs.TBCTR = 0x0000;                      // Clear counter
+    EPwm2Regs.TBCTR = 0x0000;                      // Clear counter
+    EPwm3Regs.TBCTR = 0x0000;                      // Clear counter
+    EPwm4Regs.TBCTR = 0x0000;                      // Clear counter
+    EPwm5Regs.TBCTR = 0x0000;                      // Clear counter
+    EPwm6Regs.TBCTR = 0x0000;                      // Clear counter
+	
+	EDIS;
+	M_SetFlag(SL_PWMENA);											//使能VSR1
+	M_SetFlag(SL_PWMENB);											//使能VSR2
+	
+	temp = _COMPTIME;
+	temp = temp << 15;
+	DEADCOMP1 = temp;
+	DEADCOMP2 = 6553600 - temp;
+	DEADCOMP3 = 3276800 - temp;
+	DEADCOMP4 = 3276800 + temp;
+
+}
+/*********************************************************************************************************
+** 函数名称: EnPdpint
+** 功能描述: 
+** 输　入: 	 
+** 输　出:   
+** 注  释: 	 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void EnPdpint(void)
+{
+	EALLOW;
+	
+   // Enable TZ interrupt
+    EPwm1Regs.TZEINT.bit.OST = 1;
+    EPwm2Regs.TZEINT.bit.OST = 1;
+    EPwm3Regs.TZEINT.bit.OST = 1;
+	EPwm4Regs.TZEINT.bit.OST = 1;
+    EPwm5Regs.TZEINT.bit.OST = 1;
+    EPwm6Regs.TZEINT.bit.OST = 1;
+
+	EDIS;
+}
+/*********************************************************************************************************
+** 函数名称: DisPdpint
+** 功能描述: 
+** 输　入: 	 
+** 输　出:   
+** 注  释: 	 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void DisPdpint(void)
+{
+	EALLOW;
+	
+   // disable TZ interrupt
+    EPwm1Regs.TZEINT.bit.OST = 0;
+    EPwm2Regs.TZEINT.bit.OST = 0;
+    EPwm3Regs.TZEINT.bit.OST = 0;
+	EPwm4Regs.TZEINT.bit.OST = 0;
+    EPwm5Regs.TZEINT.bit.OST = 0;
+    EPwm6Regs.TZEINT.bit.OST = 0;
+
+	EDIS;
+} 
+/*********************************************************************************************************
+** 函数名称: ClrPdpint
+** 功能描述: 
+** 输　入: 	 
+** 输　出:   
+** 注  释: 	 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void ClrPdpint(void)
+{
+	EALLOW;
+	
+    EPwm1Regs.TZCLR.bit.OST = 1;   
+    EPwm1Regs.TZCLR.bit.INT = 1;
+	EPwm2Regs.TZCLR.bit.OST = 1;   
+    EPwm2Regs.TZCLR.bit.INT = 1;
+	EPwm3Regs.TZCLR.bit.OST = 1;   
+    EPwm3Regs.TZCLR.bit.INT = 1;
+	EPwm4Regs.TZCLR.bit.OST = 1;   
+    EPwm4Regs.TZCLR.bit.INT = 1;
+	EPwm5Regs.TZCLR.bit.OST = 1;   
+    EPwm5Regs.TZCLR.bit.INT = 1;
+	EPwm6Regs.TZCLR.bit.OST = 1;   
+    EPwm6Regs.TZCLR.bit.INT = 1;
+
+	EDIS;
+}   
+/*********************************************************************************************************
+** 函数名称: DisPwm
+** 功能描述: 脉冲禁止
+** 输　入: 	 
+** 输　出:   
+** 注  释: 	 
+**-------------------------------------------------------------------------------------------------------
+** 作　者: 
+** 日　期: 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void DisPwm(void)
+{
+	M_ClrFlag(SL_PWMENA);											//不使能脉冲
+	M_ClrFlag(SL_PWMENB);											//不使能脉冲
+	Disepwmio();
+	EALLOW;
+	  
+    EPwm1Regs.TBCTR = 0x0000;                      // Clear counter
+    EPwm2Regs.TBCTR = 0x0000;                      // Clear counter
+    EPwm3Regs.TBCTR = 0x0000;                      // Clear counter
+    EPwm4Regs.TBCTR = 0x0000;                      // Clear counter
+    EPwm5Regs.TBCTR = 0x0000;                      // Clear counter
+    EPwm6Regs.TBCTR = 0x0000;                      // Clear counter
+        
+	EDIS;
+}
+
+//===========================================================================
+// No more.
+//===========================================================================

@@ -1,0 +1,269 @@
+#ifndef DCDC_database_H
+#define DCDC_database_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+//--------------------------------------//参数属性定义
+#define	WR0		1						//write only
+#define	RDO		2						//read only
+#define WR1		4						//write enable when stop
+#define	WR2		8						//write enable with password
+#define	MAX_PT	16						//最大值为指针
+#define	MIN_PT	32						//最小值为指针
+#define	SIG		64						//有符号数
+#define	VA0		128						//表示包含数值0(相当于禁止相应的功能)
+#define	UNS		256						//禁止存储
+#define	KEY		512						//查看和修改需要制造商密码
+
+//--------------------------------------//显示信息属性定义
+#define	NONE	0						//
+#define	SOFT	1						//软停止
+#define	SHUT	2						//急停
+#define	N_RCVR	4						//不能恢复
+#define	D_RCVR	8						//延时恢复
+#define	I_RCVR	16						//立即恢复
+#define	CNT		32						//计入故障次数
+#define	OT_SER	64						//超时1min后变成严重故障
+#define	SAVE	128						//信息需要保存
+
+//--------------------------------------//定义参数型结构体
+struct PARA
+{
+ Uint16 *para_add;						//变量地址指针
+ Uint16 init;							//初始值
+ Uint16	min,max;						//最小值 最大值
+ Uint16	*min_add,*max_add;				//最小值 最大值指针
+ Uint16 attr;							//属性
+};
+
+struct MESSAGE
+{
+ Uint16	name[3];						//名称
+ Uint16 rank;							//信息级别
+ Uint16 attr;							//属性
+};
+
+//--------------------------------------//数据总表
+const struct PARA FUNC[PARA_NUM]={
+//		名称   		初值		最小值		最大值		最小值指针	最大值指针	属性		说明
+//'制造商用'
+	{&_MC_TYPE,		MC_TYPE,	MC_TYPE,	MC_TYPE,	&_NULL_VAL,	&_NULL_VAL,	RDO},		//机型参数 
+	{&_MC_REV, 		MC_REV,		MC_REV,		MC_REV,		&_NULL_VAL,	&_NULL_VAL,	KEY},		//软件版本号
+	{&_MC_DATE,		MC_DATE,	0,	    	65535,		&_NULL_VAL,	&_NULL_VAL,	KEY},		//出厂日期 
+	{&_MC_ID,		MC_ID,		0,			65535,		&_NULL_VAL,	&_NULL_VAL,	KEY},		//产品编号 
+	{&_SW_FR,		210,		1,			1800,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//开关频率(0.01kHz)
+	{&_DEADTIME,	2,			0,			20,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//死区时间(us)
+	{&_COMPTIME,	45,			0,			50,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//死区补偿时间(ms)
+	{&_MINONTIME,	1,			0,			20,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//最小导通时间(us)
+	{&_RU_UDCT,		20000,		10,			20000,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//电压指令给定积分上升/下降时间(ms)
+	{&_RU_IDT,		20000,		10,			20000,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//电流指令给定积分上升/下降时间(ms)
+	{&_URF,			700,		0,			900,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//中间直流电压给定值
+	{&_IRF,			0,			0,			1000,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//转矩电流给定值6.5
+
+//'运行模式设定'
+	{&_OPERATION,	0,			0,			1,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//0:并联运行模式;1:背靠背运行模式 //9.21
+	{&_PARALLEL,	0,			0,			3,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//并联运行模式:0两台都封锁;1:VSR1运行,VSR2封锁;2:VSR2运行,VSR1封锁;3:VSR1运行,VSR2运行
+	{&_ZEROCTRL,	0,			0,			1,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//零序控制模式：0->不控零序:1->控制零序;
+	{&_SINGLE,		0,			0,			1,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//独立工作模式：0->与DCDC联调工作:1->独立工作;	//5.28
+	{&_MODULATION1,	0,			0,			1,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//网侧变流器调试模式：0->SVPWM:1->SPWM;
+	{&_MODULATION2,	0,			0,			1,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//电机侧变流器调试模式：0->SVPWM:1->SPWM;
+	{&_COMP1,		0,			0,			1,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//网侧变流器死区补偿使能：0->不使能:1->使能
+	{&_COMP2,		0,			0,			1,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//电机侧变流器死区补偿使能：0->不使能:1->使能//tf5.26
+	{&_ENDRAW,		0,			0,			1,			&_NULL_VAL,	&_NULL_VAL,	WR0},		//画图使能：0->不使能:1->使能
+
+//'基本功能'	
+	{&_UKP1,		3,			1,			200,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//电压环比例系数1(0.1)
+	{&_UTI1,		50,			0,			500,		&_NULL_VAL,	&_NULL_VAL,	WR0+VA0},	//电压环积分时间1(0.1ms)
+	{&_UKP2,		5,			1,			200,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//电压环比例系数2(0.1)
+	{&_UTI2,		70,			0,			500,		&_NULL_VAL,	&_NULL_VAL,	WR0+VA0},	//电压环积分时间2(0.1ms)
+	{&_IdKP1,		10,			1,			200,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//电流d轴环比例系数1(0.1)
+	{&_IdTI1,		60,			0,			500,		&_NULL_VAL,	&_NULL_VAL,	WR0+VA0},	//电流d轴环积分时间1(0.1ms)
+	{&_IdKP2,		6,			1,			200,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//电流d轴环比例系数2(0.1)
+	{&_IdTI2,		70,			0,			500,		&_NULL_VAL,	&_NULL_VAL,	WR0+VA0},	//电流d轴环积分时间2(0.1ms)
+	{&_IqKP1,		10,			1,			200,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//电流q轴环比例系数1(0.1)
+	{&_IqTI1,		60,			0,			500,		&_NULL_VAL,	&_NULL_VAL,	WR0+VA0},	//电流q轴环积分时间1(0.1ms)
+	{&_IqKP2,		7,			1,			200,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//电流q轴环比例系数2(0.1)
+	{&_IqTI2,		70,			0,			500,		&_NULL_VAL,	&_NULL_VAL,	WR0+VA0},	//电流q轴环积分时间2(0.1ms)
+	{&_IdKP3,		6,			1,			200,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//定子电流d轴环比例系数(0.1)
+	{&_IdTI3,		70,			0,			500,		&_NULL_VAL,	&_NULL_VAL,	WR0+VA0},	//定子电流d轴环积分时间(0.1ms)
+	{&_IqKP3,		6,			1,			200,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//定子电流q轴环比例系数(0.1)
+	{&_IqTI3,		70,			0,			500,		&_NULL_VAL,	&_NULL_VAL,	WR0+VA0},	//定子电流q轴环积分时间(0.1ms)
+	{&_I0KP,		5,			1,			200,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//电流0轴环比例系数(0.1)//9.21
+	{&_I0TI,		70,			0,			500,		&_NULL_VAL,	&_NULL_VAL,	WR0+VA0},	//电流0轴环积分时间(0.1ms)
+		
+//'高级功能'	
+	{&_SC_RTRN,		10,			0,			10,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//故障最大重试次数
+	{&_SC_RTRT,		10,			10,			60,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//两次故障重试间隔时间(s)//9.21
+	{&_SC_IACOV1,	80, 		20,			150,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//交流电流 过流保护值(基准电流的百分值)//9.21
+	{&_SC_UDCOV,	1170,		20,       	1300,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//中间直流电压 过压动作值(V)//9.21
+	{&_SC_UDCLV,	860,		0,       	1080,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//中间直流电压 过压动作值(V)//9.21
+	{&_SC_VDCON,	750,		0,       	900,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//中间直流电压 过压动作值(V)//9.21
+	{&_SC_UACOV1,	828,		20,			1000,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//网侧电压 过压动作值(V)//9.21
+	{&_SC_UACLV1,	552,		0,			800,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//网侧电压 欠压动作值(V)//9.21
+	{&_SC_IACOV2,	80, 		20,			150,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//交流电流 过流保护值(基准电流的百分值)	//9.21
+	{&_SC_UACOV2,	828,		20,			1000,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//网侧电压 过压动作值(V)//9.21
+	{&_SC_UACLV2,	552,		0,			800,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//网侧电压 欠压动作值(V)//9.21
+	{&_SC_USTEP1,	3,			0,			5,			&_NULL_VAL,	&_NULL_VAL,	WR0},		//电压滤波拍数
+	{&_SC_ISTEP1,	3,			1,			5,			&_NULL_VAL,	&_NULL_VAL,	WR0},		//电流dq滤波拍数
+	{&_SC_USTEP2,	3,			0,			5,			&_NULL_VAL,	&_NULL_VAL,	WR0},		//电压滤波拍数
+	{&_SC_ISTEP2,	3,			1,			5,			&_NULL_VAL,	&_NULL_VAL,	WR0},		//电流dq滤波拍数
+	{&_SCIB_BAUD,	9600,		1200,		19200,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//485波特率
+	{&_SCIB_ADDR,	1,			1,			31,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//485节点地址	
+	
+//'报警原因'	
+	{&_BA_ERR4,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//最新故障信息
+	{&_BA_ERR3,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//第三次故障信息 
+	{&_BA_ERR2,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//第二次故障信息 
+	{&_BA_ERR1,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//第一次故障信息 
+
+//'报警信息'	   
+	{&_BA_EIRF,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//最新故障时刻 q轴电流指令(A)
+	{&_BA_EURF,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//最新故障时刻 中间直流电压给定值(V)
+	{&_BA_EUDC,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//最新故障时刻 中间直流电压(V)
+	{&_BA_EIA1,		0,			-32768,     32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},	//最新故障时刻 网侧变流器A相并网电流有效值(A)
+	{&_BA_EIB1,		0,			-32768,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},	//最新故障时刻 网侧变流器B相并网电流有效值(A)
+	{&_BA_EIC1,		0,			-32768,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},	//最新故障时刻 网侧变流器C相并网电流有效值(A)
+	{&_BA_EIA2,		0,			-32768,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},	//最新故障时刻 电机侧变流器A相并网电流有效值(A)
+	{&_BA_EIB2,		0,			-32768,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},	//最新故障时刻 电机侧变流器B相并网电流有效值(A)
+	{&_BA_EIC2,		0,			-32768,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},	//最新故障时刻 电机侧变流器C相并网电流有效值(A)
+	{&_BA_EUAB1,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//最新故障时刻 网侧AB线电压有值(V)
+	{&_BA_EUBC1,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//最新故障时刻 网侧BC线电压有效值(V)
+	{&_BA_EUAB2,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//最新故障时刻 电机侧AB线电压有效值(V)
+	{&_BA_EUBC2,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//最新故障时刻 电机侧BC线电压有效值(V)
+	{&_BA_EFREQ,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//最新故障时刻 电网频率(hz)
+	{&_BA_ESPEED,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//最新故障时刻 电机转速(rpm)//9.21
+
+//'报警时间'	
+	{&_BA_TIME4_0,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//最新故障时间(秒)
+	{&_BA_TIME4_1,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//新故障时间(分)
+	{&_BA_TIME4_2,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//最新故障时间(时)
+	{&_BA_TIME4_3,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//最新故障时间(日)
+	{&_BA_TIME4_4,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//最新故障时间(月)
+	{&_BA_TIME4_5,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//最新故障时间(年)
+
+	{&_BA_TIME3_0,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//第三次故障时间(秒)
+	{&_BA_TIME3_1,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//第三次故障时间(分)
+	{&_BA_TIME3_2,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//第三次故障时间(时)
+	{&_BA_TIME3_3,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//第三次故障时间(日)
+	{&_BA_TIME3_4,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//第三次故障时间(月)
+	{&_BA_TIME3_5,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//第三次故障时间(年)
+
+	{&_BA_TIME2_0,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//第二次故障时间(秒)
+	{&_BA_TIME2_1,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//第二次故障时间(分)
+	{&_BA_TIME2_2,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//第二次故障时间(时)
+	{&_BA_TIME2_3,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//第二次故障时间(日)
+	{&_BA_TIME2_4,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//第二次故障时间(月)
+	{&_BA_TIME2_5,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//第二喂收鲜奔?年)
+	                                    	
+	{&_BA_TIME1_0,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//第一次故障时间(秒)
+	{&_BA_TIME1_1,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//第一次故障时间(分)
+	{&_BA_TIME1_2,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//第一次故障时间(时)
+	{&_BA_TIME1_3,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//第一次故障时间(日)
+	{&_BA_TIME1_4,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//第一次故障时间(月)
+	{&_BA_TIME1_5,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//一次故障时间(年)	                                    	
+	
+//时间设定
+	{&RTIMER.time[0],	0,		0,			59,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//最新故障时间(秒)
+	{&RTIMER.time[1],	0,		0,			59,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//最新故障时间(分)
+	{&RTIMER.time[2],	0,		0,			23,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//钚鹿收鲜奔?时)
+	{&RTIMER.time[3],	0,		0,			31,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//最新故障时间(日)
+	{&RTIMER.time[4],	0,		0,			12,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//最新故障时间(月)
+	{&RTIMER.time[5],	0,		0,			99,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//最新故障时间(年)
+
+//运行监控
+	{&_BA_IRF,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//q轴电流指令(A)
+	{&_BA_URF,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//中间直流电压给定值(V)
+	{&_BA_UDC,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//中间直流电压(V)
+	{&_BA_IA1,		0,			0,    		65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//网侧变流器A相并网电流有效值(A)
+	{&_BA_IB1,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//网侧变流器B相并网电流有效值(A)
+	{&_BA_IC1,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//网侧变流器C相并网电流有效值(A)
+	{&_BA_IA2,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//电机侧变流器A相并网电流有效值(A)
+	{&_BA_IB2,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//电机侧变流器B相并网电流有效值(A)
+	{&_BA_IC2,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//电机侧变流器C相并网电流有效值(A)
+	{&_BA_UAB1,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//网侧AB线电压有效值(V)
+	{&_BA_UBC1,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//网侧BC线电压有效值(V)
+	{&_BA_UAB2,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//电机侧AB线电压有效值(V)
+	{&_BA_UBC2,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//电机侧BC线电压有效值(V)
+	{&_BA_FREQ,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//电网频率(hz)
+	{&_BA_SPEED,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO}		//电机转速(rpm)//9.21
+};
+
+//--------------------------------------//故障信息子表(保存数据的序号)
+const Uint16 TAB_ERR[ERRO_NUM]={
+	TAB_ERR_FIRST   ,TAB_ERR_FIRST+ 1,TAB_ERR_FIRST+ 2,TAB_ERR_FIRST+ 3,
+	TAB_ERR_FIRST+ 4,TAB_ERR_FIRST+ 5,TAB_ERR_FIRST+ 6,TAB_ERR_FIRST+ 7,
+	TAB_ERR_FIRST+ 8,TAB_ERR_FIRST+ 9,TAB_ERR_FIRST+10,TAB_ERR_FIRST+11,
+	TAB_ERR_FIRST+12,TAB_ERR_FIRST+13,TAB_ERR_FIRST+14,TAB_ERR_FIRST+15,
+	TAB_ERR_FIRST+16,TAB_ERR_FIRST+17,TAB_ERR_FIRST+18,TAB_ERR_FIRST+19,
+	TAB_ERR_FIRST+20,TAB_ERR_FIRST+21,TAB_ERR_FIRST+22,TAB_ERR_FIRST+23,
+	TAB_ERR_FIRST+24,TAB_ERR_FIRST+25,TAB_ERR_FIRST+26,TAB_ERR_FIRST+27,
+	TAB_ERR_FIRST+28,TAB_ERR_FIRST+29,TAB_ERR_FIRST+30,TAB_ERR_FIRST+31,
+	TAB_ERR_FIRST+32,TAB_ERR_FIRST+33,TAB_ERR_FIRST+34,TAB_ERR_FIRST+35,
+	TAB_ERR_FIRST+36,TAB_ERR_FIRST+37,TAB_ERR_FIRST+38,TAB_ERR_FIRST+39,
+	TAB_ERR_FIRST+40,TAB_ERR_FIRST+41,TAB_ERR_FIRST+42
+};
+
+//--------------------------------------//掉电信息子表(保存数据的序号)
+
+//--------------------------------------//显示信息子表
+const struct MESSAGE TAB_MSG[MSG_NUM]={
+	//	名称     			信息级别	属性
+	{{'-',	'-',	'-'},	0, 			NONE},						//MSG_NONE
+	
+	{{'D',	'-',	'-'},	6, 			SHUT+N_RCVR+CNT+SAVE},		//MSG_CODEOK
+	{{'E',	'E',	'E'},	6, 			SHUT+N_RCVR+CNT+SAVE},		//MSG_EE_FAIL
+	{{'E',	'S',	'P'},	6, 			SHUT+N_RCVR+CNT+SAVE},		//MSG_ESTOP//9.21
+	{{'K',	'C',	'F'},	6, 			SHUT+N_RCVR+CNT+SAVE},		//MSG_OFFK//9.21
+			
+	{{'M',	'T',	'P'},	5, 			SHUT+N_RCVR+CNT+SAVE},		//MSG_MAINTRIP
+	{{'O',	'C',	'1'},	5, 			SHUT+N_RCVR+CNT+SAVE},		//MSG_HIA1
+	{{'O',	'C',	'2'},	5, 			SHUT+N_RCVR+CNT+SAVE},		//MSG_HIB1
+	{{'O',	'C',	'3'},	5, 			SHUT+N_RCVR+CNT+SAVE},		//MSG_HIC1
+	{{'O',	'C',	'4'},	5, 			SHUT+N_RCVR+CNT+SAVE},		//MSG_HIA2
+	{{'O',	'C',	'5'},	5, 			SHUT+N_RCVR+CNT+SAVE},		//MSG_HIB2
+	{{'O',	'C',	'6'},	5, 			SHUT+N_RCVR+CNT+SAVE},		//MSG_HIC2
+	{{'O',	'C',	'7'},	4, 			SHUT+D_RCVR+CNT+SAVE},		//MSG_SIAC1
+	{{'O',	'C',	'8'},	4, 			SHUT+D_RCVR+CNT+SAVE},		//MSG_SIAC2
+	
+	{{'F',	'E',	'1'},	3, 			SHUT+D_RCVR+CNT+SAVE},		//MSG_FE1
+	{{'F',	'E',	'2'},	3, 			SHUT+D_RCVR+CNT+SAVE},		//MSG_FE2
+
+	{{'U',	'F',	'1'},	3, 			SHUT+D_RCVR+CNT+SAVE},		//MSG_UDCOV
+	{{'U',	'F',	'2'},	3, 			SHUT+D_RCVR+CNT+SAVE},		//MSG_UACOV1
+	{{'U',	'F',	'3'},	3, 			SHUT+D_RCVR+CNT+SAVE},		//MSG_UACOV2
+
+	{{'U',	'F',	'4'},	2, 			SHUT+D_RCVR+CNT+SAVE},		//MSG_UDCLV
+	{{'U',	'F',	'5'},	2, 			SHUT+D_RCVR+CNT+SAVE},		//MSG_UACLV1
+	{{'U',	'F',	'6'},	2, 			SHUT+D_RCVR+CNT+SAVE},		//MSG_UACLV2
+
+	{{'O',	'H',	'1'},	1, 			SHUT+N_RCVR+CNT+SAVE},		//MSG_TAOV超温
+	{{'O',	'H',	'2'},	1, 			SHUT+N_RCVR+CNT+SAVE},		//MSG_TBOV超温9.21
+	{{'O',	'H',	'L'},	1, 			SHUT+N_RCVR+CNT+SAVE},		//MSG_TLOV电感超温
+	{{'F',	'A',	'N'},	1, 			SHUT+N_RCVR+CNT+SAVE}		//MSG_FAN风机故障
+};
+
+const Uint32 TAB_RUNTIME[60]={										//1ms
+   	187120,	167480, 149410, 132810, 117620, 103740, 
+   	91118,  79666,  69316,  60000,  51651,  44203,
+    37595,  31765,  26655,  22208,  18371,  15090,
+	12316,  10000,  9286,   8636,   8044,   7500,
+	7000,   6539,   6111,   5714,   5345,   5000,
+	4677,   4375,   4091,   3824,   3571,   3333,
+	3108,   2895,   2692,   2500,   2317,   2143,
+	1.977,  1818,   1667,   1522,   1383,   1250,
+	1122,   1000,   882,    769,    660,    556,
+	455,    357,    263,    172,    85,     0
+};
+
+#ifdef __cplusplus
+}
+#endif /* extern "C" */
+
+
+#endif  // end
+
+//===========================================================================
+// No more.
+//===========================================================================

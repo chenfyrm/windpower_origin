@@ -1,0 +1,657 @@
+//--------------------------Ë«À¡--×óÔÆ·ç³¡---------------------------------
+#ifndef DCDC_database_H
+#define DCDC_database_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+//--------------------------------------//²ÎÊýÊôÐÔ¶¨Òå
+#define	WR0		1						//write only
+#define	RDO		2						//read only
+#define WR1		4						//write enable when stop
+#define	WR2		8						//write enable with password
+#define	MAX_PT	16						//×î´óÖµÎªÖ¸Õë
+#define	MIN_PT	32						//×îÐ¡ÖµÎªÖ¸Õë
+#define	SIG		64						//ÓÐ·ûºÅÊý
+#define	VA0		128						//±íÊ¾°üº¬ÊýÖµ0(Ïàµ±ÓÚ½ûÖ¹ÏàÓ¦µÄ¹¦ÄÜ)
+#define	UNS		256						//½ûÖ¹´æ´¢
+#define	KEY		512						//²é¿´ºÍÐÞ¸ÄÐèÒªÖÆÔìÉÌÃÜÂë
+#define	DOT1	1024					//²Ù×÷Æ÷´ø1Î»Ð¡Êýµã
+#define	DOT2	2048					//²Ù×÷Æ÷´ø2Î»Ð¡Êýµã
+#define	DOT3	4096					//²Ù×÷Æ÷´ø3Î»Ð¡Êýµã
+
+//--------------------------------------//ÏÔÊ¾ÐÅÏ¢ÊôÐÔ¶¨Òå
+#define	NONE	0						//ÎÞ
+#define	REPORT	1						//ÉÏ±¨Ö÷¿Ø201105atzuoyun
+#define	SHUT	2						//¼±Í£
+#define	N_RCVR	4						//²»ÄÜ»Ö¸´
+#define	D_RCVR	8						//ÑÓÊ±»Ö¸´
+#define	I_RCVR	16						//Á¢¼´»Ö¸´
+#define	CNT		32						//¼ÆÈë¹ÊÕÏ´ÎÊý
+#define	OT_SER	64						//³¬Ê±1minºó±ä³ÉÑÏÖØ¹ÊÕÏ
+#define	SAVE	128						//ÐÅÏ¢ÐèÒª±£´æ
+#define	OFFCB	256						//¶ÏÖ÷¶Ï
+#define	WARNING	512						//±¨¾¯
+
+//--------------------------ºê¶¨Òå-----------------------------------------------
+				
+//-----------------------²ÎÊýÏà¹Øºê¶¨Òå------------------------------------------
+//¹¦ÄÜÂëÏà¹ØÊýÁ¿¶¨Òå(Ôö¼õ¹¦ÄÜÂëºóÖ»ÐèÒªÔö¼õÊý¾Ý¿âÄÚµÄÊý¾ÝºÍ´Ë´¦µÄÏàÓ¦ÊýÁ¿¶¨Òå¼´¿É)
+#define NUM_GROUP1			29				//Ê××é¹¦ÄÜÂëµÄ¸öÊý£¨'ÖÆÔìÉÌÓÃ'£©
+#define	NUM_GROUP2			5				//µÚ¶þ×é¹¦ÄÜÂëµÄ¸öÊý£¨'ÔËÐÐÄ£Ê½'£©
+#define NUM_GROUP3			42				//µÚÈý×é¹¦ÄÜÂëµÄ¸öÊý£¨'PI²ÎÊý'£©
+#define NUM_GROUP4			23				//µÚËÄ×é¹¦ÄÜÂëµÄ¸öÊý£¨'±£»¤ãÐÖµ')
+#define NUM_ERROR			4				//±¨¾¯Ô­Òò¹¦ÄÜÂëµÄ¸öÊý
+#define NUM_ERRINF			42				//±¨¾¯ÐÅÏ¢¹¦ÄÜÂëµÄ¸öÊý 20091026atzy
+#define NUM_ERRTIME			24				//±¨¾¯Ê±¼ä¹¦ÄÜÂëµÄ¸öÊý
+
+#define NUM_TIME			6				//Ê±¼äÉè¶¨¹¦ÄÜÂëµÄ¸öÊý
+#define NUM_WATCHLCD		53				//ÔËÐÐ¼à¿Ø¹¦ÄÜÂëµÄ¸öÊý
+
+//²Ù×÷Æ÷¹¦ÄÜÂëÊýÁ¿
+#define PARA_NUM			NUM_GROUP1+NUM_GROUP2+NUM_GROUP3+NUM_GROUP4+NUM_ERROR+NUM_ERRINF+NUM_ERRTIME+NUM_TIME+NUM_WATCHLCD
+
+//¹ÊÕÏ²ÎÊý×ÜÊýÁ¿
+#define ERRO_NUM			NUM_ERROR+NUM_ERRINF+NUM_ERRTIME
+
+//¹ÊÕÏ²ÎÊý±íµÚÒ»¸ö²ÎÊýµÄÐòºÅ		
+#define TAB_ERR_FIRST		NUM_GROUP1+NUM_GROUP2+NUM_GROUP3+NUM_GROUP4
+
+//¹ÊÕÏ²ÎÊý±í×îºó²ÎÊýµÄÐòºÅ		
+#define TAB_ERR_END			NUM_GROUP1+NUM_GROUP2+NUM_GROUP3+NUM_GROUP4+NUM_ERROR+NUM_ERRINF+NUM_ERRTIME-1
+
+//¼à¿Ø²ÎÊý±íµÚÒ»¸ö²ÎÊýµÄÐòºÅ(°üÀ¨Ê±¼ä²ÎÊý)
+#define BANK_FIRST			NUM_GROUP1+NUM_GROUP2+NUM_GROUP3+NUM_GROUP4+NUM_ERROR+NUM_ERRINF+NUM_ERRTIME				
+
+//¼à¿Ø²ÎÊý±í×îºóÒ»¸ö²ÎÊýµÄÐòºÅ
+#define BANK_END			NUM_GROUP1+NUM_GROUP2+NUM_GROUP3+NUM_GROUP4+NUM_ERROR+NUM_ERRINF+NUM_ERRTIME+NUM_TIME+NUM_WATCHLCD-1				
+
+//Ê±¼ä²ÎÊý±íµÚÒ»¸ö²ÎÊýµÄÐòºÅ
+#define TIME_FIRST			NUM_GROUP1+NUM_GROUP2+NUM_GROUP3+NUM_GROUP4+NUM_ERROR+NUM_ERRINF+NUM_ERRTIME				
+
+//Ê±¼ä²ÎÊý±í×îºóÒ»¸ö²ÎÊýµÄÐòºÅ
+#define TIME_END			NUM_GROUP1+NUM_GROUP2+NUM_GROUP3+NUM_GROUP4+NUM_ERROR+NUM_ERRINF+NUM_ERRTIME+NUM_TIME-1	
+
+//ÔËÐÐ¸ø¶¨µÄÎ»ÖÃ
+#define NO_URF				NUM_GROUP1-16
+#define NO_MIDRF			NUM_GROUP1-15
+#define NO_NIQRF			NUM_GROUP1-14
+#define NO_MIQRF			NUM_GROUP1-13
+#define NO_TOQRF            NUM_GROUP1-12
+#define NO_AGLRF			NUM_GROUP1-11
+
+//--------------------------------------//¶¨Òå²ÎÊýÐÍ½á¹¹Ìå
+struct PARA
+{
+ Uint16 *para_add;						//±äÁ¿µØÖ·Ö¸Õë
+ Uint16 init;							//³õÊ¼Öµ
+ Uint16	min,max;						//×îÐ¡Öµ ×î´óÖµ
+ Uint16	*min_add,*max_add;				//×îÐ¡Öµ ×î´óÖµÖ¸Õë
+ Uint16 attr;							//ÊôÐÔ
+};
+
+struct MESSAGE
+{
+ Uint16	name[3];						//Ãû³Æ
+ Uint16 rank;							//ÐÅÏ¢¼¶±ð
+ Uint16 attr;							//ÊôÐÔ
+};
+
+//---------------------------¹ÊÕÏÐÅÏ¢ÐòºÅ-----------------------------------------------
+#define MSG_NUM				42				//¹ÊÕÏÐÅÏ¢ÊýÁ¿
+
+#define	MSG_NONE			0				//¿ÕÐÅÏ¢
+#define	MSG_CODEOK			1				//EEPROMÕý³£
+#define	MSG_EE_FAIL			2				//EEPROM¹ÊÕÏ
+#define	MSG_CAN_FAIL		3				//CANÍ¨Ñ¶¹ÊÕÏ
+#define	MSG_PHORDE			4				//ÏàÐò´íÎó
+#define	MSG_ENCODFAULT		5				//±àÂëÆ÷¹ÊÕÏ
+#define	MSG_ESTOP			6				//¼±Í£¹ÊÕÏ
+#define	MSG_CBTRIP			7				//Ö÷¶ÏÍÑ¿Û¹ÊÕÏ
+#define	MSG_EXFAULT 		8				//Íâ²¿Ó²¼þ¹ÊÕÏ
+#define	MSG_CBERROR 		9				//Ö÷¶ÏºÏÕ¢¹ÊÕÏ
+#define	MSG_PREERROR 		10				//Ô¤³äµç¹ÊÕÏ
+#define	MSG_MAINKERROR 		11				//Ö÷½Ó´¥Æ÷±ÕºÏ¹ÊÕÏ
+#define	MSG_MAINFERROR 		12				//Ö÷ÂË²¨Æ÷±ÕºÏ¹ÊÕÏ
+#define	MSG_STACERROR 		13				//¶¨×Ó½Ó´¥Æ÷±ÕºÏ¹ÊÕÏ
+#define	MSG_MSPEEDOUT 		14				//×ªËÙ³¬³ö·¶Î§¹ÊÕÏ
+#define	MSG_HIA1			15				//Íø²à,AÏàÓ²¼þ¹ýÁ÷
+#define	MSG_HIB1			16				//Íø²à,BÏàÓ²¼þ¹ýÁ÷
+#define	MSG_HIC1			17				//Íø²à,CÏàÓ²¼þ¹ýÁ÷
+#define	MSG_HIA2			18				//µç»ú²à,AÏàÓ²¼þ¹ýÁ÷
+#define	MSG_HIB2			19  			//µç»ú²à,BÏàÓ²¼þ¹ýÁ÷
+#define	MSG_HIC2			20				//µç»ú²à,CÏàÓ²¼þ¹ýÁ÷
+#define	MSG_UDCOV           21	            //Ó²¼þ¼ì²âÖÐ¼äÖ±Á÷µçÑ¹¹ýÑ¹
+#define	MSG_HIAC1			22				//Íø²àÓ²¼þ¹ýÁ÷
+#define	MSG_HIAC2			23				//µç»ú²àÓ²¼þ¹ýÁ÷
+#define MSG_PDPASERIES      24            	//Íø²àÑÏÖØ¹ÊÕÏ
+#define MSG_PDPBSERIES      25            	//µç»ú²àÑÏÖØ¹ÊÕÏ
+#define	MSG_SIAC1			26				//Íø²àÈí¼þ¹ýÁ÷
+#define	MSG_SIAC2			27				//µç»ú²àÈí¼þ¹ýÁ÷
+#define	MSG_FE1				28				//µçÍøÆµÂÊ´íÎó
+#define	MSG_SUDCOV			29				//Èí¼þÖÐ¼äÖ±Á÷µçÑ¹¹ýÑ¹
+#define	MSG_SUACOV1			30				//Èí¼þÍøÑ¹½»Á÷¹ýÑ¹
+#define	MSG_SUDCLV			31				//Èí¼þÖÐ¼äÖ±Á÷µçÑ¹Ç·Ñ¹
+#define	MSG_SUACLV1			32				//Èí¼þÍøÑ¹½»Á÷Ç·Ñ¹
+#define	MSG_UDCWAVE			33				//ÖÐ¼äµçÑ¹²¨¶¯¹ÊÕÏ
+#define	MSG_SIOVST	    	34				//¶¨×ÓµçÁ÷¹ýÁ÷¹ÊÕÏ
+#define	MSG_TOV1			35				//Íø²àSKIIP³¬ÎÂ
+#define	MSG_TOV2			36  			//µç»ú²àSKIIP³¬ÎÂ
+#define	MSG_SKTOV			37  			//Èí¼þÅÐ¶ÏSKIIP³¬ÎÂ
+#define	MSG_TLOV1			38				//Íø²àµç¸Ð³¬ÎÂ
+#define MSG_TLOV2           39            	//»ú²àµç¸Ð³¬ÎÂ
+#define	MSG_PGOV			40				//Íø²àµç¸Ð³¬ÎÂ
+#define MSG_QGOV            41            	//»ú²àµç¸Ð³¬ÎÂ
+
+
+//--------------------------------------//Êý¾Ý×Ü±í
+const struct PARA FUNC[PARA_NUM]={
+//		Ãû³Æ   		³õÖµ		×îÐ¡Öµ		×î´óÖµ		×îÐ¡ÖµÖ¸Õë	×î´óÖµÖ¸Õë	ÊôÐÔ		ËµÃ÷
+//-------------------------------'ÖÆÔìÉÌÓÃ'-------------------------------------------------------
+//--29
+	{&_MC_TYPE,		MC_TYPE,	MC_TYPE,	MC_TYPE,	&_NULL_VAL,	&_NULL_VAL,	RDO},		//»úÐÍ²Î 
+	{&_MC_REV, 		MC_REV,		MC_REV,		MC_REV,		&_NULL_VAL,	&_NULL_VAL,	KEY},		//Èí¼þ°æ±¾ºÅ
+	{&_MC_DATE,		MC_DATE,	0,	    	65535,		&_NULL_VAL,	&_NULL_VAL,	KEY},		//³ö³§ÈÕÆÚ 
+	{&_MC_ID,		MC_ID,		0,			65535,		&_NULL_VAL,	&_NULL_VAL,	KEY},		//²úÆ·±àºÅ 
+	{&_SW_FR,		210,		200,		1800,		&_NULL_VAL,	&_NULL_VAL,	WR1+DOT2},	//¿ª¹ØÆµÂÊ(0.01kHz)
+	
+	{&_DEADTIME,	8,			0,			20,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//ËÀÇøÊ±¼ä(us)
+	{&_COMPTIME,	45,			0,			50,			&_NULL_VAL,	&_NULL_VAL,	WR1+DOT1},	//ËÀÇø²¹³¥Ê±¼ä(ms)
+	{&_MINONTIME,	4,			0,			20,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//×îÐ¡µ¼Í¨Ê±¼ä(us)
+	{&_RU_UDCT,		10000,		10,			20000,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//µçÑ¹Ö¸Áî¸ø¶¨»ý·ÖÉÏÉý/ÏÂ½µÊ±¼ä(ms)
+	{&_RU_IDT,		500,		10,			20000,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//µçÁ÷Ö¸Áî¸ø¶¨»ý·ÖÉÏÉý/ÏÂ½µÊ±¼ä(ms)
+	
+	{&_RU_IQT,		20,			10,			20000,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//µçÁ÷Ö¸Áî¸ø¶¨»ý·ÖÉÏÉý/ÏÂ½µÊ±¼ä(ms)
+	{&_RU_TOQT,		500,		1,			20000,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//×ª¾ØÖ¸Áî¸ø¶¨»ý·ÖÉÏÉý/ÏÂ½µÊ±¼ä(ms) 20090817cpc
+	{&_RU_AGLT,		500,		1,			20000,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//¹¦ÂÊÒòÊý½ÇÖ¸Áî¸ø¶¨»ý·ÖÉÏÉý/ÏÂ½µÊ±¼ä(s) cpc
+	{&_URF,			1100,		0,			1200,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//ÖÐ¼äÖ±Á÷µçÑ¹¸ø¶¨Öµ
+	{&_MIDRF,		0,			-200,		200,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},	//»ú²àÎÞ¹¦µçÁ÷¸ø¶¨Öµ
+	
+	{&_NIQRF,		0,			-400,		400,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},	//²¢ÍøÎÞ¹¦µçÁ÷¸ø¶¨Öµ
+	{&_MIQRF,		0,			-800,		800,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},	//»úÍøÓÐ¹¦µçÁ÷¸ø¶¨Öµ
+    {&_TOQRF,		0,			-9000,		9000,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},   //»ú²à×ª¾Ø¸ø¶¨Öµ
+    {&_AGLRF,		0,			-90,		90,	   		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},   //»ú²à¹¦ÂÊÒòÊý½Ç¸ø¶¨Öµ
+	{&_EIDCO,		1000,		0,			10000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3},	//»ú²àÀø´ÅµçÁ÷µ÷ÕûÏµÊý CPC
+
+	{&_ENCODPOS,	4840,		0,			6283,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3},	//±àÂëÆ÷³õÊ¼Î»ÖÃ½Ç¶È 0--2PIE	
+	{&_EIN, 		0,	  	    0,			1,		    &_NULL_VAL,	&_NULL_VAL,	WR0},		//ºÏÖ÷¶Ï£¬EINÖ¸Áî  07.27
+	{&_SYSRUN,		0,			0,			1,		    &_NULL_VAL,	&_NULL_VAL,	WR0},	    //ÏµÍ³Æô¶¯£¬Ô¤³äµçµ½¶¨×Ó½Ó´¥Æ÷±ÕºÏ 07.27
+	{&_RESET,		0,		    0,			1,		    &_NULL_VAL,	&_NULL_VAL,	WR0},   	//ÏµÍ³¸´Î» 07.27
+	{&_STDBY1,		0,	  	    0,			65535,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3},	//±¸ÓÃ1
+
+	{&_STDBY2,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT2},	//±¸ÓÃ2
+	{&_STDBY3,		0,		    0,			65535,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1},	//±¸ÓÃ3
+	{&_STDBY4,		0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},	//±¸ÓÃ4
+	{&_STDBY5,		1800,		-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},	//±¸ÓÃ5201105atzuoyun
+
+
+//-------------------------------'ÔËÐÐÄ£Ê½Éè¶¨'-----------------------------------------------------
+//--5
+	{&_OPERATION,	1,			0,			1,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//0:Íø²àÎÞ¹¦¢Íø; 3:±³¿¿±³Ë«À¡ÔËÐÐÄ£Ê½;
+	{&_COMP1,		0,			0,			1,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//Íø²à±äÁ÷Æ÷ËÀÇø²¹³¥Ê¹ÄÜ£º0->²»Ê¹ÄÜ:1->Ê¹ÄÜ
+	{&_COMP2,		0,			0,			1,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//µç»ú²à±äÁ÷Æ÷ËÀÇø²¹³¥Ê¹ÄÜ£º0->²»Ê¹ÄÜ:1->Ê¹ÄÜ
+	{&_AUTOCSTAC,	1,			0,			1,			&_NULL_VAL,	&_NULL_VAL,	WR0},		//¹¦ÄÜÊ¹ÄÜ,±ÕºÏSTAC£º0->²»Ê¹ÄÜ:1->Ê¹ÄÜ 07.27
+	{&_CANOPER,	    1,			0,			1,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//ÏµÍ³ÓÉCAN¿ØÖÆÊ¹ÄÜ£º0->²»Ê¹ÄÜ£¬ÓÉ²Ù×÷Æ÷¿ØÖÆ; 1->Ê¹ÄÜ 07.27
+
+
+//-------------------------------'PI²ÎÊý'---------------------------------------------------------
+//--42
+	{&_NPR_U_Kp,			40,		1,		65535,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT2},	//Íø²àµçÑ¹»·±ÈÀýÏµÊý
+	{&_NPR_U_Ki,			1000,	1,		65535,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1+VA0},//Íø²àµçÑ¹»·»ý·ÖÏµÊý
+	{&_NPR_U_Kd,			0,		0,		65535,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3+VA0},//Íø²àµçÑ¹»·»ý·ÖÏµÊý
+	{&_NPR_U_outmax,		600,	1,		1000,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//Íø²àµçÑ¹±Õ»·Êä³öÏÞ·ù
+	{&_NPR_U_errmax,		1000,	1,		10000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1},	//Íø²àµçÑ¹±Õ»·Îó²îÉÏÏÞÏÞ·ù
+	{&_NPR_U_errmin,		0,		0,		2000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3},	//Íø²àµçÑ¹»·ÏÂÏÞÎó²î
+	{&_NPR_U_incrementmax,  1000,	1,		10000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1},	//Íø²àµçÑ¹»·ÔöÁ¿ÏÞ·ù
+
+	{&_NPR_ID_Kp,			40, 	1,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT2},	//Íø²àµçÁ÷±Õ»·±ÈÀýÏµÊý
+	{&_NPR_ID_Ki,			1670,	1,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1+VA0},//Íø²àµçÁ÷±Õ»·»ý·ÖÏµÊý
+	{&_NPR_ID_Kd,			0,		0,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3+VA0},//Íø²àµçÁ÷±Õ»·»ý·ÖÏµÊý
+	{&_NPR_ID_outmax,		200,	1,		500,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//Íø²àµçÁ÷±Õ»·Êä³öÏÞ·ù
+	{&_NPR_ID_errmax,		500,	1,		10000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1},	//Íø²àµçÁ÷±Õ»·Îó²îÉÏÏÞÏÞ·ù
+	{&_NPR_ID_errmin,		0,		0,		2000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3},	//Íø²àµçÁ÷±Õ»·Îó²îÏÂÏÞÏÞ·ù
+	{&_NPR_ID_incrementmax,	550, 	1,		10000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1},	//Íø²àµçÁ÷±Õ»·ÔöÁ¿ÏÞ·ù
+
+	{&_NPR_IQ_Kp,			40, 	1,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT2},	//Íø²àµçÁ÷±Õ»·±ÈÀýÏµÊý
+	{&_NPR_IQ_Ki,			1670,	1,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1+VA0},//Íø²àµçÁ÷±Õ»·»ý·ÖÏµÊý
+	{&_NPR_IQ_Kd,			0,		0,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3+VA0},//Íø²àµçÁ÷±Õ»·»ý·ÖÏµÊý
+	{&_NPR_IQ_outmax,		200,	1,		500,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//Íø²àµçÁ÷±Õ»·Êä³öÏÞ·ù
+	{&_NPR_IQ_errmax,		500,	1,		10000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1},	//Íø²àµçÁ÷±Õ»·Îó²îÉÏÏÞÏÞ·ù
+	{&_NPR_IQ_errmin,		0,		0,		2000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3},	//Íø²àµçÁ÷±Õ»·Îó²îÏÂÏÞÏÞ·ù
+	{&_NPR_IQ_incrementmax,	550, 	1,		10000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1},	//Íø²àµçÁ÷±Õ»·ÔöÁ¿ÏÞ·ù
+
+	{&_MPR_ID_Kp,			40, 	1,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT2},	//»ú²à±äÁ÷Æ÷µçÁ÷±Õ»·±ÈÀýÏµÊý
+	{&_MPR_ID_Ki,			1600,	1,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1+VA0},//»ú²à±äÁ÷Æ÷µçÁ÷±Õ»·»ý·ÖÏµÊý
+	{&_MPR_ID_Kd,			0,		0,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3+VA0},//»ú²à±äÁ÷Æ÷µçÁ÷±Õ»·»ý·ÖÏµÊý
+	{&_MPR_ID_outmax,		200,	1,		500,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//»ú²à±äÁ÷Æ÷µçÁ÷±Õ»·Êä³öÏÞ·ù
+	{&_MPR_ID_errmax,		500,	1,		10000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1},	//»ú²à±äÁ÷Æ÷µçÁ÷±Õ»·Îó²îÏÞ·ù
+	{&_MPR_ID_errmin,		0,		0,		2000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3},	//»ú²à±äÁ÷Æ÷µçÁ÷±Õ»·Îó²îÏÞ·ù
+	{&_MPR_ID_incrementmax,	550, 	1,		10000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1},	//»ú²à±äÁ÷Æ÷µçÁ÷±Õ»·ÔöÁ¿ÏÞ·ù
+
+	{&_MPR_IQ_Kp,			15, 	1,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT2},	//»ú²à±äÁ÷Æ÷µçÁ÷±Õ»·±ÈÀýÏµÊý
+	{&_MPR_IQ_Ki,			2000,	1,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1+VA0},//»ú²à±äÁ÷Æ÷µçÁ÷±Õ»·»ý·ÖÏµÊý
+	{&_MPR_IQ_Kd,			0,		0,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3+VA0},//»ú²à±äÁ÷Æ÷µçÁ÷±Õ»·»ý·ÖÏµÊý
+	{&_MPR_IQ_outmax,		200,	1,		500,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//»ú²à±äÁ÷Æ÷µçÁ÷±Õ»·Êä³öÏÞ·ù
+	{&_MPR_IQ_errmax,		500,	1,		10000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1},	//»ú²à±äÁ÷Æ÷µçÁ÷±Õ»·Îó²îÏÞ·ù
+	{&_MPR_IQ_errmin,		0,		0,		2000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3},	//»ú²à±äÁ÷Æ÷µçÁ÷±Õ»·Îó²îÏÞ·ù
+	{&_MPR_IQ_incrementmax,	550, 	1,		10000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1},	//»ú²à±äÁ÷Æ÷µçÁ÷±Õ»·ÔöÁ¿ÏÞ·ù
+
+	{&_DYN_U_Kp,			40,	    1,		65535,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT2},	  //¶¯Ì¬µçÑ¹±Õ»·±ÈÀýÏµÊý
+	{&_DYN_U_Ki,			1000,	1,		65535,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1+VA0},//¶¯Ì¬µçÑ¹±Õ»·»ý·ÖÏµÊý
+	{&_DYN_U_Kd,			0,		0,		65535,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3+VA0},//¶¯Ì¬µçÑ¹±Õ»·»ý·ÖÏµÊý
+	{&_DYN_U_outmax,		600,	1,		1000,		&_NULL_VAL,	&_NULL_VAL,	WR0},		  //¶¯Ì¬µçÑ¹±Õ»·Êä³öÏÞ·ù 
+	{&_DYN_U_errmax,		1000,	1,		10000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1},	  //¶¯Ì¬µçÑ¹±Õ»·Îó²îÏÞ·ù 
+	{&_DYN_U_errmin,		0,		0,		2000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3},	  //¶¯Ì¬µçÑ¹±Õ»·Îóî×îÐ¡µ 
+	{&_DYN_U_incrementmax,	1000, 	1,		10000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1},	  //¶¯Ì¬µçÑ¹±Õ»·ÔöÁ¿ÏÞ·ù
+
+//-------------------------------'±£»¤ãÐÖµ'---------------------------------------------------------
+//--23		
+	{&_SC_RTRN,		4,			0,			20,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//¹ÊÕÏ×î´óÖØÊÔ´ÎÊý
+	{&_SC_RTRT,		30,			10,			600,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//Á½´Î¹ÊÕÏÖØÊÔ¼ä¸ôÊ±¼ä(s)£¬ÑÓÊ±»Ö¸´Ê±¼ä
+	{&_SC_UDCOV,	1150,		100,        1300,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//ÖÐ¼äÖ±Á÷µçÑ¹ ¹ýÑ¹¶¯×÷Öµ(V) 
+	{&_SC_UDCLV,	950,	    0,       	1200,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//ÖÐ¼äÖ±Á÷µçÑ¹ Ç·Ñ¹¶¯×÷Öµ(V) 
+	{&_SC_VDCON,	750,		0,       	1100,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//ÖÐ¼äÖ±Á÷µçÑ¹ ÉÏµçÍê³É±È½ÏãÐÖµ(V) 	
+
+	{&_SC_IACOV1,	120, 		20,			200,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//Íø²à½»Á÷µçÁ÷ ¹ýÁ÷±£»¤Öµ(»ù×¼µçÁ÷µÄ°Ù·ÖÖµ)
+	{&_SC_UACOV1,	760,		20,			1000,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//Íø²àµçÑ¹ ¹ýÑ¹¶¯×÷Öµ(V)
+	{&_SC_UACLV1,	620,	   	0,			1000,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//Íø²àµçÑ¹ Ç·Ñ¹¶¯×÷Öµ(V) gai
+	{&_SC_IACOV2,	120, 		20,			200,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//µç»ú²à½»Á÷µçÁ÷ ¹ýÁ÷±£»¤Öµ(»ù×¼µçÁ÷µÄ°Ù·ÖÖµ)
+	{&_SC_PGOV,		1600,		0,			3000,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//±äÁ÷Æ÷ÓÐ¹¦¹¦ÂÊ¹ýÔØãÐÖµ(kW)	
+
+	{&_SC_QGOV,		1000,		0,			3000,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//±äÁ÷Æ÷ÎÞ¹¦¹¦ÂÊ¹ýÔØãÐÖµ(kW)
+	{&_SC_IACOVST,	120, 		20,			200,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//¶¨×Ó²à½»Á÷µçÁ÷ ¹ýÁ÷±£»¤Öµ(»ù×¼µçÁ÷µÄ°Ù·ÖÖµ)
+	{&_SC_NPR_TLOV,	140, 		20,	    	200,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//Íø²àµç¸ÐPT100³¬ÎÂ±£»¤Öµ£¬µ¥Î»ÉãÊÏ¶È
+	{&_SC_MPR_TLOV,	140, 		20,	    	200,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//µç»ú²àµç¸ÐPT100³¬ÎÂ±£»¤Öµ£¬µ¥Î»ÉãÊÏ¶È
+	{&_SC_FAN_TH,    25, 		20,	    	200,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//¹¦ÂÊ·ç»úÐÇ×ª½Ç½ÓÎÂ¶ÈÖµ£¬µ¥Î»ÉãÊÏ¶È    cpc
+
+	{&_SC_FAN_TL,	 20, 		20,	    	200,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//¹¦ÂÊ·ç»ú½Ç×ªÐÇ½ÓÎÂ¶ÈÖµ£¬µ¥Î»ÉãÊÏ¶È    cpc
+	{&_SC_MPR_UD,	1000, 		 0,	    	1100,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//»ú²àUrdÊä³öÏÞ·ùÖµ    cpc
+	{&_SC_MPR_UQ,	1000, 		 0,	    	1100,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//»ú²àUrqÊä³öÏÞ·ùÖµ    cpc
+	{&_SC_MSPEED1,	1000, 		 0,	    	2200,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//×ªËÙ±£»¤ Ç·ËÙ±£»¤Öµ    cpc  07.27
+	{&_SC_MSPEED2,	2000, 		 0,	    	2200,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//×ªËÙ±£»¤ ³¬ËÙ±£»¤Öµ    cpc  07.27
+
+	{&_SC_UDSTAC,	80,		     0,			400,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//¶¨×Ó½Ó´¥Æ÷ºÏÕ¢µçÑ¹²îãÐÖµ
+	{&_SCIB_BAUD,	9600,		1200,		19200,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//485²¨ÌØÂÊ
+	{&_SCIB_ADDR,	1,			1,			31,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//485½ÚµãµØÖ·	
+
+	
+//-------------------------------'±¨¾¯Ô­Òò'--------------------------------------------------------
+//--4		
+	{&_BA_ERR4,		0,			0,			100,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//×îÐÂ¹ÊÕÏÐÅÏ¢
+	{&_BA_ERR3,		0,			0,			100,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//µÚÈý´Î¹ÊÕÏÐÅÏ¢ 
+	{&_BA_ERR2,		0,			0,			100,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//µÚ¶þ´Î¹ÊÕÏÐÅÏ¢ 
+	{&_BA_ERR1,		0,			0,			100,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//µÚÒ»´Î¹ÊÕÏÐÅ 
+
+
+//-------------------------------'±¨¾¯ÐÅÏ¢'--------------------------------------------------------
+//--42 20091026atzy	   
+	{&_BA_EMIDRF,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//×îÐÂ¹ÊÕÏÊ±¿Ì dÖáµç÷Ö¸Áî(A)
+	{&_BA_ENIQRF,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//×îÐÂ¹ÊÕÏÊ±¿Ì qÖáµçÁ÷(A)
+	{&_BA_EMIQRF,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//×îÐÂ¹ÊÕÏÊ±¿Ì qÖáµçÁ÷Ö¸Áî(A)
+	{&_BA_ETOQRF,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},			//×îÐÂ¹ÊÕÏÊ±¿Ì ×ª¾ØÖ¸Áî(A)
+	{&_BA_EURF,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},			//×îÐÂ¹ÊÕÏÊ±¿Ì ÖÐ¼äÖ±Á÷µçÑ¹¸ø¶¨Öµ(V)
+
+	{&_BA_EAGLRF,	0,			-90,		90,	    	&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//×îÐÂ¹ÊÕÏÊ±¿Ì ÎÞ¹¦½Ç¶ÈÖ¸Áî()   07.27
+	{&_BA_EUDC,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},			//×îÐÂ¹ÊÕÏÊ±¿Ì ÖÐ¼äÖ±Á÷µçÑ¹(V)	
+	{&_BA_EIA1,		0,			-32767,     32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//×îÐÂ¹ÊÕÏÊ±¿Ì Íø²à±ä÷Æ÷AÏà²¢ÍøµçÁ÷ÓÐÐ§Öµ(A)
+	{&_BA_EIB1,		0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//×îÐÂ¹ÊÕÏÊ±¿Ì Íø²à±äÁ÷Æ÷BÏà²¢ÍøµçÁ÷ÓÐÐ§Öµ(A)
+	{&_BA_EIC1,		0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//×îÐÂ¹ÊÕÏÊ±¿Ì Íø²à±äÁ÷Æ÷CÏà²¢ÍøµçÁ÷ÓÐÐ§Öµ(A)
+
+	{&_BA_EIA2,		0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//×îÐÂ¹ÊÕÏÊ±¿Ì µç»ú²à±äÁ÷Æ÷AÏà²¢ÍøµçÁ÷ÓÐÐ§Öµ(A)
+	{&_BA_EIB2,		0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//×îÐÂ¹ÊÕÏÊ±¿Ì µç»ú²à±äÁ÷Æ÷BÏà²¢ÍøµçÁ÷ÓÐÐ§Öµ(A)	
+	{&_BA_EIC2,		0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//×îÐÂ¹ÊÕÏÊ±¿Ì µç»ú²à±äÁ÷Æ÷CÏà²¢ÍøµçÁ÷ÓÐÐ§Öµ(A)
+	{&_BA_EUAB1,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},			//×îÐÂ¹ÊÕÏÊ±¿Ì Íø²àABÏßµçÑ¹ÓÐÖµ(V)
+	{&_BA_EUBC1,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},			//×îÐÂ¹ÊÕÏÊ±¿Ì Íø²àBCÏßµçÑ¹ÐÐ§Öµ(V)
+
+	{&_BA_EUAB2,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},			//×îÐÂ¹ÊÕÏÊ±¿Ì µç»ú²àABÏßµçÑ¹ÓÐÐ§Öµ(V)
+	{&_BA_EUBC2,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},			//×îÐÂ¹ÊÕÏÊ±¿Ì µç»ú²àBCÏßµçÑ¹ÓÐÐ§Öµ(V)	
+    {&_BA_EFREQ,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},			//×îÐÂ¹ÊÕÏÊ±¿Ì µçÍøÆµÂÊ(hz)
+	{&_BA_EUAB0,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},			//×îÐÂ¹ÊÕÏÊ±¿Ì Ö÷¶ÏÇ°ABÏßµçÑ¹ÓÐÐ§Öµ(V)
+	{&_BA_EUBC0,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},			//×îÐÂ¹ÊÕÏÊ±¿Ì Ö÷¶ÏÇ°BCÏßµçÑ¹ÓÐÐ§Öµ(V)
+
+	{&_BA_ETLAC,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//×îÐÂ¹ÊÕÏÊ±¿Ì Íø²àµç¸ÐÎÂ¶È(ÉãÊÏ¶È) 20091019atzy
+	{&_BA_ETLDUDT,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//×îÐÂ¹ÊÕÏÊ±¿Ì »ú²àµç¸ÐÎÂ¶È(ÉãÊÏ¶È)	20091019atzy
+	{&_BA_ETSKIIP,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},			//×îÐÂ¹ÊÕÏÊ±¿Ì SKIPPÎÂ¶È(ÉãÊÏ¶È)
+	{&_BA_ESPEED,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},			//×îÐÂ¹ÊÕÏÊ±¿Ì µç»ú×ªËÙ(rpm)
+	{&_BA_ENPRUD,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//×îÐÂ¹ÊÕÏÊ±¿Ì dÖáÖ÷¶ÏºóÍøÑ¹·´À¡	20091019atzy
+
+	{&_BA_ENPRUQ,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//×îÐÂ¹ÊÕÏÊ±¿Ì qÖáÖ÷¶ÏºóÍøÑ¹·´À¡	20091019atzy
+	{&_BA_ENPRUD2,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//×îÐÂ¹ÊÕÏÊ±¿Ì dÖáÖ÷¶ÏºóÍøÑ¹·´À¡ ÂË²¨ºó	20091019atzy
+	{&_BA_ENPRUQ2,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//×îÐÂ¹ÊÕÏÊ±¿Ì qÖáÖ÷¶ÏºóÍøÑ¹·´À¡ ÂË²¨ºó	20091019atzy
+	{&_BA_ENUDOUT,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//×îÐÂ¹ÊÕÏÊ±¿Ì Íø²àdÖáµçÑ¹Êä³ö	20091019atzy
+	{&_BA_ENUQOUT,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//×îÐÂ¹ÊÕÏÊ±¿Ì Íø²àqÖáµçÑ¹Êä³ö	20091019atzy
+
+	{&_BA_EPIONU,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//×îÐÂ¹ÊÕÏÊ±¿Ì Íø²àµçÑ¹»·Êä³ö
+	{&_BA_EPIONID,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//×îÐÂ¹ÊÕÏÊ±¿Ì Íø²àdÖáµçÁ÷»·Êä
+	{&_BA_EPIONIQ,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//×îÐÂ¹ÊÕÏÊ±¿Ì Íø²àqÖáµçÁ÷»·Êä³ö
+	{&_BA_EMEXI,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//×îÐÂ¹ÊÕÏÊ±¿Ì »ú²àÀø´ÅÀíÂÛ¼ÆËãÖµÏÔÊ¾ 07.27
+	{&_BA_EPIOMID,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//×îÐÂ¹ÊÕÏÊ±¿Ì »ú²àdÖáµçÁ÷»·Êä³ö
+
+	{&_BA_EPIOMIQ,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//×îÐÂ¹ÊÕÏÊ±¿Ì »ú²àqÖáµçÁ÷»·Êä³ö
+	{&_BA_ESTAIAC,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO+DOT1},		//×îÐÂ¹ÊÕÏÊ±¿Ì ¶¨×ÓÏßµçÁ÷ÓÐÐ§ÖµÏÔÊ¾ cpc 07.27
+	{&_BA_ESTAIBA,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO+DOT1},		//×îÐÂ¹ÊÕÏÊ±¿Ì ¶¨×ÓÏßµçÁ÷ÓÐÐ§ÖµÏÔÊ¾cpc 07.27
+	{&_BA_ETOQFB,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//×îÐÂ¹ÊÕÏÊ±¿Ì ×ª¾Ø·´À¡(NM) 07.27
+	{&_BA_EPSTA,	0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//×îÐÂ¹ÊÕÏÊ±¿Ì ¶¨×Ó²àÓÐ¹¦¹¦ÂÊÏÔÊ¾kW 07.27
+
+	{&_BA_EPNPR,	0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//×îÐÂ¹ÊÕÏÊ±¿Ì Íø²àÓÐ¹¦¹¦ÂÊÏÔÊ¾ 07.27
+	{&_BA_EPGRID,	0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//×îÐÂ¹ÊÕÏÊ±¿Ì ²¢Íø×ÜµÄÓÐ¹¦¹¦ÂÊÏÔÊ¾  07.27
+
+
+//-------------------------------'±¨¾¯Ê±¼ä'--------------------------------------------------------
+//--24	
+	{&_BA_TIME4_0,	0,			0,			59,		    &_NULL_VAL,	&_NULL_VAL,	RDO},		//×îÐÂ¹ÊÕÏÊ±¼ä(Ãë)
+	{&_BA_TIME4_1,	0,			0,			59,		    &_NULL_VAL,	&_NULL_VAL,	RDO},		//ÐÂ¹ÊÕÏÊ±¼ä(·Ö)
+	{&_BA_TIME4_2,	0,			0,			23,		    &_NULL_VAL,	&_NULL_VAL,	RDO},		//×îÐÂ¹ÊÕÏÊ±¼ä(Ê±)
+	{&_BA_TIME4_3,	0,			0,			31,		    &_NULL_VAL,	&_NULL_VAL,	RDO},		//×îÐÂ¹ÊÕÏÊ±¼ä(ÈÕ)
+	{&_BA_TIME4_4,	0,			0,			12,		    &_NULL_VAL,	&_NULL_VAL,	RDO},		//×îÐÂ¹ÊÕÏÊ±¼ä(ÔÂ)
+	
+	{&_BA_TIME4_5,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//×îÐÂ¹ÊÕÏÊ±¼ä(Äê)
+	{&_BA_TIME3_0,	0,			0,			59,		    &_NULL_VAL,	&_NULL_VAL,	RDO},		//µÚÈý´Î¹ÊÕÏÊ±¼ä(Ãë)
+	{&_BA_TIME3_1,	0,			0,			59,	  	    &_NULL_VAL,	&_NULL_VAL,	RDO},		//µÚÈý´Î¹ÊÕÏÊ±¼ä(·Ö)
+	{&_BA_TIME3_2,	0,			0,			23,		    &_NULL_VAL,	&_NULL_VAL,	RDO},		//µÚÈý´Î¹ÊÕÏÊ±¼ä(Ê±)
+	{&_BA_TIME3_3,	0,			0,			31,		    &_NULL_VAL,	&_NULL_VAL,	RDO},		//µÚÈý´Î¹ÊÕÏÊ±¼ä(ÈÕ)
+	
+	{&_BA_TIME3_4,	0,			0,			12,		    &_NULL_VAL,	&_NULL_VAL,	RDO},		//µÚÈý´Î¹ÊÕÏÊ±¼ä(ÔÂ)
+	{&_BA_TIME3_5,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//µÚÈý´Î¹ÊÕÏÊ±¼ä(Äê)
+	{&_BA_TIME2_0,	0,			0,			59,		    &_NULL_VAL,	&_NULL_VAL,	RDO},		//µÚ¶þ´Î¹ÊÕÏÊ±¼ä(Ãë)
+	{&_BA_TIME2_1,	0,			0,			59,		    &_NULL_VAL,	&_NULL_VAL,	RDO},		//µÚ¶þ´Î¹ÊÕÏÊ±¼ä(·Ö)
+	{&_BA_TIME2_2,	0,			0,			23,	  	    &_NULL_VAL,	&_NULL_VAL,	RDO},		//µÚ¶þ´Î¹ÊÕÏÊ±¼ä(Ê±)
+	
+	{&_BA_TIME2_3,	0,			0,			31,		    &_NULL_VAL,	&_NULL_VAL,	RDO},		//µÚ¶þ´Î¹ÊÕÏÊ±¼ä(ÈÕ)
+	{&_BA_TIME2_4,	0,			0,			12,		    &_NULL_VAL,	&_NULL_VAL,	RDO},		//µÚ¶þ´Î¹ÊÕÏÊ±¼ä(ÔÂ)
+	{&_BA_TIME2_5,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//µÚ¶þÎ¹ÊÕÏÊ±¼?Äê)
+	{&_BA_TIME1_0,	0,			0,			59,		    &_NULL_VAL,	&_NULL_VAL,	RDO},		//µÚÒ»´Î¹ÊÕÏÊ±¼ä(Ãë)
+	{&_BA_TIME1_1,	0,			0,			59,		    &_NULL_VAL,	&_NULL_VAL,	RDO},		//µÚÒ»´Î¹ÊÕÏÊ±¼ä(·Ö)
+	
+	{&_BA_TIME1_2,	0,			0,			23,		    &_NULL_VAL,	&_NULL_VAL,	RDO},		//µÚÒ»´Î¹ÊÕÏÊ±¼ä(Ê±)
+	{&_BA_TIME1_3,	0,			0,			31,		    &_NULL_VAL,	&_NULL_VAL,	RDO},		//µÚÒ»´Î¹ÊÕÏÊ±¼ä(ÈÕ)
+	{&_BA_TIME1_4,	0,			0,			12,		    &_NULL_VAL,	&_NULL_VAL,	RDO},		//µÚÒ»´Î¹ÊÕÏÊ±¼ä(ÔÂ)
+	{&_BA_TIME1_5,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//µÚÒ»´Î¹ÊÕÏÊ±¼ä(Äê)	                                    	
+
+	
+//-------------------------------Ê±¼äÉè¶¨-----------------------------------------------------------
+//--6
+	{&RTIMER.time[0],	0,		0,			59,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//×îÐÂ¹ÊÕÏÊ±¼ä(Ãë)
+	{&RTIMER.time[1],	0,		0,			59,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//×îÐÂ¹ÊÕÏÊ±¼ä(·Ö)
+	{&RTIMER.time[2],	0,		0,			23,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//×îÐÂ¹ÊÕÏÊ±¼ä(Ê±)
+	{&RTIMER.time[3],	0,		0,			31,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//×îÐÂ¹ÊÕÏÊ±¼ä(ÈÕ)
+	{&RTIMER.time[4],	0,		0,			12,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//×îÐÂ¹ÊÕÏÊ±¼ä(ÔÂ)
+	{&RTIMER.time[5],	0,		0,			99,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//×îÐÂ¹ÊÕÏÊ±¼ä(Äê)
+
+
+//-------------------------------ÔËÐÐ¼à¿Ø----------------------------------------------------------
+//--53
+	{&_BA_MIDRF,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},	//dÖáµçÁ÷Ö¸Áî(A)
+	{&_BA_NIQRF,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},	//qÖáµçÁ÷Ö¸Áî(A)
+	{&_BA_MIQRF,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},	//qÖáµçÁ÷Ö¸Áî(A)
+	{&_BA_TOQRF,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},	//ª¾ØÖ¸Áî(NM)
+	{&_BA_AGLRF,	0,			-90,		90,	    	&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},	//ÎÞ¹¦½Ç¶ÈÖ¸Áî()
+
+	{&_BA_URF,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//ÖÐ¼äÖ±Á÷µçÑ¹¸ø¶¨Öµ(V)
+	{&_BA_UDC,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//ÖÐ¼äÖ±Á÷µçÑ¹(V)	
+	{&_BA_IA1,		0,			0,    		65535,		&_NULL_VAL,	&_NULL_VAL,	RDO+DOT1},	//Íø²à±äÁ÷Æ÷AÏà²¢ÍøµçÁ÷ÓÐÐ§Öµ(A)
+	{&_BA_IB1,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO+DOT1},	//Íø²à±äÁ÷Æ÷BÏà²¢ÍøµçÁ÷ÐÐ§Ö?A)
+	{&_BA_IC1,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO+DOT1},	//Íø²à±äÁ÷Æ÷CÏà²¢ÍøµçÁ÷ÓÐÐ§Öµ(A)
+
+	{&_BA_IA2,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO+DOT1},	//µç»ú²à±äÁ÷Æ÷Aà²¢ÍøµçÁ÷ÓÐÐ§Öµ(A)
+	{&_BA_IB2,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO+DOT1},	//µç»ú²à±äÁ÷Æ÷BÏà²¢øµçÁ÷ÓÐÐ§Ö?A)	
+	{&_BA_IC2,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO+DOT1},	//µç»ú²à±äÁ÷Æ÷CÏà²¢ÍøµçÁ÷ÓÐÐ§Öµ(A)
+	{&_BA_UAB1,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//Íø²àABÏßµçÑ¹ÓÐÐ§Öµ(V)
+	{&_BA_UBC1,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//Íø²àBCÏßµçÑ¹ÓÐÐ§Öµ(V)
+
+	{&_BA_UAB2,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//20091027atzyÅ²ÓÃ×÷ÍøÑ¹µøÂä¼ì²â µç»ú²àABÏßµçÑ¹ÓÐÐ§Öµ(V)
+	{&_BA_UBC2,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//20091027atzyÅ²ÓÃ×÷ÍøÑ¹µøÂä¼ì²â µç»ú²àBCÏßµçÑ¹ÓÐÐ§Öµ(V)
+	{&_BA_FREQ,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//µçÍøÆµÂÊ(hz)
+	{&_BA_UAB0,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//Ö÷¶ÏÇ°ABÏßµçÑ¹ÓÐÐ§Öµ(V)
+	{&_BA_UBC0,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//Ö÷¶ÏÇ°BCÏßµçÑ¹ÓÐÐ§Öµ(V)
+
+	{&_BA_TLAC,		0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},	//Íø²àµç¸ÐÎÂ¶È(ÉãÊÏ¶È)20091019atzy
+	{&_BA_TLDUDT,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},	//»ú²àµç¸ÐÎÂ¶È(ÉãÊÏ¶È)20091019atzy
+	{&_BA_TNSKIIP,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//Íø²àSKIIPÎÂ¶È(ÉãÊÏ¶È) CPC
+	{&_BA_TMSKIIP,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//»ú²àSKIIPÎÂ¶È(ÉãÊÏ¶È) cpc
+	{&_BA_SPEED,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//µçú×ªËÙ(rpm)
+
+	{&_BA_PIONU,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},		//Íø²àçÑ¹»·Êä³ö
+	{&_BA_PIONID,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//Íø²àdÖáµçÁ÷»·Êä³ö
+	{&_BA_PIONIQ,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//Íø²àqÖáµçÁ÷»·Êä³ö
+	{&_BA_MEXI,	    0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},		//
+	{&_BA_PIOMID,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//»ú²àdÖáµçÁ÷»·Êä³ö
+
+	{&_BA_PIOMIQ,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//»ú²àqÖáµçÁ÷»·Êä³ö
+	{&_BA_GRDUD,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//dÖáÖ÷¶ÏºóÍøÑ¹·´À¡ ÂË²¨ºó
+	{&_BA_STAUD,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//¶¨×ÓµçÑ¹d
+	{&_BA_GRDUQ,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//qÖáÖ÷¶ÏºóÍøÑ¹·´À¡ ÂË²¨ºó
+	{&_BA_STAUQ,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//¶¨×ÓµçÑ¹q
+
+	{&_BA_STAID,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//dÖáµçÁ÷·´À¡ ÂË²¨ºó
+	{&_BA_STAIQ,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//qÖáµçÁ÷·´À¡ ÂË²¨ºó
+	{&_BA_EXCID,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//»ú²àÀø´ÅµçÁ÷dÖá
+	{&_BA_EXCIQ,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	 //»ú²àÀø´ÅµçÁ÷qÖá
+	{&_BA_STAUABD,	0,			0,    		65535,		&_NULL_VAL,	&_NULL_VAL,	RDO+DOT1},		//20091027atzyÅ²ÓÃ×÷ÍøÑ¹µøÂä¼ì²â ¶¨×ÓÍ¬²½²¢ÍøÇ°¶¨×ÓÇ°ºóµçÑ¹²î
+
+	{&_BA_STAUBCD,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO+DOT1},	    //20091027atzyÅ²ÓÃ×÷ÍøÑ¹µøÂä¼ì²â ¶¨×ÓÍ¬²½²¢ÍøÇ°¶¨×ÓÇ°ºóµçÑ¹²î
+	{&_BA_STAIAC,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO+DOT1},		//¶¨×ÓÏßµçÁ÷ÓÐÐ§ÖµÏÔÊ¾ cpc
+	{&_BA_STAIBA,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO+DOT1},		//¶¨×ÓÏßµçÁ÷ÓÐÐ§ÖµÏÔÊ¾cpc
+	{&_BA_TOQFB,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//×ª¾Ø·´À¡(NM)
+	{&_BA_PSTA,		0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//¶¨×Ó²àÓÐ¹¦¹¦ÂÊÏÔÊ¾kW
+
+	{&_BA_PNPR,		0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//Íø²àÓÐ¹¦¹¦ÂÊÏÔÊ¾
+	{&_BA_PGRID,	0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//²¢Íø×ÜµÄÓÐ¹¦¹¦ÂÊÏÔÊ¾ 
+	{&_BA_QSTA,		0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//¶¨×Ó²àÎÞ¹¦¹¦ÂÊÏÔÊ¾kVAR
+	{&_BA_QNPR,		0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//Íø²àÎÞ¹¦¹¦ÂÊÏÔÊ¾
+	{&_BA_QGRID,	0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//²¢Íø×ÜµÄÎÞ¹¦¹¦ÂÊÏÔÊ¾
+
+	{&_BA_SSTA,		0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//¶¨×Ó²àÊÓÔÚ¹¦ÂÊÏÔÊ¾
+	{&_BA_SNPR,		0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//Íø²àÊÓÔÚ¹¦ÂÊÏÔÊ¾
+	{&_BA_SGRID,	0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//²¢Íø×ÜµÄÓÐ¹¦¹¦ÂÊÏÔÊ¾ 
+
+//-------------------------------------------------------------------------------------------------
+};
+
+//--------------------------------------//¹ÊÕÏÐÅÏ¢×Ó±í(±£´æÊý¾ÝµÄÐòºÅ--70)20091026atzy
+const Uint16 TAB_ERR[ERRO_NUM]={
+	TAB_ERR_FIRST   ,TAB_ERR_FIRST+ 1,TAB_ERR_FIRST+ 2,TAB_ERR_FIRST+ 3,
+	TAB_ERR_FIRST+ 4,TAB_ERR_FIRST+ 5,TAB_ERR_FIRST+ 6,TAB_ERR_FIRST+ 7,
+	TAB_ERR_FIRST+ 8,TAB_ERR_FIRST+ 9,TAB_ERR_FIRST+10,TAB_ERR_FIRST+11,
+	TAB_ERR_FIRST+12,TAB_ERR_FIRST+13,TAB_ERR_FIRST+14,TAB_ERR_FIRST+15,
+	TAB_ERR_FIRST+16,TAB_ERR_FIRST+17,TAB_ERR_FIRST+18,TAB_ERR_FIRST+19,
+	TAB_ERR_FIRST+20,TAB_ERR_FIRST+21,TAB_ERR_FIRST+22,TAB_ERR_FIRST+23,
+	TAB_ERR_FIRST+24,TAB_ERR_FIRST+25,TAB_ERR_FIRST+26,TAB_ERR_FIRST+27,
+	TAB_ERR_FIRST+28,TAB_ERR_FIRST+29,TAB_ERR_FIRST+30,TAB_ERR_FIRST+31,
+	TAB_ERR_FIRST+32,TAB_ERR_FIRST+33,TAB_ERR_FIRST+34,TAB_ERR_FIRST+35,
+	TAB_ERR_FIRST+36,TAB_ERR_FIRST+37,TAB_ERR_FIRST+38,TAB_ERR_FIRST+39,
+	TAB_ERR_FIRST+40,TAB_ERR_FIRST+41,TAB_ERR_FIRST+42,TAB_ERR_FIRST+43,
+	TAB_ERR_FIRST+44,TAB_ERR_FIRST+45,TAB_ERR_FIRST+46,TAB_ERR_FIRST+47,
+	TAB_ERR_FIRST+48,TAB_ERR_FIRST+49,TAB_ERR_FIRST+50,TAB_ERR_FIRST+51,
+	TAB_ERR_FIRST+52,TAB_ERR_FIRST+53,TAB_ERR_FIRST+54,TAB_ERR_FIRST+55,
+	TAB_ERR_FIRST+56,TAB_ERR_FIRST+57,TAB_ERR_FIRST+58,TAB_ERR_FIRST+59,
+    TAB_ERR_FIRST+60,TAB_ERR_FIRST+61,TAB_ERR_FIRST+62,TAB_ERR_FIRST+63,
+    TAB_ERR_FIRST+64,TAB_ERR_FIRST+65,TAB_ERR_FIRST+66,TAB_ERR_FIRST+67,
+    TAB_ERR_FIRST+68,TAB_ERR_FIRST+69
+};
+
+//--------------------------------------//µç»úÀø´ÅÏµÊýÐÅÏ¢×Ó±í(80%µ½115%¶î¶¨ÍøÑ¹Ê±(540V--800V)£¬Êµ¼Êird*/ÀíÂÛ¼ÆËãird*)
+const float TAB_EXI[128]={
+ 0.9743,    0.9750,    0.9758,    0.9766,    0.9774,    0.9783,    0.9792,
+ 0.9801,    0.9811,    0.9820,    0.9830,    0.9841,    0.9851,    0.9862,
+ 0.9873,    0.9884,    0.9896,    0.9907,    0.9919,    0.9932,    0.9944,
+ 0.9957,    0.9970,    0.9983,    0.9997,    1.0010,    1.0024,    1.0039,
+ 1.0053,    1.0068,    1.0083,    1.0098,    1.0114,    1.0129,    1.0146,
+
+ 1.0162,    1.0178,    1.0195,    1.0213,    1.0230,    1.0248,    1.0266,
+ 1.0284,    1.0303,    1.0322,    1.0342,    1.0361,    1.0381,    1.0402,
+ 1.0423,    1.0444,    1.0465,    1.0487,    1.0510,    1.0532,    1.0556,
+ 1.0579,    1.0603,    1.0628,    1.0653,    1.0678,    1.0704,    1.0731,
+ 1.0758,    1.0785,    1.0813,    1.0842,    1.0871,    1.0901,    1.0931,
+
+ 1.0962,    1.0994,    1.1026,    1.1059,    1.1092,    1.1127,    1.1162,
+ 1.1197,    1.1234,    1.1271,    1.1309,    1.1348,    1.1388,    1.1428,
+ 1.1470,    1.1512,    1.1555,    1.1599,    1.1644,    1.1690,    1.1737,
+ 1.1785,    1.1834,    1.1884,    1.1935,    1.1987,    1.2040,    1.2095,
+ 1.2150,    1.2207,    1.2265,    1.2324,    1.2384,    1.2446,    1.2509,
+
+ 1.2574,    1.2639,    1.2707,    1.2775,    1.2845,    1.2917,    1.2990,
+ 1.3064,    1.3140,    1.3218,    1.3297,    1.3378,    1.3460,    1.3545,
+ 1.3631,    1.3718,    1.3808,    1.3899,    1.3992,    1.4088,    1.4185,
+ 1.4284,    1.4384 
+}; 
+
+//--------------------------------------//µç»úÀø´ÅÏµÊý×Ó±í(²¹³¥¸ºÔØµçÁ÷)
+const float TAB_IQEXI[128]={
+ 1.0000,   1.0239,    1.0319,    1.0398,    1.0476,    1.0554,    1.0631,    1.0707,    1.0783,    1.0858,    1.0932,    1.1006,
+ 1.1079,   1.1151,    1.1222,    1.1293,    1.1363,    1.1432,    1.1501,    1.1569,    1.1636,    1.1702,    1.1768,    1.1833,
+ 1.1898,   1.1961,    1.2024,    1.2087,    1.2148,    1.2209,    1.2269,    1.2329,    1.2387,    1.2445,    1.2503,    1.2559,
+ 1.2615,   1.2671,    1.2725,    1.2779,    1.2832,    1.2884,    1.2936,    1.2987,    1.3037,    1.3087,    1.3136,    1.3184,
+ 1.3232,   1.3278,    1.3324,    1.3370,    1.3414,    1.3458,    1.3502,    1.3544,    1.3586,    1.3627,    1.3668,    1.3707,
+ 1.3746,   1.3785,    1.3822,    1.3859,    1.3896,    1.3931,    1.3966,    1.4000,    1.4033,    1.4066,    1.4098,    1.4129,
+ 1.4160,   1.4190,    1.4219,    1.4248,    1.4275,    1.4302,    1.4329,    1.4354,    1.4379,    1.4404,    1.4427,    1.4450,
+ 1.4472,   1.4494,    1.4514,    1.4534,    1.4554,    1.4572,    1.4590,    1.4607,    1.4624,    1.4640,    1.4655,    1.4669,
+ 1.4683,   1.4696,    1.4708,    1.4720,    1.4731,    1.4741,    1.4750,    1.4759,    1.4767,    1.4774,    1.4781,    1.4787,
+ 1.4792,   1.4797,    1.4801,    1.4804,    1.4806,    1.4808,    1.4809,    1.4809,    1.4809,    1.4808,    1.4806,    1.4804,
+ 1.4800,   1.4796,    1.4792,    1.4787,    1.4780,    1.4774,    1.4766,    1.4758                                           
+}; 
+
+
+//¹ýÔØÎÂ¶È±í¸ñ
+//ÒªÇó£º¹ýÔØÄÜÁ¦£º               105£¥/1h£¬110£¥/3min£¬150£¥/10s£¬200%/0s
+
+//tab1//1s t1(j)=10^(0.36095/(i^2-0.97538) +0.7169);
+const Uint16 TAB_ET2[256]={										//1s
+	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	
+	0,	0,	0,	0,	0,	0,	1,	1,	2,	2,	
+	3,	4,	6,	8,	10,	12,	15,	18,	22,	27,	
+	31,	37,	43,	49,	56,	64,	73,	82,	91,	102,	
+	113,	124,	136,	149,	163,	177,	192,	207,	223,	239,	
+	257,	274,	292,	311,	330,	350,	370,	391,	412,	434,	
+	456,	478,	501,	524,	548,	572,	596,	620,	645,	670,	
+	696,	722,	748,	774,	800,	827,	854,	881,	908,	936,	
+	963,	991,	1019,	1047,	1075,	1103,	1131,	1160,	1188,	1217,	
+	1246,	1274,	1303,	1332,	1361,	1390,	1419,	1448,	1477,	1506,	
+	1534,	1563,	1592,	1621,	1650,	1679,	1708,	1737,	1766,	1794,	
+	1823,	1852,	1881,	1909,	1938,	1966,	1995,	2023,	2051,	2079,	
+	2107,	2136,	2164,	2191,	2219,	2247,	2275,	2302,	2330,	2357,	
+	2384,	2412,	2439,	2466,	2493,	2519,	2546,	2573,	2599,	2626,	
+	2652,	2678,	2704,	2730,	2756,	2782,	2807,	2833,	2858,	2884,	
+	2909,	2934,	2959,	2984,	3009,	3034,	3058,	3083,	3107,	3131,	
+	3155,	3179,	3203,	3227,	3251,	3274,	3298,	3321,	3344,	3368,	
+	3391,	3414,	3436,	3459,	3482,	3504,	3526,	3549,	3571,	3593,	
+	3615,	3637,	3658,	3680,	3702,	3723,	3744,	3765,	3787,	3808,	
+	3828,	3849,	3870,	3890,	3911,	3931,	3952,	3972,	3992,	4012,	
+	4032,	4051,	4071,	4091,	4110,	4129,	4149,	4168,	4187,	4206,	
+	4225,	4244,	4262,	4281,	4299,	4318,	4336,	4354,	4373,	4391,	
+	4409,	4426,	4444,	4462,	4480,	4497,	4515,	4532,	4549,	4566,	
+	4583,	4600,	4617,	4634,	4651,	4668,	4684,	4701,	4717,	4733,	
+	4750,	4766,	4782,	4798,	4814,	4830,	4845,	4861,	4877,	4892,	
+	4908,	4923,	4939,	4954,	4969,	4984 
+};
+
+//tab2//200us   t2(j)=10^(24.1717/(i^2) -9.7430);
+const Uint16 TAB_ET1[256]={										//200us
+	1,	1,	1,	1,	1,	1,	1,	2,	2,	2,	
+	2,	2,	2,	2,	2,	3,	3,	3,	3,	3,	
+	3,	4,	4,	4,	4,	5,	5,	5,	6,	6,	
+	6,	7,	7,	7,	8,	8,	9,	9,	10,	10,	
+	11,	12,	12,	13,	14,	14,	15,	16,	17,	18,	
+	19,	20,	21,	22,	23,	24,	26,	27,	29,	30,	
+	32,	33,	35,	37,	39,	41,	43,	45,	47,	50,	
+	52,	55,	58,	61,	64,	67,	70,	74,	78,	81,	
+	85,	90,	94,	98,	103,	108,	113,	119,	125,	130,	
+	137,	143,	150,	157,	164,	172,	180,	188,	197,	206,	
+	215,	225,	235,	246,	257,	268,	280,	293,	306,	320,	
+	334,	348,	364,	379,	396,	413,	431,	450,	469,	489,	
+	510,	531,	554,	577,	602,	627,	653,	680,	708,	738,	
+	768,	799,	832,	866,	901,	938,	976,	1015,	1056,	1098,	
+	1141,	1187,	1234,	1282,	1333,	1385,	1439,	1495,	1553,	1613,	
+	1675,	1739,	1806,	1874,	1946,	2019,	2096,	2174,	2256,	2340,	
+	2427,	2518,	2611,	2707,	2807,	2909,	3016,	3125,	3239,	3356,	
+	3477,	3602,	3731,	3864,	4002,	4143,	4290,	4441,	4597,	4758,	
+	4924,	5095,	5272,	5454,	5642,	5836,	6036,	6242,	6454,	6673,	
+	6899,	7131,	7370,	7617,	7871,	8133,	8403,	8681,	8967,	9261,	
+	9565,	9877,	10198,	10529,	10870,	11220,	11580,	11951,	12333,	12726,	
+	13130,	13545,	13972,	14411,	14863,	15328,	15805,	16296,	16800,	17319,	
+	17852,	18399,	18962,	19540,	20134,	20744,	21370,	22014,	22674,	23353,	
+	24050,	24765,	25500,	26254,	27027,	27822,	28637,	29473,	30331,	31212,	
+	32115,	33042,	33993,	34968,	35968,	36993,	38045,	39123,	40229,	41362,	
+	42524,	43715,	44935,	46186,	47468,	48781 
+};
+ 
+//--------------------------------------//µôµçÐÅÏ¢×Ó±í(±£´æÊý¾ÝµÄÐòºÅ)
+
+//--------------------------------------//ÏÔÊ¾ÐÅÏ¢×Ó±í 201105atzuoyun
+const struct MESSAGE TAB_MSG[MSG_NUM]={
+	//	Ãû³Æ     			ÐÅÏ¢¼¶±ð	ÊôÐÔ
+	{{'-',	'-',	'-'},	0, 			NONE},								//MSG_NONE
+//TAB_MSG[0]
+//TAB_MSG[1]
+	{{'D',	'-',	'-'},	11, 		SHUT+OFFCB+CNT+SAVE+REPORT},		//MSG_CODEOK
+	{{'E',	'E',	'E'},	11, 		SHUT+OFFCB+CNT+SAVE+REPORT},		//MSG_EE_FAIL
+	{{'C',	'A',	'N'},	10, 		SHUT+I_RCVR+SAVE},					//MSG_CAN_FAIL
+	{{'P',	'O',	'E'},	10, 		SHUT+OFFCB+I_RCVR+SAVE+REPORT},		//MSG_PHORDE 20091106atzy ´ó¶àÎª¸ÉÈÅÔì³É,²Ù×÷Æ÷±¨,Ö÷¿Ø¿É²éÑ¯
+	{{'E',	'C',	'F'},	9, 			SHUT+OFFCB+CNT+SAVE+REPORT},      	//MSG_ENCODFAULT 
+
+	{{'E',	'S',	'P'},	9, 			SHUT+OFFCB+I_RCVR},					//MSG_ESTOP 20091106atzy ´ó¶àÎªÖ÷¿ØÔì³É,²Ù×÷Æ÷±¨,Ö÷¿Ø¿É²éÑ¯
+	{{'C',	'B',	'F'},	9, 			SHUT+OFFCB+N_RCVR+SAVE+REPORT},		//MSG_CBTRIP
+	{{'E',	'F',	'T'},	9, 			SHUT+OFFCB+N_RCVR+SAVE+REPORT},		//MSG_EXFAULT 
+	{{'C',	'B',	'F'},	9, 			SHUT+OFFCB+N_RCVR+SAVE+REPORT},		//MSG_CBERROR 
+	{{'P',	'R',	'F'},	9, 			SHUT+OFFCB+N_RCVR+SAVE+REPORT},		//MSG_PREERROR 
+
+	{{'M',	'K',	'F'},	9, 			SHUT+OFFCB+N_RCVR+SAVE+REPORT},		//MSG_MAINKERROR 
+	{{'M',	'F',	'F'},	9, 			SHUT+OFFCB+N_RCVR+SAVE+REPORT},		//MSG_MAINFERROR 
+	{{'S',	'C',	'F'},	9, 			SHUT+OFFCB+N_RCVR+SAVE+REPORT},		//MSG_STACERROR
+//	{{'S',	'P',	'O'},	9, 			SHUT+OFFCB+SAVE+REPORT},			//MSG_MSPEEDOUT //201105atzuoyun ´ó¶àÎªÖ÷¿ØÍ£»úÔì³É,²Ù×÷Æ÷±¨,Ö÷¿Ø¿É²éÑ¯
+	{{'S',	'P',	'O'},	9, 			SHUT+OFFCB+SAVE+I_RCVR},			//MSG_MSPEEDOUT //20111116at805 ´ó¶àÎªÖ÷¿ØÍ£»úÔì³É,²Ù×÷Æ÷±¨,²»ÔÙÉÏ±¨Ö÷¿Ø£¬ÒÔ±ÜÃâÖ÷¿Ø¼ÆÊýÍ£»ú²»ÄÜ¸´Î»
+//TAB_MSG[14]
+//TAB_MSG[15]
+	{{'O',	'C',	'1'},	8, 			SHUT+OFFCB+CNT+SAVE+REPORT},      	//MSG_HIA1
+	{{'O',	'C',	'2'},	8, 			SHUT+OFFCB+CNT+SAVE+REPORT},		//MSG_HIB1
+	{{'O',	'C',	'3'},	8, 			SHUT+OFFCB+CNT+SAVE+REPORT},		//MSG_HIC1
+	{{'O',	'C',	'4'},	8, 			SHUT+OFFCB+CNT+SAVE+REPORT},		//MSG_HIA2
+	{{'O',	'C',	'5'},	8, 			SHUT+OFFCB+CNT+SAVE+REPORT},		//MSG_HIB2
+	
+	{{'O',	'C',	'6'},	8, 			SHUT+OFFCB+CNT+SAVE+REPORT},		//MSG_HIC2
+    {{'U',	'F',	'1'},	7, 			SHUT+OFFCB+CNT+SAVE+REPORT},		//MSG_UDCOV	
+	{{'O',	'C',	'7'},	7, 			SHUT+OFFCB+CNT+SAVE+REPORT},		//MSG_HIAC1 
+ 	{{'O',	'C',	'8'},	7, 			SHUT+OFFCB+CNT+SAVE+REPORT},		//MSG_HIAC2 
+	{{'P',	'D',	'A'},	7, 			SHUT+OFFCB+CNT+SAVE+REPORT},		//MSG_PDPASERIES 
+ 	
+ 	{{'P',	'D',	'B'},	7, 			SHUT+OFFCB+CNT+SAVE+REPORT},		//MSG_PDPBSERIES 
+//TAB_MSG[25]
+//TAB_MSG[26]
+	{{'O',	'C',	'9'},	6, 			SHUT+D_RCVR+CNT+SAVE+REPORT},		//MSG_SIAC1 
+	{{'O',	'C',	'A'},	6, 			SHUT+D_RCVR+CNT+SAVE+REPORT},		//MSG_SIAC2 	
+	{{'F',	'E',	'1'},	5, 			SHUT+D_RCVR+CNT+SAVE+REPORT},		//MSG_FE1	
+	{{'U',	'F',	'2'},	5, 			SHUT+D_RCVR+CNT+SAVE+REPORT},		//MSG_SUDCOV
+	{{'U',	'F',	'3'},	5, 			SHUT+D_RCVR+CNT+SAVE+REPORT},  		//MSG_SUACOV1
+//TAB_MSG[30]
+//TAB_MSG[31]	
+	{{'U',	'F',	'5'},	4, 			SHUT+D_RCVR+SAVE},					//MSG_SUDCLV
+	{{'U',	'F',	'6'},	4, 			SHUT+D_RCVR+CNT+SAVE+REPORT},		//MSG_SUACLV1
+//TAB_MSG[32]
+//TAB_MSG[33]
+	{{'D',	'C',	'E'},	4, 			SHUT+D_RCVR+SAVE},					//MSG_UDCSAVE ÖÐ¼äµçÑ¹²¨¶¯¹ÊÕÏ
+	{{'O',	'C',	'S'},	4, 			SHUT+D_RCVR+CNT+SAVE+REPORT},		//MSG_SIOVST Èí¼þ¶¨×ÓµçÁ÷¹ýÁ÷
+//TAB_MSG[34]
+//TAB_MSG[35]
+	{{'O',	'H',	'1'},	3, 			SHUT+D_RCVR+SAVE+REPORT},			//MSG_TOV1³¬ÎÂ
+	{{'O',	'H',	'2'},	3, 			SHUT+D_RCVR+SAVE+REPORT},			//MSG_TOV2³¬ÎÂ
+	{{'O',	'S',	'K'},	3, 			SHUT+D_RCVR+SAVE+REPORT},			//MSG_SKTOV³¬ÎÂ
+	{{'O',	'L',	'1'},	2, 			SHUT+D_RCVR+SAVE+REPORT},			//MSG_TLOV1Íø²àµç¸Ð³¬ÎÂ
+	{{'O',	'L',	'2'},	2, 			SHUT+D_RCVR+SAVE+REPORT},			//MSG_TLOV2»ú²àµç¸Ð³¬ÎÂ
+//TAB_MSG[39]
+//TAB_MSG[40]
+	{{'P',	'O',	'V'},	1, 			SHUT+D_RCVR+SAVE+REPORT},			//MSG_PGOV±äÁ÷Æ÷ÓÐ¹¦¹¦ÂÊ¹ýÔØ
+	{{'Q',	'O',	'V'},	1, 			SHUT+D_RCVR+SAVE+REPORT},			//MSG_QGOV±äÁ÷Æ÷ÎÞ¹¦¹¦ÂÊ¹ýÔØ
+//TAB_MSG[41]
+};
+
+#ifdef __cplusplus
+}
+#endif /* extern "C" */
+
+
+#endif  // end
+
+//===========================================================================
+// No more.
+//===========================================================================

@@ -1,0 +1,644 @@
+   /****************************************Copyright (c)**************************************************
+**                       		     ±±	¾©	½»	Í¨	´ó	Ñ§
+**                                        µçÆø¹¤³ÌÑ§Ôº
+**                                         614ÊµÑéÊÒ
+** 
+**                              
+**
+**--------------ÎÄ¼þÐÅÏ¢--------------------------------------------------------------------------------
+**ÎÄ   ¼þ   Ãû: DCDC_work.c
+**´´   ½¨   ÈË: 
+**×îºóÐÞ¸ÄÈÕÆÚ: 
+**Ãè        Êö: DCDC±ä»»Æ÷ºËÐÄ¿ØÖÆ³ÌÐò
+**              
+**--------------ÀúÊ·°æ±¾ÐÅÏ¢----------------------------------------------------------------------------
+** ´´½¨ÈË: 
+** °æ  ±¾: 
+** ÈÕ¡¡ÆÚ: 
+** Ãè¡¡Êö: 
+**
+**--------------µ±Ç°°æ±¾ÐÞ¶©------------------------------------------------------------------------------
+** ÐÞ¸ÄÈË: 
+** ÈÕ¡¡ÆÚ: 
+** Ãè¡¡Êö: 
+**
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+#include "DSP2833x_Device.h"     // Headerfile Include File
+#include "DSP2833x_Examples.h"   // Examples Include File
+#include "math.h"
+
+//º¯ÊýÉùÃ÷
+/*********************************************************************************************************
+** º¯ÊýÃû³Æ: InitWork
+** ¹¦ÄÜÃèÊö: ³õÊ¼»¯WORK²¿·Ö£¬°üÀ¨GIVE£¬RUNCTL£¬WAVE£¬SCOUT
+** Êä¡¡Èë: 
+** Êä¡¡³ö:   
+** ×¢  ÊÍ: 	 
+**-------------------------------------------------------------------------------------------------------
+** ×÷¡¡Õß: 
+** ÈÕ¡¡ÆÚ: 
+**-------------------------------------------------------------------------------------------------------
+** ÐÞ¸ÄÈË:
+** ÈÕ¡¡ÆÚ:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void InitWork(void)
+{
+	M_SetFlag(SL_POWERON);											//ÖÃ³õ´ÎÉÏµç±êÖ¾
+    M_SetFlag(CL_OCS_START);
+	M_SetFlag(SL_RUNNING);
+	M_SetFlag(SL_NPR_RUNING);
+//	M_SetFlag(SL_CB);
+//	M_SetFlag(SL_MIAN_CONTACTOR);
+//	M_SetFlag(CL_STA_CONTACTOR); 
+//	_MSG_SCOUT1=MSG_NONE;											//¹ÊÕÏÐÅÏ¢Çå³ý
+//	_MSG_SCOUT2=MSG_NONE;											//¹ÊÕÏÐÅÏ¢Çå³ý
+	MAIN_LOOP.pulse = 0;											//·ÖÊ±Âö³å¸³³õÖµ
+//	M_SetFlag(SL_STOP);
+//	M_ClrFlag(SL_START);
+    M_SetFlag(SL_PRE_NEED);//³õ´ÎÉÏµçÊ±½øÐÐÒ»´ÎÔ¤³äµç£¬³õÊ¼»¯Îª1£¬×¢ÒâÔÚ¶Ï¿ªÖ÷½Ó´¥Æ÷Ê±½«ÆäÖÃ1 
+}
+
+/******CAP2³õÊ¼»¯********/
+void InitECapture(void)
+{
+   EALLOW; 
+   ECap2Regs.ECEINT.all = 0x0000;             // Disable all capture interrupts
+   ECap2Regs.ECCLR.all = 0xFFFF;              // Clear all CAP interrupt flags
+   ECap2Regs.ECCTL1.bit.CAPLDEN = 0;          // Disable CAP1-CAP4 register loads
+   ECap2Regs.ECCTL2.bit.TSCTRSTOP = 0;        // Make sure the counter is stopped
+   
+   // Configure peripheral registers
+   ECap2Regs.ECCTL2.bit.CONT_ONESHT = 0;      // Continuous
+   ECap2Regs.ECCTL2.bit.STOP_WRAP = 0;        // Stop at 1 events
+   ECap2Regs.ECCTL1.bit.CAP1POL = 0;          // Rising edge
+   ECap2Regs.ECCTL1.bit.CTRRST1 = 0;          // Absolute operation         
+   ECap2Regs.ECCTL2.bit.SYNCI_EN = 0;         // Disable sync in
+   ECap2Regs.ECCTL2.bit.SYNCO_SEL = 2;        // Disable sync out
+   ECap2Regs.ECCTL1.bit.PRESCALE=2;           // Divide by 4
+   ECap2Regs.ECCTL2.bit.CAP_APWM=0;           //Capture mode
+   ECap2Regs.ECCTL1.bit.CAPLDEN = 1;          // Enable capture units
+
+   ECap2Regs.ECCTL2.bit.TSCTRSTOP = 1;        // Start Counter
+
+   EDIS;
+}
+
+/*******CAP2²âÂêÅÌµÄ×ªËÙ£¬Âë³ÝÎª1024********/
+void Speed_calculate(void)
+{
+		TimeStamp_Temp=TimeStamp_Old;
+ 		TimeStamp_Old=TimeStamp_New;
+		TimeStamp_New=ECap2Regs.CAP1;
+
+		if(TimeStamp_New==TimeStamp_Old)
+			TimeStamp_Old=TimeStamp_Temp;
+
+		if(TimeStamp_New>TimeStamp_Old)
+			TimeStamp_Difference=TimeStamp_New-TimeStamp_Old;
+
+		if(TimeStamp_New<TimeStamp_Old)
+			TimeStamp_Difference=0xffffffff+TimeStamp_New-TimeStamp_Old;
+
+		Period_Cap=(float)TimeStamp_Difference/600000000;
+		if(Period_Cap!=0)
+		{	
+			Frequency_Cap=1/Period_Cap;
+		    Speed_hz=Frequency_Cap * 3/1024;
+		}
+}
+
+/*********************************************************************************************************
+** º¯ÊýÃû³Æ: PwmDrive
+** ¹¦ÄÜÃèÊö: 
+** Êä¡¡Èë: 
+** Êä¡¡³ö:        
+** ×¢  ÊÍ: 	 
+**-------------------------------------------------------------------------------------------------------
+** ×÷¡¡Õß: 
+** ÈÕ¡¡ÆÚ: 
+**-------------------------------------------------------------------------------------------------------
+** ÐÞ¸ÄÈË:
+** ÈÕ¡¡ÆÚ:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void PwmDrive(void)
+{
+    if(M_ChkFlag(SL_POWERON)==0)//ÏµÍ³²»ÊÇÕýÔÚÉÏµç£¬ÒÑÉÏÍêµç
+	{ 
+        if((M_ChkFlag(SL_PWMEN)!=0)&&(M_ChkFlag(SL_ERROR)==0)&&(M_ChkFlag(SL_SERIOUS)==0))	//ÏµÍ³Æô¶¯Ã»ÓÐ¹ÊÕÏ
+		{
+			if(M_ChkCounter(MAIN_LOOP.cnt_pwmout,DELAY_PWMOUT)>=0)//Âö³å·¢ÉúÔÊÐíÑÓÊ±µ½
+			{
+				if(M_ChkFlag(SL_PWMOUT)==0)			//±£Ö¤EnPwm()Ö»ÄÜÔËÐÐÒ»´Î
+				{
+					EnPwm();
+					M_SetFlag(SL_PWMOUT);			//Âö³åÔÊÐí
+				//	M_SetFlag(SL_B2BWORK);			//±³¿¿±³±äÁ÷Æ÷¿ªÊ¼¹¤×÷
+			    }
+			}
+//----------------ÏÂÃæÊÇÕæÕýµÄÂö³åÊ¹ÄÜ×îºóÒ»¹Ø£¬tf³ÌÐòÔÚmodulationÀïÃæ----------------//
+	        if((M_ChkFlag(SL_PWMOUT)!=0)&&(M_ChkFlag(SL_RUNNING)!=0))
+	        {
+	 //--------Íø²à±äÁ÷Æ÷Âö³åÔÊÐí--------------//
+	           if(M_ChkFlag(SL_NPR_RUNING)!=0)
+	           {
+		          if(M_ChkFlag(SL_NPR_PWMOUT)==0)//±£Ö¤Enepwmio_NPR()Ö»ÄÜÔËÐÐÒ»´Î
+		          {
+			        Enepwmio_NPR();
+		            PWMEN= _OUT1_DATA | 0x0001;
+	                *OUT1_ADDR = PWMEN;
+			        M_SetFlag(SL_NPR_PWMOUT);									//Âö³åÔÊÐí
+		          }
+	           }
+			   else
+	           {
+		          Disepwmio_NPR();
+		          M_ClrFlag(SL_NPR_PWMOUT);		//Âö³å½ûÖ¹
+	           }
+   //------»ú²à±äÁ÷Æ÷Âö³åÊ¹ÄÜ---------//
+               if(M_ChkFlag(SL_MPR_RUNING)!=0)
+	           {
+		          if(M_ChkFlag(SL_MPR_PWMOUT)==0)	//±£Ö¤EnPwm()Ö»ÄÜÔËÐÐÒ»´Î
+		          {
+			         Enepwmio_MPR();	
+			         PWMEN= _OUT1_DATA | 0x0001;
+	                 *OUT1_ADDR = PWMEN;
+			         M_SetFlag(SL_MPR_PWMOUT);			//Âö³åÔÊÐí
+		          }
+	           }
+	           else
+	           {
+		          Disepwmio_MPR();
+		          M_ClrFlag(SL_MPR_PWMOUT);	
+	           }
+	        }
+	        else  //if((M_ChkFlag(SL_PWMOUT)!=0)&&(M_ChkFlag(SL_RUNNING)!=0))ÎªÂú×ã
+	        {
+	           DisPwm();
+			   PWMEN= _OUT1_DATA & 0xFFFE;
+               *OUT1_ADDR = PWMEN;
+			   M_ClrFlag(SL_NPR_PWMOUT);
+			   M_ClrFlag(SL_MPR_PWMOUT);
+		       M_ClrFlag(SL_PWMOUT);			//ÇåÂö³åÔÊÐí±êÖ¾
+		   //    MAIN_LOOP.cnt_pwmout=0;				//Çå³ýÂö³å·¢ÉúÔÊÐíÑÓÊ±
+	        }			
+	    }
+        else  //ÏµÍ³ÒÑ¾­ÉÏÍêµç£¬µ«ÊÇÏµÍ³ÓÐ¹ÊÕÏ»òÕßSL_PWMEN=0
+		{
+			DisPwm();							//Âö³å·âËø
+	        PWMEN= _OUT1_DATA & 0xFFFE;
+            *OUT1_ADDR = PWMEN;
+		//	EnPwm();
+		    M_ClrFlag(SL_NPR_PWMOUT);
+			M_ClrFlag(SL_MPR_PWMOUT);
+			M_ClrFlag(SL_PWMOUT);				//ÇåÂö³åÔÊÐí±êÖ¾
+		//	M_ClrFlag(SL_B2BWORK);				//±³¿¿±³±äÁ÷Æ÷Í£Ö¹¹¤×÷
+			MAIN_LOOP.cnt_pwmout=0;				//Çå³ýÂö³å·¢ÉúÔÊÐíÑÓÊ±
+		}
+	}
+    else   //ÏµÍ³ÕýÔÚÉÏµç
+	{
+		DisPwm();
+	    PWMEN= _OUT1_DATA & 0xFFFE;
+	    *OUT1_ADDR = PWMEN;
+		M_ClrFlag(SL_NPR_PWMOUT);
+		M_ClrFlag(SL_MPR_PWMOUT);
+		M_ClrFlag(SL_PWMOUT);					//Âö³å·âËø
+	//	M_ClrFlag(SL_B2BWORK);					//±³¿¿±³±äÁ÷Æ÷Í£Ö¹¹¤×÷
+		MAIN_LOOP.cnt_pwmout=0;					//Çå³ýÏµÍ³¹¤×÷ÔÊÐíÑÓÊ±
+	}
+} 
+//****************************************************************************
+//±àºÅ£º
+//Ãû³Æ£ºSVPWM
+//¹¦ÄÜ£ºÂö³åµ÷ÖÆÊä³ö
+//ÊäÈë£º
+
+//Êä³ö£º
+//×¢ÊÍ£º
+//ÐÞ¸ÄËµÃ÷º
+//****************************************************************************
+//------------------Íø²à±äÁ÷Æ÷SVPWMµ÷ÖÆ------------------------------------//	
+void SVPWM_NPR(float alfa, float beta)
+{      
+  float t0,t1,t2;     //¿Õ¼ä»ù±¾Ê¸Á¿µÄ×÷ÓÃÊ±¼ä
+  Uint16 sector;      //ÉÈÇø
+  vdc=540;
+//  vdc = udc_NPR_MPR;  //vdcÎªÊµ¼ÊÖ±Á÷µçÑ¹Öµ,cdcÈ¡Êµ¼ÊÖ±Á÷µçÑ¹ÖµÓÃÓÚµ÷ÖÆ
+ /*estimate sector and calculate t0£¬t1 and t2,now Ts=1*/ 
+  if(beta>=0)
+	{
+	   if(alfa>=beta/SQRT3) 
+	   	{
+	      sector=1;
+	      t1=SQRT3 * (alfa * SQRT3/2-beta * 0.5)/vdc;   //SQRT3=sqrt(3)=1.73205081£¬ÔÚºê¶¨ÒåÀïÃæÊµÏÖ
+	      t2=SQRT3 * beta/vdc;
+	   	}
+	   else if(alfa<=-beta/SQRT3) 
+	   	{
+	      sector=3;                                    
+	      t1=SQRT3 * beta/vdc;
+	      t2=SQRT3 * (-beta * 0.5-alfa * SQRT3/2)/vdc;
+	   	}
+	   else 
+    	{
+	      sector=2;
+	      t1=SQRT3 * (alfa * SQRT3/2+beta * 0.5)/vdc;
+	      t2=SQRT3 * (beta * 0.5-alfa * SQRT3/2)/vdc;
+     	}
+    }
+  else
+	{
+	   if(alfa>=-beta/SQRT3)
+	   	{
+		  sector=6;
+		  t1=-SQRT3 * beta/vdc;
+		  t2=SQRT3 * (beta * 0.5+alfa * SQRT3/2)/vdc;
+	    }
+	   else if(alfa<=beta/SQRT3)	
+	    {
+	      sector=4; 
+		  t1=SQRT3 * (beta * 0.5-alfa * SQRT3/2)/vdc;	   
+	      t2=-SQRT3 * beta/vdc;
+	   	}
+	   else 
+	   	{
+	      sector=5;
+	      t1=SQRT3 * (-alfa * SQRT3/2-beta * 0.5)/vdc;
+	      t2=SQRT3 * (-beta * 0.5+alfa * SQRT3/2)/vdc;
+	   	}
+	}
+
+  if(t1+t2>=1.0)           //´ËÊ±Ts=1£¬¹ÊÅÐ¶ÏÊ±ÒÔ1×÷Îª±È½Ï
+	{
+	   t1=t1/(t1+t2);
+	   t2=1.0-t1;
+	} 
+  t0=1.0-t1-t2;
+ /* calculate CMPR1,CMPR2 and CMPR3*/
+  switch(sector)
+    {
+      	case 1:    EPwm1Regs.CMPA.half.CMPA=(int)(t0 * 0.5 * SW_NPR);//SW_NPRÎªPWMÖÜÆÚ¼Ä´æÆ÷µÄÖµ,Îª¿ª¹ØÖÜÆÚµÄÒ»°ë
+           	       EPwm2Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t1) * SW_NPR);
+               	   EPwm3Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t1+t2) * SW_NPR);
+            	   break;
+     	case 2:    EPwm1Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t2) * SW_NPR);
+           	       EPwm2Regs.CMPA.half.CMPA=(int)(t0 * 0.5 * SW_NPR);
+               	   EPwm3Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t1+t2) * SW_NPR);
+       	           break;
+        case 3:    EPwm1Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t1+t2) * SW_NPR);           
+            	   EPwm2Regs.CMPA.half.CMPA=(int)(t0 * 0.5 * SW_NPR);
+               	   EPwm3Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t1) * SW_NPR);  
+                   break;
+    	case 4:    EPwm1Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t1+t2) * SW_NPR);           
+                   EPwm2Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t2) * SW_NPR);
+               	   EPwm3Regs.CMPA.half.CMPA=(int)(t0 * 0.5 * SW_NPR);  
+                   break;
+    	case 5:    EPwm1Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t1) * SW_NPR);           
+           	       EPwm2Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t1+t2) * SW_NPR);
+               	   EPwm3Regs.CMPA.half.CMPA=(int)(t0 * 0.5 * SW_NPR);  
+                   break;
+       	case 6:    EPwm1Regs.CMPA.half.CMPA=(int)(t0 * 0.5 * SW_NPR);           
+            	   EPwm2Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t1+t2) * SW_NPR);
+              	   EPwm3Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t2) * SW_NPR);  
+               	   break;  
+        default:   break;         
+   }
+} 
+
+//---------------------»ú²à±äÁ÷Æ÷SVPWMµ÷ÖÆ----------------------------//
+void SVPWM_MPR( float alfa, float beta)
+{
+  float t0,t1,t2;
+  Uint16 sector;
+  vdc=540;
+// vdc = udc_NPR_MPR;
+/**************SVPWM**************************************************/	       
+	    /*estimate sector and calculate t1 and t2,now Ts=1*/  
+  if(beta>=0)
+	{
+	   if(alfa>=beta/SQRT3) 
+	   	{
+	      sector=1;
+	      t1=SQRT3 * (alfa * SQRT3/2-beta * 0.5)/vdc;
+	      t2=SQRT3 * beta/vdc;
+	   	}
+	   else if(alfa<=-beta/SQRT3) 
+	   	{
+	      sector=3;                                    
+	      t1=SQRT3 * beta/vdc;
+	      t2=SQRT3 * (-beta * 0.5-alfa * SQRT3/2)/vdc;
+	   	}
+	   else 
+    	{
+	      sector=2;
+	      t1=SQRT3 * (alfa * SQRT3/2+beta * 0.5)/vdc;
+	      t2=SQRT3 * (beta * 0.5-alfa * SQRT3/2)/vdc;
+     	}
+    }
+  else
+	{
+	   if(alfa>=-beta/SQRT3)
+	   	{
+		  sector=6;
+		  t1=-SQRT3 * beta/vdc;
+		  t2=SQRT3 * (beta * 0.5+alfa * SQRT3/2)/vdc;
+	    }
+	   else if(alfa<=beta/SQRT3)	
+	    {
+	      sector=4; 
+		  t1=SQRT3 * (beta * 0.5-alfa * SQRT3/2)/vdc;	   
+	      t2=-SQRT3 * beta/vdc;
+	   	}
+	   else 
+	   	{
+	      sector=5;
+	      t1=SQRT3 * (-alfa * SQRT3/2-beta * 0.5)/vdc;
+	      t2=SQRT3 * (-beta * 0.5+alfa * SQRT3/2)/vdc;
+	   	}
+	}
+
+  if(t1+t2>=1.0) 
+	{
+	   t1=t1/(t1+t2);
+	   t2=1.0-t1;
+	} 
+  t0=1.0-t1-t2; 	    
+ /* calculate CMPR1,CMPR2 and CMPR3*/
+  switch(sector)
+    {
+      	case 1:    EPwm4Regs.CMPA.half.CMPA=(int)(t0 * 0.5 * SW_MPR);
+           	       EPwm5Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t1) * SW_MPR);
+               	   EPwm6Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t1+t2) * SW_MPR);
+            	   break;
+     	case 2:      EPwm4Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t2) * SW_MPR);
+           	       EPwm5Regs.CMPA.half.CMPA=(int)(t0 * 0.5 * SW_MPR);
+               	   EPwm6Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t1+t2) * SW_MPR);
+       	           break;
+        case 3:    EPwm4Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t1+t2) * SW_MPR);           
+            	     EPwm5Regs.CMPA.half.CMPA=(int)(t0 * 0.5 * SW_MPR);
+               	   EPwm6Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t1) * SW_MPR);  
+                   break;
+    	case 4:      EPwm4Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t1+t2) * SW_MPR);           
+                   EPwm5Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t2) * SW_MPR);
+               	   EPwm6Regs.CMPA.half.CMPA=(int)(t0 * 0.5 * SW_MPR);  
+                   break;
+    	case 5:      EPwm4Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t1) * SW_MPR);           
+           	       EPwm5Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t1+t2) * SW_MPR);
+               	   EPwm6Regs.CMPA.half.CMPA=(int)(t0 * 0.5 * SW_MPR);  
+                   break;
+       	case 6:    EPwm4Regs.CMPA.half.CMPA=(int)(t0 * 0.5 * SW_MPR);           
+            	     EPwm5Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t1+t2) * SW_MPR);
+              	   EPwm6Regs.CMPA.half.CMPA=(int)((t0 * 0.5+t2) * SW_MPR);  
+               	   break;  
+        default:   break;         
+   }
+}  
+
+//----------------end of svpwm------------------------------//
+//***********************************************************************//
+//***********************************************************************// 
+
+void VVVF(void)
+{
+	Freq_rw_set=50 * Freq1_rw * 6/32768;
+    Freq_rw_set=50;
+///-------------------¸ø¶¨»ý·Ö----------------------//
+  if((Run_flag & 0x0010)==0x0010)
+	{
+      Freq_rw_step=0.1;
+      CNT_F_stator++;
+      if(CNT_F_stator>20)     CNT_F_stator=0;
+      if(CNT_F_stator==20)
+       {                                  
+         if(Freq_rw=Freq_rw_set)
+		 {
+		    Freq_rw=Freq_rw_set;
+		 }
+         else if(Freq_rw<Freq_rw_set) 
+		 {
+		    Freq_rw=Freq_rw+Freq_rw_step;   //Ö¸ÁîÔö¼Ó
+			if(Freq_rw>Freq_rw_set)
+			{
+			  Freq_rw=Freq_rw_set;
+			}
+		 }                
+         else if(Freq_rw>Freq_rw_set)
+		 {
+		    Freq_rw=Freq_rw-Freq_rw_step;   //Ö¸Áî¼õÐ¡
+			if(Freq_rw<Freq_rw_set)
+			{
+			  Freq_rw=Freq_rw_set;
+			} 
+		 }               
+       }    	
+	}
+
+	theta11=2 * PAI;
+    theta= theta + 2 * PAI * Freq_rw/ Ts;
+    if(theta >= theta11) theta=theta-theta11;
+	m=sqrt(2) * 220 * Freq_rw / 50.0;
+	ua_m=m * sin(theta);
+    ub_m=m * sin(theta-2 * PAI / 3);
+    uc_m=m * sin(theta+2 * PAI / 3);
+    u_alfa_NPR = ua_m;
+	u_beta_NPR = (ub_m - uc_m) * 1.732/3.0;
+}
+
+/*********************************************************************************************************
+** º¯ÊýÃû³Æ: ×ø±ê±ä»»×Óº¯Êý
+** ¹¦ÄÜÃèÊö: 3s/2s±ä»»£¬2s/2r±ä»»
+** Êä¡¡Èë: 
+** Êä¡¡³ö:   
+** ×¢  ÊÍ: 
+**-------------------------------------------------------------------------------------------------------
+** ×÷¡¡Õß: 
+** ÈÕ¡¡ÆÚ: 
+**-------------------------------------------------------------------------------------------------------
+** ÐÞ¸ÄÈË:zzx¡¢lxr
+** ÈÕÆÚ:20090331
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+
+/**************3s/2s*******************************************/
+void Transform_3s_2s_2r(struct TRANS_DATA *var1)
+{   
+    var1->alfa = var1->a;						//²ÉÓÃµÈ·ù±ä»» ualfa=2/3(ua-0.5ub-0.5uc)   
+	var1->beta = (var1->b-var1->c)*SQRT3/3;		//ubeta=2/3*sqrt(3)/2 (ub-uc)  
+
+    var1->d = var1->alfa * cos(var1->theta) + var1->beta * sin(var1->theta);//ud=ualfa*cos(th)+ubeta*sin(th)
+    var1->q = -var1->alfa * sin(var1->theta) + var1->beta * cos(var1->theta);//uq=-ualfa*sin(th)+ubeta*cos(th)
+} 
+/*********************************************************************************************************
+** º¯ÊýÃû³Æ: ×ø±ê·´±ä»»×Óº¯Êý
+** ¹¦ÄÜÃèÊö: 2r/2s±ä»»£¬2s/3s±ä»»
+** Êä¡¡Èë: 
+** Êä¡¡³ö: 
+** ×¢  ÊÍ: 
+**-------------------------------------------------------------------------------------------------------
+** ×÷¡¡Õß: 
+** ÈÕ¡¡ÆÚ: 
+**-------------------------------------------------------------------------------------------------------
+** ÐÞ¸ÄÈË:zzx¡¢lxr
+** ÈÕÆÚ:20090331
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+
+/**************2r/2s*******************************************/
+void Anti_Transform_2r_2s(struct TRANS_DATA *var2)
+{
+    var2->alfa = var2->d * cos(var2->theta) - var2->q * sin(var2->theta);			//ualfa=ud*cos(th)-uq*sin(th)   
+	var2->beta = var2->d * sin(var2->theta) + var2->q * cos(var2->theta);			//*ubeta=ud*sin(th)+uq*cos(th)     			
+}
+
+/*********************************************************************************************************
+** º¯ÊýÃû³Æ: PI_Loop
+** ¹¦ÄÜÃèÊö: PIµ÷½ÚÆ÷
+** Êä¡¡Èë:   kp ±ÈÀý·Å´óÏµÊý
+             ki »ý·ÖÏµÊý
+			 outmax Êä³öÏÞ·ù
+			 errmax Îó²î×î´óÖµÏÞ·ù
+             errmin Îó²î×îÐ¡ÖµÏÞ·ù
+             incrementmax Êä³öÔöÁ¿ÏÞ·ù
+
+** Êä¡¡³ö:   
+** ×¢  ÊÍ: 
+**-------------------------------------------------------------------------------------------------------
+** ×÷¡¡Õß: 
+** ÈÕ¡¡ÆÚ: 
+**-------------------------------------------------------------------------------------------------------
+** ÐÞ¸ÄÈË:zzx¡¢lxr
+** ÈÕÆÚ:20090331
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void PI_Loop(struct PI_DATA *var,float kp,float ki,float outmax,float errmax,float errmin,float incrementmax)
+{
+	float temp;                              //Êä³öÔÝ´æ
+	float integrator_temp;						//»ý·ÖÖµÔÝ´æ£¬ÓÃÓÚ¿¹»ý·Ö±¥ºÍ
+	var->error=var->reference-var->feedback;				//PIÊäÈë£ºÎó²î¼ÆËã
+    if(var->error>errmax)    var->error=errmax;			//ÔöÁ¿ÏÞ·ù
+    else if(var->error<-errmax)   var->error=-errmax;          //ÔöÁ¿ÏÞ·ù
+    else if((var->error>-errmin)&&(var->error<errmin))  var->error=0;				
+    integrator_temp=var->integrator;					//½«ÉÏ´Î»ý·ÖÀÛ»ýÖµÔÝ´æ£¬ÓÃÓÚ¿¹»ý·Ö±¥ºÍ
+    var->integrator=var->integrator+ki*var->error*0.0001;			//»ý·ÖÏî¼ÆËã£¬ÓÃÉÏ´ÎÀÛ»ýµÄÖµ¼ÓÉÏ±¾´ÎÐÂÔöµÄÖµ
+    temp=kp*var->error+var->integrator;				    //PIÊä³ö£¬±ÈÀýÖµ¼ÓÉÏ»ý·ÖÖµ
+	if(temp>outmax) 									//ÏÞ·ù
+  	{
+    	temp=outmax;
+   		var->integrator=integrator_temp;				//¿¹»ý·Ö±¥ºÍ£¬Èç¹û»ý·Ö±¥ºÍ£¬Ôò¶ªµô±¾´ÎÐÂÔöµÄ»ý·ÖÏî
+   	}
+   	else if(temp<-outmax) 								//ÏÞ·ù
+   	{
+   		temp=-outmax;  
+   		var->integrator=integrator_temp;				//¿¹»ý·Ö±¥ºÍ£¬Èç¹û»ý·Ö±¥ºÍ£¬Ôò¶ªµô±¾´ÎÐÂÔöµÄ»ý·ÖÏî
+   	}
+	if(abs(temp-var->out)>incrementmax)             //Êä³öÔöÁ¿ÏÞ·ù
+	{
+	    if(temp>var->out) temp=var->out+incrementmax;
+		else temp=var->out-incrementmax;
+	}
+	var->out=temp;
+}
+
+void draw(void)
+{
+//	draw_data_alfa[test_k]=Test.alfa;
+//	draw_data_beta[test_k]=Test.beta;
+//	draw_data_d[test_k]=Test.d;
+//	draw_data_q[test_k]=Test.q;
+//	draw_data_theta[test_k]=Test.theta;
+    draw_data_out[test_k]=U_test.out;
+
+	test_k++;
+	if(test_k==400) test_k=399;
+}
+
+//*********»ú²à±äÁ÷Æ÷¿ØÖÆËã·¨**********//
+void MPR_CONTROL(void)
+{
+   float U_grd_amp;  //µçÍøµçÑ¹Ê¸Á¿·ùÖµ(V)
+   float ws_sta,theta_sta;     //¶¨×Ó´ÅÁ´½ÇÆµÂÊ(rad)
+   float wr_rot,theta_rot;     //µç»ú×ª×Ó½ÇÆµÂÊ
+   float wsl,theta_sl;         //×ª²î½Ç¶È
+   float urqc,urdc;            //²¹³¥Á¿ 
+   float Te_ref;               //ÞD¾ØÖ¸Áî
+   float ims;
+   float sigma;
+   float theta_epwm,period_epwm£¬theta_delta;
+   sigma=1-Lm*Lm/(Ls*Lr);
+//---------------µçÍøµçÑ¹Ê¸Á¿·ùÖµ¼ÆËã---------------------// 
+   U_grd.a = AD_OUT_NGS_u.a;
+   U_grd.b = AD_OUT_NGS_u.b;
+   U_grd.c = AD_OUT_NGS_u.c;
+   U_grd.theta=0;            //ÒòÎª´Ë´¦²»ÐèÒª×ø±ê±ä»»µ½d¡¢qÖá£¬ËùÒÔ½Ç¶ÈÈ¡0
+   Transform_3s_2s_2r(&U_grd);
+   U_grd_amp=sqrt(U_grd.alfa * U_grd.alfa + U_grd.beta * U_grd.beta);
+//---------------»ñÈ¡¶¨×Ó´ÅÁ´Ê¸Á¿½Ç¶È¡¢½ÇÆµÂÊ---------------------//
+   theta_sta = CAP4.phase+PAI/2;     //zly£¬ÐèÐ£Õý        
+   ws_sta    = CAP4.afreq;        
+//----------------»ñÈ¡µç»ú×ª×Ó½Ç¶È¡¢½ÇÆµÂÊ-----------------------//
+   wr_rot    = QEPDATA.omigaelectric;  
+   theta_rot = QEPDATA.rotpos;		   //zly£¬ÐèÐ£Õý
+//-------------------¼ÆËã×ª²î------------------------------//
+   wsl       = ws_grd-wr_rot;
+   theta_sl  = theta_grd-theta_rot;//********ÐÞ¸Ä³ÉzlyÍ³Ò»¸ø¹ýÀ´
+//----------------×ª×ÓµçÁ÷×ø±êÕý±ä»»----------------------------------//
+   I_MPR.a   = AD_OUT_MPR_i.a;
+   I_MPR.b   = AD_OUT_MPR_i.b;
+   I_MPR.c   = AD_OUT_MPR_i.c;
+   I_MPR.theta=theta_sl;
+   Transform_3s_2s_2r(&I_MPR);
+   Id_MPR_LOOP.reference = U_grd_amp /(Lm * ws_sta); //¼ÆËãid*£¬LmÊÇµç»ú²ÎÊý£¬ºê¶¨Òå
+   Id_MPR_LOOP.feedback  = I_MPR.d;  //idr
+   Iq_MPR_LOOP.feedback  = I_MPR.q;  //iqr
+
+   if(M_ChkFlag(SL_MPR_SYNC)!=0) //·¢µçËã·¨×´Ì¬£¬SL_MPR_SYNC¿ÉÒÔ´Ó¶¨×Ó½Ó´¥Æ÷×´Ì¬ÅÐ¶Ï
+   {
+     ims=U_grd_amp /(Lm * ws_sta);//im
+          
+     Iq_MPR_LOOP.reference = -Te_ref*Ls*ws_grd/(POLEPAIRES * Lm * U_grd_amp);  //¼ÆËã¸ù“þÞD¾ØÖ¸Áîiq*,µÈ·ù±ä»»µÄÏµÊý
+	
+	 PI_Loop(&Id_MPR_LOOP,_IdKP1,_IdTI1,200,200,1,200);   //dÖáµçÁ÷PI
+	 urdc= Xigma * Lr * wsl * Iq_MPR_LOOP.feedback;
+
+     PI_Loop(&Iq_MPR_LOOP,_IqKP1,_IqTI1,200,200,1,200);   //qÖáµçÁ÷PI
+     urqc=-wsl * ims * Lm * Lm/Ls - Xigma * Lr * wsl * Id_MPR_LOOP.feedback;
+     
+	 U_MPR.d     = urdc+Id_MPR_LOOP.out;
+	 U_MPR.q     = urqc+Iq_MPR_LOOP.out;
+
+	 period_epwm = EPwm4Regs.TBPRD;
+     theta_epwm  = EPwm4Regs.TBCTR;
+	 if(M_ChkT3Direction()==0)	M_ClrFlag(SL_T3UP);//EPwm4¼õ¼ÆÊý
+	 if(M_ChkFlag(SL_T3UP)!=0)  theta_delta = 2 * (3 * period_epwm-theta_epwm) * CAP4.delta;
+	 else                       theta_delta = 2 * (period_epwm+theta_epwm) * CAP4.delta;
+	 U_MPR.theta = theta_sl + theta_delta; //theta_slÊÇ·ñÐèÒªÖØÐÂ¼ÆËã£¬ÖØÐÂ²¹³¥£¨µ÷ÓÃÒ»ÏÂCAPºÍQEPµÄ³ÌÐò£©£¿
+	 Anti_Transform_2r_2s(&U_MPR);
+	 SVPWM_MPR(U_MPR.alfa,U_MPR.beta);
+   } 
+   else                         //²¢ÍøËã·¨×´Ì¬
+   {
+     Iq_MPR_LOOP.reference = 0;  //¼ÆËãiq*=0
+
+	 PI_Loop(&Id_MPR_LOOP,_IdKP1,_IdTI1,200,200,1,200);   //dÖáµçÁ÷PI
+	 urdc= Lr * wsl * Iq_MPR_LOOP.feedback;               //dÖá²¹³¥Á¿
+     PI_Loop(&Iq_MPR_LOOP,_IqKP1,_IqTI1,200,200,1,200);   //qÖáµçÁ÷PI
+     urqc=-Lr * wsl * Id_MPR_LOOP.feedback;	              //qÖá²¹³¥Á¿
+     
+     U_MPR.d     = urqc+Id_MPR_LOOP.out;        //urd*
+	 U_MPR.q     = urdc+Iq_MPR_LOOP.out;        //urq*
+
+	 if(M_ChkT3Direction()==0)	M_ClrFlag(SL_T3UP);//EPwm4Ê±ÖÓ¼ÆÊý·½ÏòÅÐ¶Ï
+	 if(M_ChkFlag(SL_T3UP)!=0)  theta_delta = 2 * (3 * period_epwm-theta_epwm) * CAP4.delta;//EPwm4Ê±ÖÓÔö¼ÆÊý
+	 else                       theta_delta = 2 * (period_epwm+theta_epwm) * CAP4.delta;    //EPwm4Ê±ÖÓ¼õ¼ÆÊý
+	 U_MPR.theta = theta_sl + theta_delta;  //theta_slÊÇ·ñÐèÒªÖØÐÂ¼ÆËã£¬ÖØÐÂ²¹³¥£¨µ÷ÓÃÒ»ÏÂCAPºÍQEPµÄ³ÌÐò£©£¿
+	 Anti_Transform_2r_2s(&U_MPR);
+	 SVPWM_MPR(U_MPR.alfa,U_MPR.beta);
+   }
+}
+
+///////no more///////////////
+
+
