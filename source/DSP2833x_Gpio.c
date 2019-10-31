@@ -103,17 +103,17 @@ void InitGpio(void)
    GpioCtrlRegs.GPAMUX1.bit.GPIO12 = 1;  // GPIO12 = TZ1
    GpioCtrlRegs.GPAMUX1.bit.GPIO13 = 1;  // GPIO13 = TZ2
 
-//scib_CANOPEN
+//scib RS485-PC	//20100329at27
     GpioCtrlRegs.GPAPUD.bit.GPIO14 = 0;    // Enable pull-up for GPIO14 (SCITXDB)
 	GpioCtrlRegs.GPAPUD.bit.GPIO15 = 0;    // Enable pull-up for GPIO15 (SCIRXDB)
-    GpioCtrlRegs.GPAQSEL1.bit.GPIO15 = 1;  // Asynch input GPIO15 (SCIRXDB)
+    GpioCtrlRegs.GPAQSEL1.bit.GPIO15 = 1;  // 3 sample time (SCIRXDB)
 	GpioCtrlRegs.GPAMUX1.bit.GPIO14 = 2;   // Configure GPIO14 for SCITXDB operation
-	GpioCtrlRegs.GPAMUX1.bit.GPIO15 = 2;   // Configure GPIO15 for SCIRXDB operation 
+	GpioCtrlRegs.GPAMUX1.bit.GPIO15 = 2;   // Configure GPIO15 for SCIRXDB operation
 
-//scia
+//scia RS232-CANOPEN	//20100329at27
     GpioCtrlRegs.GPBPUD.bit.GPIO35 = 0;    // Enable pull-up for GPIO35 (SCITXDA)
 	GpioCtrlRegs.GPBPUD.bit.GPIO36 = 0;    // Enable pull-up for GPIO36 (SCIRXDA)
-    GpioCtrlRegs.GPBQSEL1.bit.GPIO36 = 1;  // 3 sample time (SCIRXDA)//8.12
+    GpioCtrlRegs.GPBQSEL1.bit.GPIO36 = 1;  // 3 sample time GPIO36 (SCIRXDA)
 	GpioCtrlRegs.GPBMUX1.bit.GPIO35 = 1;   // Configure GPIO35 for SCITXDA operation
 	GpioCtrlRegs.GPBMUX1.bit.GPIO36 = 1;   // Configure GPIO36 for SCIRXDA operation
 
@@ -133,12 +133,24 @@ void InitGpio(void)
     GpioCtrlRegs.GPAMUX2.bit.GPIO18 = 1; // Configure GPIO18 as SPICLKA
     GpioCtrlRegs.GPAMUX2.bit.GPIO19 = 1; // Configure GPIO19 as SPISTEA
 
+
 //canb
-	GpioCtrlRegs.GPAPUD.bit.GPIO20 = 0;   // Enable pull-up for GPIO20 (CANTXB)
-	GpioCtrlRegs.GPAPUD.bit.GPIO21 = 0;   // Enable pull-up for GPIO21 (CANRXB)
-	GpioCtrlRegs.GPAQSEL2.bit.GPIO21 = 3; // Asynch qual for GPIO21 (CANRXB)
-	GpioCtrlRegs.GPAMUX2.bit.GPIO20 = 3;  // Configure GPIO20 for CANTXB operation
-	GpioCtrlRegs.GPAMUX2.bit.GPIO21 = 3;  // Configure GPIO21 for CANRXB operation
+//	GpioCtrlRegs.GPAPUD.bit.GPIO20 = 0;   // Enable pull-up for GPIO20 (CANTXB)
+//	GpioCtrlRegs.GPAPUD.bit.GPIO21 = 0;   // Enable pull-up for GPIO21 (CANRXB)
+//	GpioCtrlRegs.GPAQSEL2.bit.GPIO21 = 3; // Asynch qual for GPIO21 (CANRXB)
+//	GpioCtrlRegs.GPAMUX2.bit.GPIO20 = 3;  // Configure GPIO20 for CANTXB operation
+//	GpioCtrlRegs.GPAMUX2.bit.GPIO21 = 3;  // Configure GPIO21 for CANRXB operation
+
+//active crowbar control signal 20100104
+	GpioCtrlRegs.GPAPUD.bit.GPIO20 = 1;   // disable pullup on GPIO20
+	GpioCtrlRegs.GPAMUX2.bit.GPIO20 = 0;  // General purpose I/O 20
+    GpioCtrlRegs.GPADIR.bit.GPIO20 = 1;   // OUTPUT
+    GpioDataRegs.GPACLEAR.bit.GPIO20 = 1; // force low when power on
+//chopperIGBT control signal 20120228	BJTULVRT201204
+	GpioCtrlRegs.GPAPUD.bit.GPIO21 = 1;   // disable pullup on GPIO21
+	GpioCtrlRegs.GPAMUX2.bit.GPIO21 = 0;  // General purpose I/O 21
+    GpioCtrlRegs.GPADIR.bit.GPIO21 = 1;   // OUTPUT
+    GpioDataRegs.GPACLEAR.bit.GPIO21 = 1; // force low when power on
 
 //XINT1,XINT2 as GPIO
   	GpioCtrlRegs.GPAPUD.bit.GPIO22 = 1;   // disable pullup on GPIO22
@@ -189,7 +201,7 @@ void InitGpio(void)
 //prd1//8.12
     GpioCtrlRegs.GPBCTRL.bit.QUALPRD0 = 100;  // sample frequency for 3 or 6 sample window 
     GpioCtrlRegs.GPACTRL.bit.QUALPRD3 = 32;   // sample frequency for 3 or 6 sample window FOR eCAP4
-    GpioCtrlRegs.GPACTRL.bit.QUALPRD1 = 64;   // sample frequency for 3 or 6 sample window FOR TZ1 and TZ2 2011atzuoyun 2*2*QUALPRD*TSYSCLKOUT=4*64/150M=1.7us
+    GpioCtrlRegs.GPACTRL.bit.QUALPRD1 = 32;   // sample frequency for 3 or 6 sample window FOR TZ1 and TZ2 0.853us cpc
 //apwm1,apwm2
     //GpioCtrlRegs.GPBPUD.bit.GPIO48 = 1;  //disable pull-up on apwm1
 	//GpioCtrlRegs.GPBPUD.bit.GPIO49 = 1;  // disable pull-up on apwm2 
@@ -201,7 +213,7 @@ void InitGpio(void)
 	//GpioCtrlRegs.GPBDIR.bit.GPIO49 = 0;  // apwm2 
 
 //mode0-5
-	GpioCtrlRegs.GPBPUD.bit.GPIO50 = 0;  // mode0
+	GpioCtrlRegs.GPBPUD.bit.GPIO50 = 0;  // mode0 参数初始化控制20100401at27Enable the internal pullup on the specified pin
 	GpioCtrlRegs.GPBPUD.bit.GPIO51 = 0;  // mode1
 	GpioCtrlRegs.GPBPUD.bit.GPIO52 = 0;  // mode2
 	GpioCtrlRegs.GPBPUD.bit.GPIO53 = 0;  // mode3

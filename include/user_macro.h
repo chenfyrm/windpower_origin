@@ -1,7 +1,7 @@
 /****************************************Copyright (c)**************************************************
 **                       		     北	京	交	通	大	学
 **                                        电气工程学院
-**                                         614实验室
+**                                         604实验室
 **
 **                              
 **
@@ -9,7 +9,7 @@
 **文   件   名: user_macro.h
 **创   建   人: 
 **最后修改日期: 
-**描        述: 1.5MW双馈电机转子侧变流器宏函数定义文件
+**描        述: 右玉1.5MW双馈风电机组并网变流器控制软件宏函数定义文件----2010
 **              
 **--------------历史版本信息----------------------------------------------------------------------------
 ** 创建人: 
@@ -242,24 +242,26 @@ extern "C" {
 // 485发送允许
 #define M_EN485TXD()		(GpioDataRegs.GPBCLEAR.bit.GPIO34 = 1)
 
+//20100329at27
 //-----SCIB
-#define	M_DisTxRxb()		(SciaRegs.SCICTL1.all=0x0000)			// Disable TX RX
+#define	M_DisTxRxb()		(ScibRegs.SCICTL1.all=0x0000)			// Disable TX RX
 
-#define	M_EnTxb()			(SciaRegs.SCICTL1.all=0x0002)			// Enable TX, disable RX
-#define	M_EnTxbInt()		(SciaRegs.SCIFFTX.bit.TXFFIENA=1)		// Enable TXINT, disable RXINT
-#define	M_DisTxbInt()		(SciaRegs.SCIFFTX.bit.TXFFIENA=0)		// Disable TXINT RXINT
+#define	M_EnTxb()			(ScibRegs.SCICTL1.all=0x0002)			// Enable TX, disable RX
+#define	M_EnTxbInt()		(ScibRegs.SCIFFTX.bit.TXFFIENA=1)		// Enable TXINT, disable RXINT
+#define	M_DisTxbInt()		(ScibRegs.SCIFFTX.bit.TXFFIENA=0)		// Disable TXINT RXINT
 //#define	M_TxbFifoRst0()		(ScibRegs.SCIFFTX.bit.TXFIFOXRESET=0)	// 0=Reset FIFO
 //#define	M_TxbFifoRst1()		(ScibRegs.SCIFFTX.bit.TXFIFOXRESET=1)	// 1=Normal
-#define	M_ClrTxFifoInt()	(SciaRegs.SCIFFTX.bit.TXINTCLR=1)		// Clear Interrupt flag
+#define	M_ClrTxFifoInt()	(ScibRegs.SCIFFTX.bit.TXINTCLR=1)		// Clear Interrupt flag
 
-#define	M_EnRxb()			(SciaRegs.SCICTL1.all=0x0001)			// Enable RX, disable TX
-#define	M_EnRxbInt()		(SciaRegs.SCIFFRX.bit.RXFFIENA=1)		// Enable RXINT, disable TXINT
-#define	M_DisRxbInt()		(SciaRegs.SCIFFRX.bit.RXFFIENA=0)		// Disable TXINT RXINT
+#define	M_EnRxb()			(ScibRegs.SCICTL1.all=0x0001)			// Enable RX, disable TX
+#define	M_EnRxbInt()		(ScibRegs.SCIFFRX.bit.RXFFIENA=1)		// Enable RXINT, disable TXINT
+#define	M_DisRxbInt()		(ScibRegs.SCIFFRX.bit.RXFFIENA=0)		// Disable TXINT RXINT
 //#define	M_RxbFifoRst0()		(ScibRegs.SCIFFRX.bit.RXFIFORESET=0)	// 0=Reset FIFO
 //#define	M_RxbFifoRst1()		(ScibRegs.SCIFFRX.bit.RXFIFORESET=1)	// 1=Normal    
-#define	M_ClrRxFifoInt()	(SciaRegs.SCIFFRX.bit.RXFFINTCLR=1)		// Clear Interrupt flag
+#define	M_ClrRxFifoInt()	(ScibRegs.SCIFFRX.bit.RXFFINTCLR=1)		// Clear Interrupt flag
 
-#define	M_ClrRxFifoOvr()	(SciaRegs.SCIFFRX.bit.RXFFOVRCLR=1)  	// Clear Overflow flag
+#define	M_ClrRxFifoOvr()	(ScibRegs.SCIFFRX.bit.RXFFOVRCLR=1)  	// Clear Overflow flag
+//20100329at27
 
 //#define M_CALUND(x,y)        (x*y+x*x)
 //#define M_CALUSD(x,y)		 (x*x+y*y)
@@ -267,7 +269,15 @@ extern "C" {
 #define M_ClrQepPCO()		(EQep2Regs.QCLR.bit.PCO = 1)
 #define M_ClrQepPHE()		(EQep2Regs.QCLR.bit.PHE = 1)
 
-				 
+//#define M_ACROWBARON()		(GpioDataRegs.GPASET.bit.GPIO20 = 1)  //GPIO输出作为ACTIVECROWBAR驱动信号，拉高开通
+//#define M_ACROWBAROFF()	 	(GpioDataRegs.GPACLEAR.bit.GPIO20 = 1)//GPIO输出作为ACTIVECROWBAR驱动信号，拉低关断
+#define M_ACROWBARON()		(GpioDataRegs.GPASET.bit.GPIO20 = 1)  //GPIO输出作为ACTIVECROWBAR驱动信号，拉高开通
+#define M_ACROWBAROFF()	 	(GpioDataRegs.GPACLEAR.bit.GPIO20 = 1)//GPIO输出作为ACTIVECROWBAR驱动信号，拉低关断
+//#define M_CHOPPERON()		(GpioDataRegs.GPASET.bit.GPIO21 = 1)  //GPIO输出作为CHOPPER驱动信号，拉高开通,onlyfortest	20120228	BJTULVRT201204
+//#define M_CHOPPEROFF()	 	(GpioDataRegs.GPACLEAR.bit.GPIO21 = 1)//GPIO输出作为CHOPPER驱动信号，拉低关断,onlyfortest	20120228	BJTULVRT201204
+//#define M_CHOPPER_EN()		(GpioDataRegs.GPBSET.bit.GPIO49 = 1)  //GPIO输出作为DC-CHOPPER驱动使能信号，拉高使能，开通关断还与底板滞环VDC2结果有关
+//#define M_CHOPPER_DISEN()	(GpioDataRegs.GPBCLEAR.bit.GPIO49 = 1)//GPIO输出作为DC-CHOPPER驱动使能信号，拉低禁止 BJTULVRT201204
+
 #ifdef __cplusplus
 }
 #endif /* extern "C" */

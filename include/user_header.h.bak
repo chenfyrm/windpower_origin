@@ -126,7 +126,7 @@ float	POLEPAIRES;       				//µç»ú¼«¶ÔÊý
 //canopen
 //#define	DELAY_CANOPENTX		13										//CANOPENTX£º7ms
 #define	DELAY_CANOPENTX		6										//CANOPENTX£º6ms	120507
-#define	DELAY_CANOPENOVER	1000									//CANOPENOVER£º500ms,HEARTBEAT 2014-05-06LJDÁÙÊ±ÐÞ¸ÄCANopen
+#define	DELAY_CANOPENOVER	500										//CANOPENOVER£º500ms,HEARTBEAT
 #define	DELAY_SCICANOPENOVER 250									//20090817
 #define	DELAY_CANFAULT       10000									//CANOPENOVER£ºÉÏµçºóÅÐ¶ÏCANÍ¨Ñ¶¹ÊÕÏ
 
@@ -919,7 +919,7 @@ struct	MAIN_LOOP{
 	int32 cnt1;					//Ö÷Ñ­·¶¨Ê±¼ÄæÆ÷5ms
 	int32 cnt2;					//Ö÷Ñ­»·¶¨Ê±¼Ä´æÆ÷10ms
 	int32 cnt3;					//Ö÷Ñ­»·¶¨Ê±¼Ä´æÆ÷20ms
-	int32 cnt4;					//Ö÷Ñ­»·¨Ê±¼Ä´æÆ÷50ms
+	int32 cnt4;					//Ö÷Ñ­»·¶¨Ê±¼Ä´æÆ÷50ms
 	int32 cnt5;					//÷Ñ­»·¶¨Ê±¼Ä´æÆ÷100ms
 	int32 cnt6;					//Ö÷Ñ­»·¶¨Ê±¼Ä´æ÷1000ms
 	int32 pulse;				//Ö÷Ñ­»··ÖÊ±Âö³å¼Ä´æÆ÷
@@ -1598,7 +1598,7 @@ Uint16 _SC_Rs;														//¶¨×Óµç×è(mohm)
 Uint16 _SC_Lls;														//¶¨×ÓÂ©¿¹(mH)
 Uint16 _SC_Rr;														//×ª×Óµç×è(mohm)
 Uint16 _SC_Llr;														//×ª×ÓÂ©¿¹(mH)
-Uint16 _SC_Lm;														//Àø´Åµç¹(mH)
+Uint16 _SC_Lm;														//Àø´Åµç¿¹(mH)
 Uint16 _SC_POLES;													//¼«¶ÔÊý
 Uint16 _SC_Usn;														//¶¨×Ó¶î¶¨µçÑ¹(V)
 Uint16 _SC_Uro;                                                		//×ª×Ó¿ªÂ·µçÑ¹(V)	
@@ -1738,10 +1738,10 @@ Uint16 _BA_PIOMIQ;													//»ú²àqÖáµçÁ÷»·Êä³ö
 Uint16 _BA_GRDUD;													//´«¸ÐÆ÷²âÁ¿ÍøÑ¹d
 Uint16 _BA_GRDUQ;													//´«¸ÐÆ÷²âÁ¿ÍøÑ¹q
 
-//Uint16 _BA_STAUD;													//¶¨×ÓµçÑ¹d MagnetCurve2013-12-13
-Uint16 _BA_MC_IN;													//Àø´ÅÐ£ÕýÊäÈë MagnetCurve2013-12-13
-Uint16 _BA_MC_K;													//Àø´ÅÐ£ÕýÊä³ö MagnetCurve2013-12-13
-//Uint16 _BA_STAUQ;													//¶¨×ÓµçÑ¹q MagnetCurve2013-12-13
+//Uint16 _BA_STAUD;													//¶¨×ÓµçÑ¹d 2013-12-13ZZJ
+Uint16 _BA_MC_IN;													//Àø´ÅÐ£ÕýÊäÈë2013-12-13ZZJ
+Uint16 _BA_MC_K;													//Àø´ÅÐ£ÕýÊä³ö2013-12-13ZZJ
+//Uint16 _BA_STAUQ;													//¶¨×ÓµçÑ¹q  2013-12-13ZZJ
 
 Uint16 _BA_NPRID;													//´«¸ÐÆ÷²âÁ¿ÍøÑ¹d
 Uint16 _BA_NPRIQ;													//´«¸ÐÆ÷²âÁ¿ÍøÑ¹q

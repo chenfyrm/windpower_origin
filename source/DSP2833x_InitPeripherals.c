@@ -450,6 +450,7 @@ void InitPeripherals(void)
 //设置QEP模块工作模式
 //设置解码计数控制寄存器
 	EQep2Regs.QPOSMAX           = 4 * 2048;		// 位置计数器最大值
+//	EQep2Regs.QPOSMAX           = 4 * _SC_PLSPRVL;	// 位置计数器最大值 ???201005atcpc
 	EQep2Regs.QDECCTL.bit.QSRC  = 0;			//正交计数模式
 	EQep2Regs.QDECCTL.bit.SOEN  = 0;			//禁止比较输出
 	EQep2Regs.QDECCTL.bit.SWAP  = 0;            //不交换A、B输入信号，交换的话可以改变计数方向，相当于改变转向
@@ -493,7 +494,7 @@ void InitPeripherals(void)
 // -------------------End Of Initialize SPI--------------------------	
 	
 // -------------------INITIAL SCI------------------------------------
-
+/*
 // scib_fifo_init_CANOPEN
 	ScibRegs.SCICCR.all =0x0007;   			// 1 stop bit,No loopback 
                                   			// no parity,8 char bits
@@ -531,6 +532,45 @@ void InitPeripherals(void)
   	SciaRegs.SCICTL1.all =0x0021;     		// Relinquish SCI from Reset
   	SciaRegs.SCIFFTX.bit.TXFIFOXRESET=1;
 	SciaRegs.SCIFFRX.bit.RXFIFORESET=1;
+*/
+// scib_fifo_init RS485-PC	//20100329at27
+	ScibRegs.SCICCR.all =0x0007;   			// 1 stop bit,No loopback 
+                                  			// no parity,8 char bits
+	ScibRegs.SCICTL1.all =0x0001;   		// Disable TX, enable RX, internal SCICLK, 
+                                  			// Disable RX_ERR, SLEEP, TXWAKE
+	ScibRegs.SCICTL2.all =0;		 		// fifo mode,they are ignored 
+
+	ScibRegs.SCIHBAUD = 0x00;				// 19200 bps //20100727
+   	ScibRegs.SCILBAUD = 0xF3;
+   	
+   	ScibRegs.SCIFFTX.all=0xC000;			// disable tx232_int,reset scia_fifo 
+    ScibRegs.SCIFFRX.all=0x000A;			// disable rx232_int 
+    ScibRegs.SCIFFCT.all=0x00;
+    
+	ScibRegs.SCICTL1.all =0x0021;     		// Relinquish SCI from Reset 
+
+	ScibRegs.SCIFFTX.bit.TXFIFOXRESET=1;
+	ScibRegs.SCIFFRX.bit.RXFIFORESET=1;
+	
+// scia_fifo_init RS232-CANOPEN	//20100329at27
+	SciaRegs.SCICCR.all =0x0007;    		// 1 stop bit, No loopback 
+                                   			// no parity,8 char bits
+   	SciaRegs.SCICTL1.all =0x0003;  			// Enable TX, RX, internal SCICLK, 
+                                   			// Disable RX ERR, SLEEP, TXWAKE
+  	SciaRegs.SCICTL2.all =0;				// fifo mode,they are ignored
+   	SciaRegs.SCIHBAUD =0x00;				// 57600 bps 20120507CPC	原19200 bps
+//	SciaRegs.SCILBAUD =0xF3;
+	SciaRegs.SCILBAUD =0x4F;
+//	SciaRegs.SCILBAUD =0x79;				//38400bps 20121024sp
+   	
+   	SciaRegs.SCIFFTX.all=0xC000;			// disable tx485_int
+   	SciaRegs.SCIFFRX.all=0x000A;			// disable rx485_int
+   	SciaRegs.SCIFFCT.all=0x00;
+	
+	
+  	SciaRegs.SCICTL1.all =0x0023;     		// Relinquish SCI from Reset
+  	SciaRegs.SCIFFTX.bit.TXFIFOXRESET=1;
+	SciaRegs.SCIFFRX.bit.RXFIFORESET=1; 
 //-------------------------------------------------------------------	
 	EDIS;
 

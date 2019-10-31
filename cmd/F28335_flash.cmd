@@ -81,13 +81,14 @@ PAGE 0:    /* Program Memory */
    RAML3       : origin = 0x00B000, length = 0x001000     /* on-chip RAM block L3 */
    ZONE6       : origin = 0x0100000, length = 0x100000    /* XINTF zone 6 */ 
 /*   ZONE7A      : origin = 0x0200000, length = 0x00FC00    /* XINTF zone 7 - program space */ 
-   FLASHH      : origin = 0x300000, length = 0x008000     /* on-chip FLASH */
+/*   FLASHH      : origin = 0x300000, length = 0x008000     /* on-chip FLASH */
    FLASHG      : origin = 0x308000, length = 0x008000     /* on-chip FLASH */
    FLASHF      : origin = 0x310000, length = 0x008000     /* on-chip FLASH */
    FLASHE      : origin = 0x318000, length = 0x008000     /* on-chip FLASH */
    FLASHD      : origin = 0x320000, length = 0x008000     /* on-chip FLASH */
    FLASHC      : origin = 0x328000, length = 0x008000     /* on-chip FLASH */
-   FLASHA      : origin = 0x338000, length = 0x007F80     /* on-chip FLASH */
+/*   FLASHA      : origin = 0x338000, length = 0x007F80     /* on-chip FLASH */
+   FLASHAB     : origin = 0x330000, length = 0x00FF80     /* on-chip FLASH -201101CMDSAVE */
    CSM_RSVD    : origin = 0x33FF80, length = 0x000076     /* Part of FLASHA.  Program with all 0x0000 when CSM is in use. */
    BEGIN       : origin = 0x33FFF6, length = 0x000002     /* Part of FLASHA.  Used for "boot to Flash" bootloader mode. */
    CSM_PWL     : origin = 0x33FFF8, length = 0x000008     /* Part of FLASHA.  CSM password locations in FLASHA */
@@ -113,7 +114,8 @@ PAGE 1 :   /* Data Memory */
 /*   RAML6     : origin = 0x00E000, length = 0x001000     /* on-chip RAM block L1 */
 /*   RAML7     : origin = 0x00F000, length = 0x001000     /* on-chip RAM block L1 */
    ZONE7B      : origin = 0x200000, length = 0x040000     /* XINTF zone 7 - data space 20091109atzy*/
-   FLASHB      : origin = 0x330000, length = 0x008000     /* on-chip FLASH */
+/*   FLASHB      : origin = 0x330000, length = 0x008000     /* on-chip FLASH */
+   FLASHH      : origin = 0x300000, length = 0x008000     /* on-chip FLASH - 201101CMDSAVE*//*20100920MagnetCurve200909*/
 }
 
 /* Allocate sections to memory blocks.
@@ -127,9 +129,12 @@ SECTIONS
 {
  
    /* Allocate program areas: */
-   .cinit              : > FLASHA      PAGE = 0
-   .pinit              : > FLASHA,     PAGE = 0
-   .text               : > FLASHA      PAGE = 0
+//   .cinit              : > FLASHA      PAGE = 0
+//   .pinit              : > FLASHA,     PAGE = 0
+//   .text               : > FLASHA      PAGE = 0
+   .cinit              : > FLASHAB      PAGE = 0				/*201101CMDSAVE MagnetCurve200909*/
+   .pinit              : > FLASHAB,     PAGE = 0				/*201101CMDSAVE MagnetCurve200909*/
+   .text               : > FLASHAB      PAGE = 0				/*201101CMDSAVE MagnetCurve200909*/
    codestart           : > BEGIN       PAGE = 0
    ramfuncs            : LOAD = FLASHD, 
                          RUN = RAML0, 
@@ -148,8 +153,10 @@ SECTIONS
 
    /* Initalized sections go in Flash */
    /* For SDFlash to program these, they must be allocated to page 0 */
-   .econst             : > FLASHA      PAGE = 0
-   .switch             : > FLASHA      PAGE = 0      
+//   .econst             : > FLASHA      PAGE = 0
+//   .switch             : > FLASHA      PAGE = 0      
+   .econst             : > FLASHAB      PAGE = 0				/*201101CMDSAVE MagnetCurve200909*/
+   .switch             : > FLASHAB      PAGE = 0      			/*201101CMDSAVE MagnetCurve200909*/
 
    /* Allocate IQ math areas: */
    IQmath              : > FLASHC      PAGE = 0                  /* Math Code */
