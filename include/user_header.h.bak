@@ -1,7 +1,7 @@
 /****************************************Copyright (c)**************************************************
 **                       		     ±±	¾©	½»	Í¨	´ó	Ñ§
 **                                        µçÆø¹¤³ÌÑ§Ôº
-**                                         604ÊµÑéÊÒ
+**                                         614ÊµÑéÊÒ
 **
 **
 **
@@ -9,7 +9,7 @@
 **ÎÄ   ¼ş   Ãû: user_header.h
 **´´   ½¨   ÈË: 
 **×îºóĞŞ¸ÄÈÕÆÚ: 
-**Ãè        Êö: ÓÒÓñ1.5MWË«À¡·çµç»ú×é²¢Íø±äÁ÷Æ÷¿ØÖÆÈí¼şÍ·ÎÄ¼ş----201005atcpc-201007atbjtu
+**Ãè        Êö: 1.5MWË«À¡±ä»»Æ÷Í·ÎÄ¼ş--CPCÊÔÑé2010
 				°üÀ¨°æ±¾ĞÅÏ¢,ºê¶¨Òå,±äÁ¿ÉùÃ÷
 **              
 **--------------ÀúÊ·°æ±¾ĞÅÏ¢----------------------------------------------------------------------------
@@ -36,31 +36,24 @@ extern "C" {
 				
 //-----------------------²ÎÊıÏà¹Øºê¶¨Òå------------------------------------------
 //--------------------------°æ±¾ĞÅÏ¢-----------------------------------------------
-#define MC_TYPE 			2010			//»úĞÍ²ÎÊı
-#define MC_REV 				210				//Èí¼ş°æ±¾ºÅ£¨dot2£©
-#define MC_DATE 			2010			//³ö³§ÈÕÆÚ
+#define MC_TYPE 			60701			//»úĞÍ²ÎÊı
+#define MC_REV 				41222			//Èí¼ş°æ±¾ºÅ
+#define MC_DATE 			60815			//³ö³§ÈÕÆÚ
 #define MC_ID				1				//²úÆ·±àºÅ
 #define MC_WRKEY			999				//¹¦ÄÜÂëĞŞ¸ÄÃÜÂë
 #define MC_MYKEY			1021			//ÖÆÔìÉÌÊ¹ÓÃµÄÃÜÂë
 
 //------------------------µ÷ÊÔ×´Ì¬Èí¿ª¹Ø-----------------------------------------------
-//#define	ON					1				          //¿ª
-//#define	OFF					0				          //¹Ø
-//#define	DEBUG_OPER			OFF			              //1=²»´ø²Ù×÷Æ÷2009.6.24
-Uint16 DEBUG_OPER;                                        //20100401at27
-
-//------------------------µç»ú×ª×Ó·´Ğò¿ØÖÆÑ¡Ôñ-201005atcpc-----------------------------------------
-#define	R_PHORDE			1				          //¿ª
+#define	ON					1				          //¿ª
+#define	OFF					0				          //¹Ø
+#define	DEBUG_OPER			OFF			              //1=²»´ø²Ù×÷Æ÷2009.6.24
 
 //********************************************************************************************//
 //===================¶î¶¨µçÁ÷»ù×¼Öµ·åÖµ£¨Ã¿´ÎÊµÑé¸ù¾İĞèÒª¸ü¸Ä£©=====================================
-//#define NPR_IACN  473        //Íø²à¶î¶¨µçÁ÷»ù×¼Öµ ¶î¶¨ÓĞĞ§ÖµÎª334A
-//#define MPR_IACN  545        //»ú²à¶î¶¨µçÁ÷»ù×¼Öµ ¶î¶¨ÓĞĞ§ÖµÎª385A
-#define NPR_IACN  682        //Íø²à¶î¶¨µçÁ÷»ù×¼Öµ 201205LVRTatZB LVRTÊµÑé¸Ä´ó 20120601night
-#define MPR_IACN  682        //»ú²à¶î¶¨µçÁ÷»ù×¼Öµ ¶î¶¨ÓĞĞ§ÖµÎª482A 201107HC
+#define NPR_IACN  473        //Íø²à¶î¶¨µçÁ÷»ù×¼Öµ ¶î¶¨ÓĞĞ§ÖµÎª334A
+#define MPR_IACN  545        //»ú²à¶î¶¨µçÁ÷»ù×¼Öµ ¶î¶¨ÓĞĞ§ÖµÎª385A
 #define STA_IACN  1000       //¶¨×Ó¶î¶¨µçÁ÷»ù×¼Öµ 
 #define GRD_UN    563        //¶î¶¨µçÍøÏàµçÑ¹·åÖµ690VÏµÍ³
-#define CHOP_IDCN 650        //dc-chopperµçÁ÷±£»¤¶î¶¨ÖµBJTULVRT201204
 
 //********************************************************************************************//
  
@@ -80,28 +73,16 @@ Uint16 DEBUG_OPER;                                        //20100401at27
 #define	STAROTRTO	1.246504       		//¶¨×ª×Ó±ä±È
 #define	POLEPAIRES	2       			//µç»ú¼«¶ÔÊı 
 */
-/*
-//CPCµç»ú²ÎÊı----¶î¶¨×´Ì¬¹éËãµ½¶¨×Ó²à²ÎÊı
-#define MPR_Ls   	18.154e-3	 	    //¶¨×Ó×Ô¸Ğ	--µ¥Î»H
-#define MPR_Lr   	18.3258e-3	 	    //×ª×Ó×Ô¸Ğ	--µ¥Î»H	
+//CPCµç»ú²ÎÊı----¶î¶¨×´Ì¬
+#define MPR_Ls   	18.154e-3	 	    //¶¨×Ó×Ô¸Ğ	--µ¥Î»H			£¨Êµ¼ÊÏàÖµ£©
+#define MPR_Lr   	18.3258e-3	 	    //×ª×Ó×Ô¸Ğ	--µ¥Î»H			£¨Êµ¼ÊÏàÖµ£©
 #define MPR_Lm   	17.87e-3	 	    //¶¨×ª×Ó»¥¸Ğ--µ¥Î»H
-#define MPR_Rs   	0.007747	     	//¶¨×Óµç×è	--µ¥Î»ohm
-#define MPR_Rr   	0.004175	    	//×ª×Óµç×è	--µ¥Î»ohm
+#define MPR_Rs   	0.007747	     	//¶¨×Óµç×è	--µ¥Î»ohm		£¨Êµ¼ÊÏàÖµ£©
+#define MPR_Rr   	0.004175	    		//×ª×Óµç×è	--µ¥Î»ohm£¨Êµ¼ÊÏàÖµ£©
 #define SIGMA	 	0.040127			//(1-MPR_Lm*MPR_Lm/(MPR_Ls*MPR_Lr))	        
 #define	STAROTRTO	0.5922       		//¶¨×ª×Ó±ä±È
 #define	STAROTRTO2	0.35070084       	//¶¨×ª×Ó±ä±ÈµÄÆ½·½
 #define	POLEPAIRES	2       			//µç»ú¼«¶ÔÊı  
-*/
-//µç»ú²ÎÊıÉè¶¨2010atcpc
-float  	MPR_Ls;	 	    				//¶¨×Ó×Ô¸Ğ	--µ¥Î»H 
-float	MPR_Lr;	 	    				//×ª×Ó×Ô¸Ğ	--µ¥Î»H	
-float 	MPR_Lm;	 	    				//¶¨×ª×Ó»¥¸Ğ--µ¥Î»H
-float 	MPR_Rs;	     					//¶¨×Óµç×è	--µ¥Î»ohm
-float 	MPR_Rr;	    					//×ª×Óµç×è	--µ¥Î»ohm
-float 	SIGMA;							//(1-MPR_Lm*MPR_Lm/(MPR_Ls*MPR_Lr))	        
-float	STAROTRTO;       				//¶¨×ª×Ó±ä±È
-float	STAROTRTO2;       				//¶¨×ª×Ó±ä±ÈµÄÆ½·½
-float	POLEPAIRES;       				//µç»ú¼«¶ÔÊı  
 ///-------------³£ÓÃ³£Á¿ºê¶¨Òå-------------------------//
 #define	SQRT3		1.73205081			//sqrt(3)
 #define	SQRT3_2		0.8660254           //sqrt(3)/2
@@ -112,8 +93,8 @@ float	POLEPAIRES;       				//µç»ú¼«¶ÔÊı
 #define PAI_2       1.5707963			//PAI/2
 #define PAI_3       1.0471975			//PAI/3
 #define TWOPAI_3    2.0943951			//2*PAI/3
-#define TWOPAI_12   0.523598766			//2*PAI/12
 #define IRQTOTE     27.51385e-3			//×ª»»ÏµÊı£º-Irq*³Ë¸ÃÏµÊıÔÙ³ËÍøÑ¹ed=×ª¾ØTe
+
 
 //------------------------------ÑÓÊ±Ê±¼ä-------------------------------------------------
 #define	DELAY_MAIN1			5										//Ò»¼¶Ñ­»·£º5ms
@@ -124,8 +105,7 @@ float	POLEPAIRES;       				//µç»ú¼«¶ÔÊı
 #define	DELAY_MAIN6			1000									//Áù¼¶Ñ­»·£º1000ms
 
 //canopen
-//#define	DELAY_CANOPENTX		13										//CANOPENTX£º7ms
-#define	DELAY_CANOPENTX		6										//CANOPENTX£º6ms	120507
+#define	DELAY_CANOPENTX		13										//CANOPENTX£º7ms
 #define	DELAY_CANOPENOVER	500										//CANOPENOVER£º500ms,HEARTBEAT
 #define	DELAY_SCICANOPENOVER 250									//20090817
 #define	DELAY_CANFAULT       10000									//CANOPENOVER£ºÉÏµçºóÅĞ¶ÏCANÍ¨Ñ¶¹ÊÕÏ
@@ -139,63 +119,66 @@ float	POLEPAIRES;       				//µç»ú¼«¶ÔÊı
 #define	DELAY_NPRRUN		100	   	//NPR¹¤×÷---°å×Ó¹¤×÷µÆ¿ìËÙÉÁË¸(ms)
 #define	DELAY_MPRSTDBY		1000   	//MPR´ı»ú---°å×Ó¹¤×÷µÆÂıËÙÉÁË¸(ms)
 #define	DELAY_MPRRUN		100	   	//MPR¹¤×÷---°å×Ó¹¤×÷µÆ¿ìËÙÉÁË¸(ms) 
-#define	DELAY_FREQ			2000	   	//ÆµÂÊÊ§°ÜÔÊĞíÑÓÊ±
+#define	DELAY_FREQ			200	   	//ÆµÂÊÊ§°ÜÔÊĞíÑÓÊ±
 #define	DELAY_CBFREQ		1000	//´ÓÖ÷¶Ï·´À¡±ÕºÏµ½ÅĞ¶ÏÍøÆµ¹ÊÕÏµÄÑÓÊ±£¨ms£©
 
 #define	DELAY_FREQ2			200	   	//ÆµÂÊÊ§°ÜÔÊĞíÑÓÊ±
 #define	DELAY_OTSER			60000  	//³¬Ê±ÑÏÖØÑÓÊ±(ms)
 #define	DELAY_SCISPACE		10	   	//Í¨Ñ¶½ÓÊÕµ½·¢ËÍµÄ¼ä¸ôÊ±¼ä(ms)
-#define	DELAY_SCIOVER		5000	//Í¨Ñ¶½ÓÊÕ/·¢ËÍ³¬Ê±Ê±(ms)!!!!µ÷ÊÔ½çÃæºóĞŞ¸Ä20100125//have corected
+#define	DELAY_SCIOVER		1000	//Í¨Ñ¶½ÓÊÕ/·¢ËÍ³¬Ê±Ê±(ms)!!!!µ÷ÊÔ½çÃæºóĞŞ¸Ä20100125//have corected
 //-----Protection-------
 #define	DELAY_ESTOP  		6					//
 #define	DELAY_CBTP		    6					//
-#define DELAY_SWITCHDETECT	50		//¿ª¹ØÒâÍâ¶¯×÷¹ÊÕÏ¼ì²âÑÓÊ±10ms	110818 
-#define DELAY_DETECT		2000	//¿ª¹ØÒâÍâ¶¯×÷¼ì²âÇĞ»»ÑÓÊ±1s	110818
 #define DELAY_EXFAULT       500 
-#define DELAY_CBERROR       1000     //0.5s		110818 20110829HC
-#define DELAY_MAINKERROR    1000     //0.5s		110818
-#define DELAY_MAINFERROR    1000     //0.5s		110818
-#define DELAY_STACERROR     1000     //0.5s		110818
+#define DELAY_CBERROR       2000     //2s 
+#define DELAY_MAINKERROR    2000     //2s 
+#define DELAY_MAINFERROR    2000     //2s
+#define DELAY_STACERROR     2000     //2s
 #define DELAY_PREERROR      15000    //15s
 #define DELAY_PGOVLOAD      10000    //10s
 #define DELAY_QGOVLOAD      10000    //10s
 #define DELAY_CBRESET       500    	 //0.5s
 #define DELAY_SPEEDOUT      50       //50ms 20091022atzy Ö÷¿Øfastshutdown
 #define DELAY_UACLV1        10000     //10s   20091027atzy
-#define	DELAY_GFAULT		3000	//ÈıÏàµçÁ÷²»Æ½ºâµ½½ÓµØ¹ÊÕÏÑÓÊ±(ms)
-#define DELAY_PHORDE        12000     //12s   201005atcpc
-#define DELAY_ENCOFAULT     150     //150ms   201005atcpc
-
-#define	DELAY_NPRTLOV		60000	//Íø²àµç¸Ğ³¬ÎÂ
-#define DELAY_MPRTLOV		60000	//»ú²àµç¸Ğ³¬ÎÂ
-#define	DELAY_NSKIPTOV		10		//Íø²àSKIIP³¬ÎÂ systest
-#define DELAY_MSKIPTOV		10		//»ú²àSKIIP³¬ÎÂ systest
 
 #define	DELAY_EE		    20					//eepromÑÓ³ÙÊ±¼ä
 
 #define	DELAY_ISTEADY0	    1000	 //RunCtrlÍø²àÍ£»ú¸ø¶¨ÑÓÊ±1s
 #define	DELAY_MPRSTEADY0    50     //RunCtrlÍø²àÍ£»ú¸ø¶¨ÑÓÊ±0.05s 
-#define	DELAY_SENSZFSTDY    60000    //RunCtrlÍø²àÍ£»ú¸øÊ±60s
+#define	DELAY_SENSZFSTDY    60000    //RunCtrlÍø²àÍ£»ú¸ø¶¨ÑÓÊ±60s
+/*
+//sysctl_start µ÷ÊÔ°æ
+#define	DELAY_OPENCONTAC	2000	 //ÑÏÖØ²»¿É»Ö¸´¹ÊÕÏÏÂ£¬·¢³ö¶ÏÖ÷¶ÏÖ¸Áîºóµ½·¢³ö¶Ï¶¨×Ó½Ó´¥Æ÷ºÍÖ÷½Ó´¥Æ÷µÄÑÓÊ± 2s 
 
-//sysctl_start
+#define	DELAY_MKOFF	        5000	 //½ÓÊÕµ½ÏµÍ³Í£»úÖ¸Áîºó£¬ÑÓÊ±¶ÏÖ÷½Ó´¥Æ÷¼ÆÊı 5s
+#define	DELAY_CBOFF	        1000	 //½ÓÊÕµ½ÏµÍ³Í£»úÖ¸Áîºó£¬ÑÓÊ±¶ÏÖ÷¶Ï¼ÆÊı 2s
+
+#define	DELAY_CLOSE_CB	    5000	 //Õı³£Æô¶¯£¬Ö÷¶Ï´¢ÄÜµ½Ö÷¶ÏºÏÕ¢µÄÑÓÊ±¼ÆÊı 5s 
+#define	DELAY_PRECOK        9000	 //Õı³£Æô¶¯£¬Ô¤³äµçÊ±¼ä 9s   ³äµç³£Êı=2.115s
 #define	DELAY_STEADYFB	    2000	 //Õı³£Æô¶¯£¬¼ì²âµ½VdcÎÈ¶¨ÔÚ1100Vµ½ÔÊĞí»ú²àÂö³åµÄÑÓÊ± 2s
-#define	DELAY_PRECOK        8000	 //Õı³£Æô¶¯£¬Ô¤³äµçÊ±¼ä 8s
-#define	DELAY_SERSTOP		2000	 //ÑÏÖØ¹ÊÕÏÏÂ£¬·¢³ö¶ÏÖ÷¶ÏÖ¸Áîºóµ½·¢³ö¶Ï¶¨×Ó½Ó´¥Æ÷ºÍÖ÷½Ó´¥Æ÷µÄÑÓÊ± 2s 
-#define	DELAY_ERRSTOP	    2000	 //½ÓÊÕµ½ÏµÍ³Í£»úÖ¸Áîºó£¬ÑÓÊ±¶ÏÖ÷½Ó´¥Æ÷ 2s
-#define	DELAY_EPWMSTOP	    500	 //Õı³£Æô¶¯£¬Ò»°ã¹ÊÕÏ·âÂö³åºóÑÓÊ±¶ÏÖ÷¶ÏÔÙ¶Ï½Ó´¥Æ÷ 500ms  20110829
-#define	DELAY_CBON	    	1000	 //Õı³£Æô¶¯£¬±ÕºÏÖ÷¶ÏÇ·Ñ¹Á´µ½Ö÷¶ÏºÏÕ¢µÄÑÓÊ±¼ÆÊı 1s 
-#define	DELAY_SYSOFF	    2000	 //·ç»úÍ£»ú£¬ÎŞÊÓ×ª¾ØÖ¸Áî£¬×ÔĞĞÍ£»úºóÑÓÊ±2sÖÃÍ£»ú½áÊø±êÖ¾	20120321
+#define	DELAY_MPRSTART 	    5000	 //Õı³£Æô¶¯£¬VdcÎÈ¶¨ºóµ½MPR·¢Âö³åµÄÑÓÊ± 5s
+//sysctl_end  
+*/ 
+
+//sysctl_start ×îÖÕ°æ
+#define	DELAY_OPENCONTAC	2000	 //ÑÏÖØ²»¿É»Ö¸´¹ÊÕÏÏÂ£¬·¢³ö¶ÏÖ÷¶ÏÖ¸Áîºóµ½·¢³ö¶Ï¶¨×Ó½Ó´¥Æ÷ºÍÖ÷½Ó´¥Æ÷µÄÑÓÊ± 2s 
+
+#define	DELAY_MKOFF	        2000	 //½ÓÊÕµ½ÏµÍ³Í£»úÖ¸Áîºó£¬ÑÓÊ±¶ÏÖ÷½Ó´¥Æ÷ 2s
+#define	DELAY_CBOFF	        1000	 //½ÓÊÕµ½ÏµÍ³Í£»úÖ¸Áîºó£¬ÑÓÊ±¶ÏÖ÷¶Ï¼ÆÊı 2s
+
+#define	DELAY_CLOSE_CB	    5000	 //Õı³£Æô¶¯£¬Ö÷¶Ï´¢ÄÜµ½Ö÷¶ÏºÏÕ¢µÄÑÓÊ±¼ÆÊı 5s 
+#define	DELAY_PRECOK        8000	 //Õı³£Æô¶¯£¬Ô¤³äµçÊ±¼ä 8s   ³äµç³£Êı=2.115s
+#define	DELAY_STEADYFB	    2000	 //Õı³£Æô¶¯£¬¼ì²âµ½VdcÎÈ¶¨ÔÚ1100Vµ½ÔÊĞí»ú²àÂö³åµÄÑÓÊ± 2s
+#define	DELAY_MPRSTART 	    1000	 //Õı³£Æô¶¯£¬VdcÎÈ¶¨ºóµ½MPR·¢Âö³åµÄÑÓÊ± 1s
 //sysctl_end  
 
-#define	DELAY_RESET	        1000  	 //ÏµÍ³¸´Î»ÑÓÊ±£¬·ÀÖ¹Îó²Ù×÷ 2s
+
+#define	DELAY_RESET	        2000  	 //ÏµÍ³¸´Î»ÑÓÊ±£¬·ÀÖ¹Îó²Ù×÷ 2s
 #define	DELAY_CLOSTACMD	    1000  	 //ÔÊĞíºÏ¶¨×Ó½Ó´¥Æ÷£¬·ÀÖ¹Îó²Ù×÷ 1s
 #define	DELAY_NPRCMD	    1000  	 //ÉÏÎ»»úÔÊĞíNPR·¢Âö³å£¬·ÀÖ¹Îó²Ù×÷ 1s
 #define	DELAY_MPRCMD	    1000  	 //ÉÏÎ»»úÔÊĞíMPR·¢Âö³å£¬·ÀÖ¹Îó²Ù×÷ 1s
-#define	DELAY_EIN	    	1000  	 //ÏÎ»»ú¿ØÖÆÖ÷¶Ï£¬·ÀÖ¹Îó²Ù×÷ 1s
-#define	DELAY_SYSRUN	    1000  	 //ÉÏÎ»»ú¿ØÖÆÏµÍ³ÔËĞĞ/µç»úÊÔÑé£¬·ÀÖ¹Îó²Ù÷ 1s
-#define	DELAY_PREC	     	1000  	 //ÉÏÎ»»ú¿ØÖÆÔ¤³äµç£¬·ÀÖ¹Îó²Ù×÷ 1s
 
-#define	DELAY_QCAPSPDIN     120    	//×ª×ÓËÙ¶È²âÕı³£120ms   20090817
+#define	DELAY_QCAPSPDIN     120    	//×ª×ÓËÙ¶È¼ì²âÕı³£120ms   20090817
 #define	DELAY_QCAPDISTURB   100    	//Á¬Ğø10´Î¼ì²â×ª×ÓËÙ¶È²»Õı³£±¨¹ÊÕÏ 100ms  20090817
 #define	DELAY_QEPCNTOK      1000    //Á¬Ğø1sÎ´·¢ÉúÉÏÒç´íÎó 1s
 #define	DELAY_QEPZDISTURB   1000    //Á¬Ğø1s·¢ÉúZĞÅºÅÌáÇ°µ½À´±»¸ÉÈÅ´íÎó  1s
@@ -204,43 +187,13 @@ float	POLEPAIRES;       				//µç»ú¼«¶ÔÊı
 #define	DELAY_OCSEIN2   	250    	//20090817
 #define	DELAY_OCSSYSRUN1    250    	//20090817
 #define	DELAY_OCSSYSRUN2   	250    	//20090817
-#define	DELAY_MC_ACK		500  	 //500ms MagnetCurve2013-12-13
 
-#define	DELAY_DATASAVE   	1800     //¹ÊÕÏ·¢ÉúºóÑÓÊ±0.5sºóÍ£Ö¹´æ´¢20100203atbjtu
+#define	DELAY_DATASAVE   	2000    //¹ÊÕÏ·¢ÉúºóÑÓÊ±2sºóÍ£Ö¹´æ´¢20091109atzy
 //LVRT
-#define	DELAY_SCRIZERO	    15  	 //¼ì²âÑÓÊ±0.5¸ö×î´ó×ª²îÖÜÆÚ 100ms/10Hz//201007BJTULVRT
-#define	DELAY_MPWMSTOP	    0  	 	 //0ms
-#define	DELAY_SCRIZERO2	    2  	 	 //2ms 20121103
-#define	DELAY_MPWMRESTART	50  	 //50ms//201007BJTULVRT
-#define	DELAYMPWM			0  	 	 //5ms
-#define	DELAY_NPWMRESTART	50  	 //50ms//201007BJTULVRT
-#define	DELAY_LVSTATE		2  	 	 //2ms
-#define	DELAY_LVRCV			10  	 //40ms
-#define	DELAY_LV_T1			625  	 //625ms
-#define	DELAY_LV_T2			3000  	 //3000ms
-#define	DELAY_LV_TEST		1000  	 //1000ms
-#define	DELAY_SCRONDELAY	2000  	 //2s
-#define	DELAY_LVFAULT1		200  	 //200ms
-#define	DELAY_LVFAULT2		100  	 //100ms
-
-
-
-//---------20121103atsp-----------
-#define	DELAY_LVQWORKING	100  	 //100ms 20121103
-#define	DELAY_PHICON		50  	 //50ms 
-#define	DELAY_LVTEST2		1000  	 //1s 2013-12-6¸ÄÎª1s
-#define	DELAY_LVUBALNCE		30  	 //30ms 201011LVRT
-#define	DELAY_LVUTLV		500  	 //500ms 
-#define	DELAY_LVMIDVAR		20  	 //20ms 
-
-#define	DELAY_FREQRECV		10  	 //10ms 201011PLL
-#define DELAY_IDCOV			300		//ÑÓ³Ù10ms¼ì²âchopperµçÁ÷	201205LVRTatZB20120531
-#define DELAY_IDCOVDELAY	1000	//ÑÓ³Ù1s¼ì²âchopperµçÁ÷	BJTULVRT201204
-
-#define	DELAY_VDSCRON		3		//3ms
-#define	DELAY_VDSCROFF		2		//7ms
-
-#define	DELAY_CHOPPER		100  	 //100ms 2013-12-6ZZJ  
+#define	DELAY_SCRIZERO	    100  	 //¼ì²âÑÓÊ±1¸ö×î´ó×ª²îÖÜÆÚ 100ms/10Hz
+#define	DELAY_MPWMSTOP	    5  	 	 //5ms
+#define	DELAY_MPWMRESTART	20  	 //20ms
+#define	DELAYMPWM			5  	 	//5ms
 
 //---------------------------¹ÊÕÏ±£»¤»Ø²îÖµ-----------------------------------------------
 #define	SC_IAC_HW			2			//ÊäÈëµçÁ÷±£»¤»Ø²î(»ù×¼µçÁ÷µÄ°Ù·ÖÖµ)
@@ -248,15 +201,16 @@ float	POLEPAIRES;       				//µç»ú¼«¶ÔÊı
 #define	SC_UAC_HW			20			//µçÑ¹±£»¤»Ø²î(V)
 #define	SC_MSPD_HW			30			//×ªËÙ±£»¤»Ø²î(V) r/min
 #define	SC_POWOROV_HW	    0	    	//¹¦ÂÊ¹ıÔØ±£»¤»Ø²î(W) 0kW
+
 #define	et_gate	    		50000	    //¹ıÔØ±£»¤¼ÆËã
 
 //-----------------------------CANOPENÍ¨ĞÅºê¶¨Òå----------------------------------------------
-//#define	SCICANOPENRXNUM		10										//CANOPENRXÊı¾İ°ü´óĞ¡
-//#define	SCICANOPENTXNUM		18										//CANOPENTXÊı¾İ°ü´óĞ¡
+#define	SCICANOPENRXNUM		10										//CANOPENRXÊı¾İ°ü´óĞ¡
+#define	SCICANOPENTXNUM		18										//CANOPENTXÊı¾İ°ü´óĞ¡
 #define CANOPENCOM_HEAD		0x7E									//CANOPEN±¨Í·
-#define	SCICANOPENRXNUM		14										//CANOPENRXÊı¾İ°ü´óĞ¡120507
-#define	SCICANOPENTXNUM		22										//CANOPENTXÊı¾İ°ü´óĞ¡120507
-#define	SCICANOPENREADNUM	7										//CANOPENRD¶ÁÈ¡Ö¸ÁîÊı¾İ°ü´óĞ¡120507
+//#define CANOPENCOM_RX		0x03									//FUNCTION_RX
+//#define CANOPENCOM_TX1		0x01									//FUNCTION_TX
+//#define CANOPENCOM_TX2		0x02									//FUNCTION_TX 
 //-----------------------------CANOPENÍ¨ĞÅºê¶¨ÒåNORMAL----------------------------------------------
 #define CAN_TEN  	  10000     //Ö÷¿ØÖ¸Áî¶î¶¨×ª¾Ø»ù×¼Öµ (³£Ç£:1800r/minÊ±P=1560kW,Te=P*60/(n*2*pie)=8276 NM )
 #define CAN_ANGLEN     90       //Ö÷¿ØÖ¸Áî¶î¶¨ÎŞ¹¦ÒòÊı½Ç¶È»ù×¼Öµ 
@@ -274,7 +228,6 @@ float	POLEPAIRES;       				//µç»ú¼«¶ÔÊı
 #define COM_RDAO			0x0003									//¶ÁÈ¡¹¦ÄÜÂë(¶ÁÈ¡ÏÂÎ»»úEEPROMÖĞµÄ¹¦ÄÜÂëÖµĞ´Èëµ½ÉÏÎ»»úEEPROMÖĞ)
 #define COM_WRDO			0x0005									//ĞŞ¸Ä¹¦ÄÜÂë(ĞŞ¸ÄÏÂÎ»»úRAMÖĞµÄ¹¦ÄÜÂëÖµ)
 #define COM_WRAO			0x0006									//ĞŞ¸Ä¹¦ÄÜÂë(ĞŞ¸ÄÏÂÎ»»úRAMÖĞµÄ¹¦ÄÜÂëÖµ)
-#define COM_RDRAM			0x0046									//¶ÁÈ¡exRAM¹¦ÄÜÂë(20100203atbjtu)
 
 //------------------------------CANOPEN-------------------------------------------------------------
 //CANOPENÉÏÎ»»ú×´Ì¬×Ö
@@ -348,14 +301,13 @@ float	POLEPAIRES;       				//µç»ú¼«¶ÔÊı
 #define DA_ADD3				((Uint16 *)0x1B0003)						//Êä³öµØÖ·3
 
 //External RAM 20091109atzy
-#define BANK_RAMSTART		((Uint16 *)0x200000)						//Æ¬ÍâRAMÊ×µØÖ·XINTF zone 7
-#define BANK_RAMEND			((Uint16 *)0x21E848)						//Æ¬ÍâRAMÎ²µØÖ·XINTF zone 7 end at 125000
-#define ERROR_RAMSTART		((Uint16 *)0x21FBD0)						//Æ¬ÍâRAMÊ×µØÖ·XINTF zone 7 start at 130000
-#define ERROR_RAMEND		((Uint16 *)0x23E418)						//Æ¬ÍâRAMÎ²µØÖ·XINTF zone 7 end at 255000
-#define RAM_BIAS			5000										//=2s/(0.4ms/point)=5000points/variable
-Uint16  BANK_RAMDATA_POS;						    					//´æ´¢±äÁ¿µÄ´æ´¢µãÎ»ÖÃ[0,4999]
-Uint16  ERROR_RAMDATA_POS;						    					//´æ´¢±äÁ¿µÄ´æ´¢µãÎ»ÖÃ[0,4999]
-#define RAM_SEGMENT			1000											//Ã¿¸ö²¨ĞÎÃ¿´Î·¢ËÍ·Ö¶Î´ò°ü³¤¶È
+#define ERROR_RAMSTART		((Uint16 *)0x200000)						//Æ¬ÍâRAMÊ×µØÖ·XINTF zone 7
+#define ERROR_RAMEND		((Uint16 *)0x2186A0)						//Æ¬ÍâRAMÎ²µØÖ·XINTF zone 7
+#define BANK_RAMSTART		((Uint16 *)0x21ADB0)						//Æ¬ÍâRAMÊ×µØÖ·XINTF zone 7 start at 110000
+#define BANK_RAMEND			((Uint16 *)0x233450)						//Æ¬ÍâRAMÎ²µØÖ·XINTF zone 7 end at 210000
+#define RAM_DATABIAS		4000										//Ã¿¸öäÁ¿Æ«ÒÆÁ¿=4s/(0.4ms/point)=10000points/variable
+Uint16  BANK_RAMDATA_POS;						    					//´æ´¢±äÁ¿µÄ´æ´¢µãÎ»ÖÃ[0,7999]
+Uint16  ERROR_RAMDATA_POS;						    					//´æ´¢±äÁ¿µÄ´æ´¢µãÎ»ÖÃ[0,7999]
 
 
 //----------------------------ÊäÈëÊä³öµØÖ·¶¨Òå--------------------------------------------
@@ -376,7 +328,7 @@ Uint16  ERROR_RAMDATA_POS;						    					//´æ´¢±äÁ¿µÄ´æ´¢µãÎ»ÖÃ[0,4999]
 #define	HSPCLK				75      		//¸ßËÙ»ù×¼Ê±ÖÓÆµÂÊ(Hz)
 #define	LSPCLK				37500000		//µÍËÙ»ù×¼Ê±ÖÓÆµÂÊ(Hz)
 
-//--------------------------------±êÖ¾Î»¶¨-----------------------------------------------
+//--------------------------------±êÖ¾Î»¶¨å-----------------------------------------------
 //flag[0]ÏÔÊ¾¼°Éè¶¨±ê
 #define	SL_DISPLAY0			0x00			//LEDÏÔÊ¾0
 #define	SL_DISPLAY1			0x01			//LEDÏÔÊ¾1
@@ -386,18 +338,18 @@ Uint16  ERROR_RAMDATA_POS;						    					//´æ´¢±äÁ¿µÄ´æ´¢µãÎ»ÖÃ[0,4999]
 #define	SL_DISPLAY5			0x05			//LEDÏÔÊ¾5
 #define	SL_DISPLAY6			0x06			//LEDÏÔÊ¾6
 #define	SL_DISPLAY7			0x07			//LEDÏÔÊ¾7
-#define SL_RAMERRORSAVE     0x08            //=1Íâ²¿RAM¹ÊÕÏ²¿·ÖËø´æ±êÖ¾
-#define SL_RAMBANKSAVE      0x09            //=1Íâ²¿RAM¹ÊÕÏ²¿·ÖËø´æ±êÖ¾
-#define	SL_TRIG_ERRDSAVE    0x0A      		//´¥·¢Íâ²¿RAMÊı¾İ×ª´æ20091109atzy
-#define	SL_PC_ERRDATACLR    0x0B      		//´¥·¢Íâ²¿RAMÊı¾İÊÍ·Å PCmodbus20100305
-#define	SL_PC_ERRDATASAVE   0x0C      		//PC´¥·¢Íâ²¿RAMÊı¾İËø´æ PCmodbus20100308
-#define SL_PC_BANKDATASAVE  0x0D            //PCÖ¸ÁîÍâ²¿RAMÏÔÊ¾Êı¾İËø´æ PCmodbus20100308
-#define	SL_MC_OK   			0x0E      		//Àø´ÅÇúÏßMagnetCurve2013-12-13
-#define SL_MC_FAIL          0x0F    		//Àø´ÅÇúÏßMagnetCurve2013-12-13
+#define SL_OCS_NPRSTART     0x08            //=1Ö÷¿ØÒªÇóNPR·¢Âö³å        
+#define SL_OCS_MPRSTART     0x09            //=1Ö÷¿ØÒªÇóMPR·¢Âö³å
+#define SL_OCS_RESET        0x0A            //=1Ö÷¿Ø·¢¹ıÀ´µÄ¹ÊÕÏ¸´Î»ĞÅºÅ  
+#define SL_SERIESTOPING    	0x0B			//=1ÕıÔÚÑÏÖØ¹ÊÕÏÍ£»ú¹ı³Ì 
+#define	SL_SERIESTOP        0x0C      		//=1ÏµÍ³ÑÏÖØ²»¿É»Ö¸´¹ÊÕÏ±êÖ¾Î» 
+#define SL_SENSZFSTDY       0x0D            //=1´«¸ĞÆ÷ÁãÆ¯ÂË²¨½áÊø 
+#define	SL_EINSTOPING       0x0E      		//=1ÕıÔÚÕı³£¶ÏÖ÷¶ÏÍ£»ú¹ı³Ì
+#define SL_SYSSTOPING       0x0F            //=1ÕıÔÚÕı³£¶ÏÖ÷½Ó´¥Æ÷Í£»ú¹ı³Ì
 
-//#define	SL_STA_PHORDE   	0x0E      		//TEST
-//#define SL_ROT_PHORDE  		0x0F            //
+ 
   
+
 //flag[1]´®ĞĞÍ¨ĞÅÏà¹Ø±ê;eepromÏà¹Ø±ê
 #define SL_TX		    	0x10			//1=±íÊ¾sciÕıÔÚ·¢ËÍ
 #define SL_RX		    	0x11			//1=±íÊ¾sci½ÓÊÕÍê³ÉÑÓÊ±ÖĞ
@@ -413,17 +365,15 @@ Uint16  ERROR_RAMDATA_POS;						    					//´æ´¢±äÁ¿µÄ´æ´¢µãÎ»ÖÃ[0,4999]
 #define SL_EEBUSY_INI		0x1B			//=1»Ö¸´³ö³§²ÎÊı½øĞĞÖĞ
 #define SL_EEBUSY_MCODE		0x1C			//=1ĞŞ¸Ä¹¦ÄÜÂë½øĞĞÖĞ
 #define SL_EEBUSY_ERRSAVE	0x1D			//=1±£´æ¹ÊÕÏĞÅÏ¢½øĞĞÖĞ 
-#define SL_TXLONGDATA		0x1E			//=1·¢ËÍ³¤Êı¾İ½øĞĞÖĞ 
-
-//#define SL_PHO_FH			0x1F			//=1TEST
-#define SL_CANOPENTX_FLAG	0x1F			//120507
 	
 //flag[2]QEPÏà¹Ø±êÖ¾Î» ¼°¹ÊÕÏ±êÖ¾Î»
 #define SL_QEPPCO			0x20			//=1 QEP¼ÆÊıÉÏÒç¹ÊÕÏ
+//#define SL_QEPPHE			0x21			//=1 QEP¼ÆÊıÏàĞò¹ÊÕÏ
 #define SL_QCAPDISTURB		0x21			//=1 QEPÂö³åÊÜµ½¸ÉÈÅ¹ÊÕÏ Á¬Ğø10´Î¶ÁÈ¡¾ù²»ÔÚÕıÈ··¶Î§ÄÚ 20090804cpc
+//#define	SL_QEPPCDE	        0x22     	//Î»ÖÃ¼ÆÊıÆ÷·½Ïò´íÎó  
 #define	SL_QEPZDISTRUB	    0x22     	    //=1 QEP ZĞÅºÅÊÜµ½¸ÉÈÅ£¬Á¬Ğø1sÄÚ´íÎó¾Í±¨¹ÊÕÏ   20090804cpc
 #define SL_ENCODFAULT		0x23			//=1 QEP¹ÊÕÏ(±àÂëÆ÷¹ÊÕÏ)
-#define	SL_QEPPCDE          0x24      		//±àÂëÆ÷×ªÏò¸Ä±ä´íÎó,A»òBĞÅºÅÏûÊ§
+#define	SL_QEPSWP           0x24      		//ABÒÑ¾­¶Ôµ÷¹ıÒ»´Î±êÖ¾Î»
 #define	SL_QCAPSPDIN        0x25      		//QEPµÄCAPµçÂ·ÄÜ¹»ÕıÈ·¼ì²â qcap speed in 
 #define	SL_SPEED_HIGH       0x26      		//¸ß×ªËÙÇø²ÉÓÃQCLK128·ÖÆµ£¬µÍ×ªËÙ²ÉÓÃ8·ÖÆµ 
 //flag[2]½Ó´¥Æ÷¹ÊÕÏ±êÖ¾Î»
@@ -433,36 +383,33 @@ Uint16  ERROR_RAMDATA_POS;						    					//´æ´¢±äÁ¿µÄ´æ´¢µãÎ»ÖÃ[0,4999]
 #define SL_ERROR_STAC		0x2A         	//=1¶¨×Ó½Ó´¥Æ÷¹ÊÕÏ
 #define SL_ERROR_PRE       	0x2B         	//=1Ô¤³äµçÊÕÏ 
 #define SL_MSPOUT        	0x2C         	//=1×ªËÙ³¬³ö·¶Î§¹ÊÕÏ 
-#define SL_SYNFAIL        	0x2D         	//=1¶¨×ÓÍ¬²½²¢ÍøÊ§°Ü¹ÊÕÏ 
-#define SL_STEADYGV			0x2E			//=1Vdc¸ø¶¨ÎÈ¶¨
-#define SL_STEADYFB			0x2F			//=1Vdc·´À¡µçÑ¹ÎÈ¶¨
+
 
 //flag[3]×´Ì¬±ê
 #define SL_POWERON			0x30			//=1ÏµÍ³ÉÏµçÍê³É
-#define SL_WARNING			0x31			//=1±¨¾¯
-#define SL_OFFCB			0x32			//=1¶ÏÖ÷¶Ï
-//#define SL_SOFT				0x33			//=1»ºÂıÍ£Ö¹
-#define SL_DL_RESET			0x33			//=1ÑÓÊ±ÔÊĞí¸´Î»
-#define SL_SHUT				0x34			//=1½ô¼±Í£Ö¹
-#define SL_NRCVR			0x35			//=1¹ÊÕÏ²»ÄÜ»Ö¸´
-#define SL_DRCVR			0x36			//=1¹ÊÕÏÑÓÊ±»Ö¸´
-#define SL_IRCVR			0x37			//=1¹ÊÕÏÁ¢¼´»Ö¸´
-#define SL_CNT				0x38			//=1¼ÆÈë¹ÊÕÏ´ÎÊı
-#define SL_OTSER			0x39			//=1¹ÊÕÏ³¬Ê±ÑÏÖØ
-#define SL_SAVE				0x3A			//=1¹ÊÕÏĞèÒª´æ´¢
-#define	SL_NO_RESET        	0x3B      		//=1½ûÖ¹¸´Î»±êÖ¾Î» 
-#define SL_IUBLNCE1     	0x3C			//1=µçÍø²àÂ©µçÁ÷³¬ÏŞ
-#define SL_IUBLNCE2      	0x3D			//1=»ú²àÂ©µçÁ÷³¬ÏŞ
-#define SL_GFAULT1			0x3E			//1=µçÍø²à½ÓµØ¹ÊÕÏ	
-#define SL_GFAULT2		    0x3F			//1=»ú²à½ÓµØ¹ÊÕÏ	
+#define SL_VDCON			0x31			//=1ÉÏµç±êÖ¾£¨ÖĞ¼äµçÑ¹´ïµ½´ËÖµÖ÷¶Ï¿ÉÒÔ±ÕºÏ£©
+#define SL_WARNING			0x32			//=1±¨¾¯
+#define SL_OFFCB			0x33			//=1¶ÏÖ÷¶Ï
+#define SL_SOFT				0x34			//=1»ºÂıÍ£Ö¹
+#define SL_SHUT				0x35			//=1½ô¼±Í£Ö¹
+#define SL_NRCVR			0x36			//=1¹ÊÕÏ²»ÄÜ»Ö¸´
+#define SL_DRCVR			0x37			//=1¹ÊÕÏÑÓÊ±»Ö¸´
+#define SL_IRCVR			0x38			//=1¹ÊÕÏÁ¢¼´»Ö¸´
+#define SL_CNT				0x39			//=1¼ÆÈë¹ÊÕÏ´ÎÊı
+#define SL_OTSER			0x3A			//=1¹ÊÕÏ³¬Ê±ÑÏÖØ
+#define SL_SAVE				0x3B			//=1¹ÊÕÏĞèÒª´æ´¢
+#define SL_STEADYGV			0x3C			//=1Vdc¸ø¶¨ÎÈ¶¨
+#define SL_STEADYFB			0x3D			//=1Vdc·´À¡µçÑ¹ÎÈ¶¨
+#define SL_DEADCOMP1		0x3E			//=1Íø²àËÀÇø²¹³¥Ê¹ÄÜ
+#define SL_DEADCOMP2		0x3F			//=1µç»ú²àËÀÇø²¹³¥Ê¹ÄÜ 
 
 //flag[4]¹ÊÕÏ±ê1
 #define SL_ERROR			0x40			//=1ÏµÍ³¹ÊÕÏ
-#define SL_ERRSTOP			0x41			//=1ÏµÍ³Ò»°ã¹ÊÕÏ
-#define	SL_SERIESTOP        0x42      		//=1ÏµÍ³ÑÏÖØ¹ÊÕÏ 
-#define	SL_PDPINTA			0x43			//=1¹¦ÂÊÇı¶¯±£»¤A
-#define	SL_PDPINTB			0x44			//=1¹¦ÂÊÇı¶¯±£»¤B
-#define	SL_UDCWAVE			0x45			//=1ÖĞ¼äµçÑ¹²»ÎÈ¶¨£¬³¬³ö580VºÍ620V
+#define SL_ERRSTOP			0x41			//=1ÏµÍ³ÑÏÖØ¹ÊÕÏµ¼ÖÂÍ£»ú
+#define	SL_PDPINTA			0x42			//=1¹¦ÂÊÇı¶¯±£»¤A
+#define	SL_PDPINTB			0x43			//=1¹¦ÂÊÇı¶¯±£»¤B
+#define	SL_UDCWAVE			0x44			//=1ÖĞ¼äµçÑ¹²»ÎÈ¶¨£¬³¬³ö580VºÍ620V
+#define	SL_SUDCOVH			0x45			//=1ÖĞ¼äµçÑ¹¹ıÑ¹¹ÊÕÏ±êÖ¾Î»(ÍøÑ¹µøÂä)
 #define SL_HIA1			    0x46			//=1Íø²à±äÁ÷Æ÷AÏàÓ²¼ş¹ıÁ÷
 #define SL_HIB1			    0x47			//=1Íø²à±äÁ÷Æ÷BÏàÓ²¼ş¹ıÁ÷
 #define SL_HIC1			    0x48			//=1Íø²à±äÁ÷Æ÷CÏàÓ²¼ş¹ıÁ÷
@@ -472,7 +419,7 @@ Uint16  ERROR_RAMDATA_POS;						    					//´æ´¢±äÁ¿µÄ´æ´¢µãÎ»ÖÃ[0,4999]
 #define SL_SIAC1		    0x4C			//=1Íø²à±äÁ÷Æ÷Èí¼ş¹ıÁ÷
 #define SL_SIAC2		    0x4D			//=1µç»ú²à±äÁ÷Æ÷Èí¼ş¹ıÁ÷
 #define SL_SUDCOV			0x4E			//=1ÖĞ¼äÖ±Á÷Õı¹ıÑ¹
-#define SL_UACLV2			0x4F			//=1ÍøÑ¹Ë²¼äµøÂä¹ÊÕÏLVRT 201007BJTULVRT
+#define SL_SUDCLV			0x4F			//=1ÖĞ¼äÖ±Á÷ÕıÇ·Ñ¹
 
 //flag[5]¹ÊÕÏ±ê2
 #define SL_UACOV1			0x50			//=1ÍøÑ¹Èí¼ş¹ıÑ¹
@@ -494,83 +441,51 @@ Uint16  ERROR_RAMDATA_POS;						    					//´æ´¢±äÁ¿µÄ´æ´¢µãÎ»ÖÃ[0,4999]
 //flag[6]ÔËĞĞ·½Ê½
 #define SL_ENPCOPER			0x60			//¿ØÖÆÄ£Ê½£º1=PC¿ØÖÆ£»0=CAN¿ØÖÆ			modbus2010
 #define SL_OPERATION		0x61			//ÔËĞĞÄ£Ê½£º1=Íø²àµ¥¶ÀÔËĞĞ 0=±³¿¿±³ÔËĞĞ modbus2010
-#define	SL_NPR_START		0x62			//Íø²à±äÁ÷Æ÷ÔËĞĞÖ¸Áî 1=ÔËĞĞ
-#define	SL_MPR_START		0x63			//»ú²à±äÁ÷Æ÷ÔËĞĞÖ¸Áî 1=ÔËĞĞ
-#define	SL_NPR_RUN			0x64			//=1Íø²à±äÁ÷Æ÷¹¤×÷ÔÊĞí
-#define	SL_MPR_RUN			0x65			//=1»ú²à±äÁ÷Æ÷¹¤×÷ÊĞí 
-#define	SL_NPR_RUNING		0x66			//=1Íø²à±äÁ÷Æ÷ÕıÔÚ¹¤÷
-#define	SL_MPR_RUNING		0x67			//=1»ú²à±äÁ÷Æ÷ÕıÔÚ¹¤×÷
-#define SL_NPR_PWMOUT       0x68            //=1Íø²àÂö³åÒÑ¾­Ê¹ÄÜ±êÖ¾Î»,²¢ÇÒ±£Ö¤Enepwmio_NPR()Ö»ÄÜÔËĞĞÒ»´Î
-#define SL_MPR_PWMOUT       0x69            //=1»ú²àÂö³åÒÑ¾­Ê¹ÄÜ±êÖ¾Î»,²¢ÇÒ±£Ö¤Enepwmio_MPR()Ö»ÄÜÔËĞĞÒ»´Î
-#define SL_RUN				0x6A			//=1ÏµÍ³ËĞĞ
-#define SL_CONFIGPWM		0x6B			//=1PWMÂö³åÅäÖÃÍê³É±êÖ¾Î»,¤ConfigPwm()Ö»ÄÜÔËĞĞÒ»´Î
-#define SL_FAN_WORK         0x6C			//=1ÒªÇó¹¦ÂÊ·çÉÈ¿ªÊ¼¹¤×÷
-#define SL_CHARGEOK			0x6D			//=1Ô¤³äµçÍê³É
-//#define SL_SENSZFSTDY       0x6E            //=1´«¸ĞÆ÷ÁãÆ¯ÂË²¨½áÊø 
-#define SL_UNBALANCE       	0x6E            //=1µçÍø²»Æ½ºâ±êÖ¾Î» 20121103
-#define SL_SPEED_IN_RANGE	0x6F			//=1×ªËÙÔÚ·¶Î§ÒÔÄÚ
+#define SL_OCS_PREC			0x62			//=1±³¿¿±³ÔËĞĞ
+#define SL_OCS_OPENSTAC		0x63			//=1½ûÖ¹±ÕºÏ¶¨×Ó½Ó´¥Æ÷ 1=½ûÖ¹±ÕºÏ
+//#define SL_NPR_PWMSTOP      0x64            //=1Íø²àÍ£Ö¹Âö³å
+//#define SL_MPR_PWMSTOP      0x65            //=1»ú²àÍ£Ö¹Âö³å
+#define	SL_NPR_START		0x66			//Íø²à±äÁ÷Æ÷ÔËĞĞÖ¸Áî 1=ÔËĞĞ
+#define	SL_MPR_START		0x67			//»ú²à±äÁ÷Æ÷ÔËĞĞÖ¸Áî 1=ÔËĞĞ
+#define	SL_NPR_RUN			0x68			//=1Íø²à±äÁ÷Æ÷¹¤×÷ÔÊĞí
+#define	SL_MPR_RUN			0x69			//=1»ú²à±äÁ÷Æ÷¹¤×÷ÊĞí 
+#define	SL_NPR_RUNING		0x6A			//=1Íø²à±äÁ÷Æ÷ÕıÔÚ¹¤÷
+#define	SL_MPR_RUNING		0x6B			//=1»ú²à±äÁ÷Æ÷ÕıÔÚ¹¤×÷
+#define	SL_TAOVONCE			0x6C			//=1Íø²àÇÅ±Û³¬ÎÂ¹ÊÕÏĞÅºÅÊÜ¸ÉÈÅ
+#define	SL_TBOVONCE			0x6D			//=1µç»ú²àÇÅ±Û³¬ÎÂ¹ÊÕÏĞÅºÅÊÜ¸ÉÈÅ
+#define SL_FAN_WORK         0x6E			//=1ÒªÇó¹¦ÂÊ·çÉÈ¿ªÊ¼¹¤×÷
+#define	SL_FANSELECT		0x6F			//=0¹¦ÂÊ·ç»úĞÇ½Ó 1¹¦ÂÊ·ç»ú½Ç½Ó
 								
 //flag[7]Êä³ö±ê1,IOÊä³ö   0x180000          //µçÆ÷Êä³ö£¬=1 Êä³öDC24V
 #define _OUT1_DATA			flag[7]	
 #define CL_CBLVC            0x70         	//=0Ö÷¶Ï¶Ï¿ªÖ¸ÁîP5.5
-#define CL_CBON   			0x71			//=1ÒªÇóºÏÖ÷¶ÏP5.6
+#define CL_CB   			0x71			//=1ÒªÇóºÏÖ÷¶ÏP5.6
 #define CL_PRE   			0x72			//=1ÒªÇóºÏÔ¤³äµçP5.7
 #define	CL_MAINK    		0x73			//=1ÒªÇóºÏ¿ØÖÆÖ÷½Ó´¥Æ÷ºÍÂË²¨Æ÷Æ÷P5.8
-#define CL_STATORK		    0x74			//=1ÒªÇóºÏ¿ØÖÆ¶¨×Ó½Ó´¥÷P5.9
+#define CL_STATORK		    0x74			//=1ÒªÇóºÏ¿ØÖÆ¶¨×Ó½Ó´¥Æ÷P5.9
 #define CL_CBFCON           0x75			//=1ÒªÇóÖ÷¶ÏÇ·Ñ¹Á´±ÕºÏ£¬0=Ö÷¶ÏÇ·Ñ¹Á´¶Ï¿ªP5.10
 #define CL_FANWORK	        0x76			//=1ÒªÇó¹¦ÂÊ·çÉÈÔËĞĞP5.11
-//#define CL_SAVEC	        0x77			//=1Õı³£,°²È«Á´±ÕºÏP5.12 20110829
-#define CL_ZKLVRT	        0x77			//=1·¢ÉúÍøÑ¹µøÂä£¬·¢¸øÖ÷¿Ø24VĞÅºÅ20121107
 
 //flag[8]Êä³ö±ê2         0x190000           //¼ÌµçÆ÷Êä³ö£¬=1 Êä³öAC220V
 #define _OUT2_DATA			flag[8]				
 #define CL_RELAY8      		0x80			//±¸ÓÃ
-#define CL_CHOPTEST        	0x81			//Õ¶²¨²âÊÔ 2013-12-6ZZJ 
-#define SL_WATCHDOG			0x82            //DSPÈí¼ş¿´ÃÅ¹· 20100401at27
-//#define SL_SWITCHDETECT    	0x84         	//=1¼ì²âÒââ¶¯×÷ 		110818
-#define CL_CHOPEN			0x83			//enable chopper
-
-//--------ÒÔÏÂ±ê¾Î»·ÇÊä³ö£¬ÄÚ²¿±êÖ¾--------------------------------------------
-#define SL_ERRSTOP_S1		0x84            //Ò»°ã¹ÊÕÏ²½Öè±êÖ¾Î»20110829
-#define SL_SWITCHDETECT    	0x85         	//=1¼ì²âÒââ¶¯×÷ 		110818
-#define SL_QEPPHE    		0x86         	//=1µç»ú·´×ª»òAB·´½Ó¹ÊÕÏ 20110829HC
-#define SL_SYSOFF    		0x87         	//=1·ç»úÕı³£Í£»úÊ±×ªËÙ¹ıµÍ£¬²»ÔÙ½ÓÊÕÖ÷¿Ø×ª¾ØÖ¸Áî£¬×ÔĞĞÍ£»ú	20120321
-#define SL_IDCOV    		0x88         	//=1ÖĞ¼äÖ±Á÷Õ¶²¨Èí¼şµçÁ÷¹ıÁ÷ÅĞ¶Ï-BJTULVRT201204
-#define SL_LV_SYNCON    	0x89         	//=1»ú²à¶¯Ì¬PI¿ØÖÆ±êÖ¾Î»-BJTULVRT201204
-#define SL_LV_PHICON    	0x8A         	//=1»ú²àÓĞÔ´´ÅÁ´Ë¥¼õ¿ØÖÆ±êÖ¾Î»-BJTULVRT201204
-#define SL_CHOPPEREN		0x8B			//=1Õ¶²¨Æ÷Ê¹ÄÜ		20120228	BJTULVRT201204
-#define SL_LV_SCRKEEPON		0x8C			//=1crowbarÒ»Ö±¿ªÍ¨±êÖ¾20120602
-#define SL_LV_VDSCRON		0x8D			//=1µçÑ¹µøÂä´¥·¢SCR 20121203
-#define SL_LV_SCROFF1		0x8E			//=1 35%²»¶Ô³Æ¹ØSCR 20121210
-#define SL_LV_SCROFF2		0x8F			//=1 50%²»¶Ô³Æ¹ØSCR 20121210
+#define CL_RELAY9          	0x81			//±¸ÓÃ 
 
 //flag[15]Êä³ö±ê4         0x1A0000          //ÂıËÙADµØÖ·Êä³ö
 #define _OUT3_DATA			flag[15]									
-#define SL_PHASEA			0xF0		     //					
+#define SL_PHASEA			0xF0		     //						
 #define SL_PHASEB			0xF1             //
  
-Uint16   _OUT4_DATA;		//¸Ã±êÖ¾Î»ÎŞÓÃ¸ÄÎªºê¶¨Òå20130222
 
-//flag[11]Êä³ö±ê4         0x1C0000          //ADÖ·Êä³ö
-/*#define _OUT4_DATA			flag[11]									
+//flag[11]Êä³ö±ê4         0x1C0000          //ÂıADÖ·Êä³ö
+#define _OUT4_DATA			flag[11]									
 #define SL_LSADA0			0xB0		     //A0						
 #define SL_LSADA1			0xB1             //A1
 #define SL_LSADA2			0xB2             //A2
 #define SL_LSADA3			0xB3	         //A3							
-*/
-//flag[11]LVRTÏà¹Ø±êÖ¾Î»	20130222
-#define SL_LV_RECMSTOP			0xB0			//=1»Ö¸´Ê±¿ÌÖ÷¶¯·âÂö³å	20130124
-#define SL_LV_ZDNSTOP			0xB1			//=1µøÂäÊ±¿ÌÍø²àÖ÷¶¯·âÂö³å	20130202
-//#define SL_LV_XNZKKZ			0xB2			//=1ĞéÄâ×è¿¹¿ØÖÆÆÚ¼ä	20130202
-#define SL_LV_STRICTLV			0xB2			//=1ÑÏ¸ñLVÇø¼ä	20130222
-#define SL_LV_RECNSTOP			0xB3			//=1»Ö¸´Ê±¿ÌÖ÷¶¯·âÂö³å	20130206
-#define SL_LV_ZDMSTOP			0xB4			//=1µøÂäÊ±¿Ì»ú²àÖ÷¶¯·âÂö³å	20130221
-#define SL_LV_SCRDONE			0xB5			//=1 Í¶ÈëscrÒ»´Î20130221
-#define SL_LV_CLRERRAM			0xB6			//=1 Çå³ıLVÎó´¥·¢²¨ĞÎ20130306
-#define SL_CANOPENHEAD			0xB7			//=1 ÊÕµ½±¨Í·	20130801
-#define SL_ENCODEPOS_OK			0xB8			//=1±àÂëÆ÷Î»ÖÃ¼ì²âÍê³É	20130801
-#define SL_ECPOSSEARCH			0xB9			//=1±àÂëÆ÷Î»ÖÃĞ£Ñé¹ı 	20130801
+							
 
+						
 
 //flag[9]ÊäÈë±ê12
 #define _IN12_DATA			flag[9]			//±äÁ÷Æ÷²¼ş×´Ì¬·´À¡
@@ -581,12 +496,12 @@ Uint16   _OUT4_DATA;		//¸Ã±êÖ¾Î»ÎŞÓÃ¸ÄÎªºê¶¨Òå20130222
 #define SL_IN1_MIANK   			0x93			//=1 Ö÷½Ó´¥Æ÷´¦ÓÚºÏÕ¢×´¬£¬P4.4
 #define SL_IN1_MIANFILTER		0x94			//=1 Ö÷ÂË²¨Æ÷´¦ÓÚºÏÕ¢×´Ì¬£¬P4.5
 #define SL_IN1_EXFAULTOK	   	0x95			//=1 Íâ²¿¹ÊÕÏÁ´Õı³££¬0=¹ÊÕÏ·¢Éú	P4.6¬£		
-#define SL_IN1_MIANFAN	    	0x96	        //=1 ¹¦ç»úÕı³££¬0=³¬ÎÂÕÏ   P4.7 
-#define SL_IN1_EXESTOP	        0x97			//=1 Íâ²¿¼±Í£¹ÊÕÏ  ±äÁ÷Æ÷¹ñÉÏ½ô¼±Í£ú°´Å¥°´ÏÂ=1 P4.8	090815				
+#define SL_IN1_MIANFAN	    	0x96	        //=1 ¹¦ÂÊ·ç»úÕı³££¬0=³¬ÎÂÕÏ   P4.7 
+#define SL_IN1_EXESTOP	        0x97			//=1 Íâ²¿¼±Í£¹ÊÕÏ  ±äÁ÷Æ÷¹ñÉÏ½ô¼±Í£»ú°´Å¥°´ÏÂ=1 P4.8	090815				
 //---------------------0x150000---------------------------------------------------------------------------	
 #define SL_IN2_IOVA1			0x98			//=1 Íø²àAÏà SKiiP¹ÊÕÏ(¹ıÁ÷»òÕß³¬ÎÂ)
 #define SL_IN2_IOVB1			0x99			//=1 Íø²àBÏà SKiiP¹ÊÕÏ(¹ıÁ÷»òÕß³¬ÎÂ)
-#define SL_IN2_IOVC1			0x9A			//=1 Íø²àC SKiiP¹ÊÕÏ(¹ıÁ÷»òÕß³¬ÎÂ)					
+#define SL_IN2_IOVC1			0x9A			//=1 Íø²àCÏà SKiiP¹ÊÕÏ(¹ıÁ÷»òÕß³¬ÎÂ)					
 #define SL_IN2_TAOV			    0x9B			//=1 Íø²àSKiiP³¬ÎÂ¹ÊÕÏ 
 #define SL_IN2_IOVA2			0x9C			//=1 µç»ú²àAÏàSKiiP¹ÊÕÏ(¹ıÁ÷»òÕß³¬ÎÂ£©
 #define SL_IN2_IOVB2			0x9D			//=1 µç»ú²àBÏà SKiiP¹ÊÕÏ(¹ıÁ÷»òÕß³¬ÎÂ)
@@ -604,66 +519,57 @@ Uint16   _OUT4_DATA;		//¸Ã±êÖ¾Î»ÎŞÓÃ¸ÄÎªºê¶¨Òå20130222
 #define SL_IN3_CBTRIP		    0xA3			//=1 Ö÷¶Ï¹ıÁ÷ÍÑ¿Û¹ÊÕÏ  P4.9   20090816
 //#define SL_IN3_OCS_NPRSTART		0xA4			//=1 ÉÏÎ»»úÔÊĞí·¢Íø²àÂö³å  ²Ù×÷°åĞÅºÅ£¬·ç³¡Ã»ÓÃ
 //#define SL_IN3_OCS_MPRSTART		0xA5			//=1 ÉÏÎ»»úÔÊĞí·¢»ú²àÂö³å  ²Ù×÷°åĞÅºÅ£¬·ç³¡Ã»ÓÃ
-#define SL_IN3_IOVDC			0xA6			//=1 dc-link chopper errror 20120228atbjtu	BJTULVRT201204
-//×¢Òâ£ºÓÃ¸ß8Î»Ê±£¬ÊäÈë¸³Öµ»áÇåÁã20130222atzb
 
-//flag[12]Ö÷¿ØÍ¨Ñ¶¼°PCÖ¸Áî±êÖ¾Î»
-#define SL_OCS_NPREIN       0xC0            //=1Ö÷¿ØÒªÇó±äÁ÷Æ÷Íø²àµ¥¶ÀÎŞ¹¦²¢ÍøÔËĞĞ				
-#define SL_OCS_EIN          0xC1            //=1Ö÷¿Ø·¢¹ıÀ´µÄÏµÍ³Æô¶¯ĞÅºÅ  bit0 ºÏÖ÷¶ÏÂ·Æ÷
-#define SL_OCS_SYSRUN    	0xC2			//=1Ö÷¿Ø·¢¹ıÀ´µÄ±äÁ÷Æ÷Æô¶¯ĞÅºÅ  bit2 ¿ªÊ¼Ô¤³äµçÖ±ÖÁ¶¨×Ó½Ó´¥Æ÷±ÕºÏ
-#define SL_CBCLOSED    	    0xC3			//=1·´À¡Ö÷¿Ø£¬Ö÷¶ÏÒÑ¾­±ÕºÏ
-#define SL_MPR_SYNOK        0xC4            //=1»ú²àÍ¬²½²¢ÍøÍê³É±êÖ¾Î»				
+
+//flag[12]Ö÷¿ØÍ¨Ñ¶±êÖ¾Î»
+#define SL_OCS_EIN          0xC0            //=1Ö÷¿Ø·¢¹ıÀ´µÄÏµÍ³Æô¶¯ĞÅºÅ  bit0 ºÏÖ÷¶ÏÂ·Æ÷
+#define SL_OCS_SYSRUN    	0xC1			//=1Ö÷¿Ø·¢¹ıÀ´µÄ±äÁ÷Æ÷Æô¶¯ĞÅºÅ  bit2 ¿ªÊ¼Ô¤³äµçÖ±ÖÁ¶¨×Ó½Ó´¥Æ÷±ÕºÏ
+#define SL_CBCLOSED    	    0xC2			//=1·´À¡Ö÷¿Ø£¬Ö÷¶ÏÒÑ¾­±ÕºÏ
+#define SL_MPR_SYNOK        0xC3            //=1»ú²àÍ¬²½²¢ÍøÍê³É±êÖ¾Î»				
+#define SL_OCS_NPREIN       0xC4            //=1Ö÷¿ØÒªÇó±äÁ÷Æ÷Íø²àµ¥¶ÀÎŞ¹¦²¢ÍøÔËĞĞ				
 #define SL_PGOV_COM         0xC5            //=1ÓĞ¹¦¹¦ÂÊ³¬³öÏŞÖÆ£¬Í¨ÖªÖ÷¿Ø ³ÖĞø10sºó±äÁ÷Æ÷»á±¨¹ÊÕÏ			
 #define SL_QGOV_COM         0xC6            //=1ÎŞ¹¦¹¦ÂÊ³¬³öÏŞÖÆ£¬Í¨ÖªÖ÷¿Ø ³ÖĞø10sºó±äÁ÷Æ÷»á±¨¹ÊÕÏ				
-#define SL_OCS_PREC			0xC7			//=1PC¿ØÖÆÔ¤³äµçÖ¸Áî
-#define SL_OCS_NPRSTART     0xC8            //=1PC¿ØÖÆÒªÇóNPR·¢Âö³å        
-#define SL_OCS_MPRSTART     0xC9            //=1PC¿ØÖÆÒªÇóMPR·¢Âö³å
-#define SL_OCS_RESET        0xCA            //=1Ö÷¿Ø·¢¹ıÀ´µÄ¹ÊÕÏ¸´Î»ĞÅºÅ  
-#define SL_OCS_OPENSTAC		0xCB			//=1½ûÖ¹±ÕºÏ¶¨×Ó½Ó´¥Æ÷ 1=½ûÖ¹±ÕºÏ
-#define SL_PCOCS_CBOFF		0xCC			//=1PC¿ØÖÆÊÖ¶¯¶Ï¿ªCB 1=¶Ï¿ª 2010atcpc
 //canopen
-#define SL_CANOPENOVER		0xCD			//=1 CANOPEN FAULT
-#define SL_CANOPENHEADOK	0xCE			//=1 SL_CANOPENHEADOK
-#define SL_CANOPENTX		0xCF			//=1 SL_CANOPENOVER 
+#define SL_CANOPENOVER		0xC8			//=1 CANOPEN FAULT
+#define SL_CANOPENHEADOK	0xC9			//=1 SL_CANOPENHEADOK
+#define SL_CANOPENTX		0xCA			//=1 SL_CANOPENOVER 
+#define SL_TEST		        0xCB			//=1 SL_CANOPENOVER 
 
 
 //flag[13]
+#define SL_GRIDLOSE70		0xD0			//Îª¼à²âÍøÑ¹µøÂä20091027atzy
+#define	SL_GRIDLOSE50       0xD1      		//Îª¼à²âÍøÑ¹µøÂä20091027atzy
+#define	SL_GRIDLOSE30       0xD2      		//Îª¼à²âÍøÑ¹µøÂä20091027atzy
+#define	SL_GRIDLOSE15       0xD3      		//Îª¼à²âÍøÑ¹µøÂä20091027atzy
+#define	SL_ERRDATASAVE      0xD4      		//´¥·¢Íâ²¿RAMÊı¾İ×ª´æ20091109atzy
 //LVRT±êÖ¾Î»
-#define SL_LV_QWORKING      0xD0       		    
-#define SL_LV_MSTOP         0xD1       		    
-#define SL_LV_NSTOP         0xD2
-#define SL_LV_SCRON         0xD3
-#define SL_LV_SCRRUNING     0xD4
-#define SL_LV_SCRIZERO      0xD5
-#define SL_LV_MPWMOUT		0xD6		
-#define SL_LV_STATE		    0xD7		
-#define SL_LV_TEST         	0xD8		
-//ÏµÍ³Âß¼­¿ØÖÆ ±êÖ¾Î»
-#define SL_SYN_S3         	0xD9			//SYN²½Öè±êÖ¾Î»
-#define SL_SYN_S2         	0xDA			//SYN²½Öè±êÖ¾Î»
-#define SL_SYN_S1     		0xDB			//SYN²½Öè±êÖ¾Î»	
-#define SL_NORSTOP_FH      	0xDC			//NORSTOP²½Öè±êÖ¾Î»	
-#define SL_NORSTOP_S2		0xDD			//NORSTOP²½Öè±êÖ¾Î»	
-#define SL_NORSTOP_S1		0xDE			//NORSTOP²½Öè±êÖ¾Î»	
-#define SL_ERRSTOP_FH		0xDF			//ERRSTOP²½Öè±êÖ¾Î»		
+#define SL_LV_MSTOP         0xD5       		    
+#define SL_LV_NSTOP         0xD6
+#define SL_LV_SCRON         0xD7
+#define SL_LV_SCRRUNING     0xD8
+#define SL_LV_SCRIZERO      0xD9
+#define SL_LV_MPWMOUT		0xDA		
+#define SL_LV_STATE		    0xDB		
+
 
 //flag[14]
-#define SL_RESET            0xE0
-#define SL_SIOVST           0xE1
-#define SL_NPR_TLOV         0xE2
-#define SL_MPR_TLOV         0xE3
-#define SL_STACKEEPON		0xE4			//=1¶¨×Ó²¢ÍøµçÁ÷½Ï´ó£¬¶¨×Ó½Ó´¥Æ÷½ûÖ¹¶Ï¿ª 20100510
-#define	SL_TAOV				0xE5			//=1Íø²à³¬ÎÂ
-#define SL_TBOV			    0xE6			//=1»ú²à³¬ÎÂ
-#define SL_SKTOV            0xE7            //=1Èí¼şÅĞ¶ÏSKIIP³¬ÎÂ
-#define SL_SERIESTOPING    	0xE8			//=1ÕıÔÚÑÏÖØ¹ÊÕÏÍ£»ú¹ı³Ì 
-#define	SL_ERRSTOPING       0xE9      		//=1ÕıÔÚÒ»°ã¹ÊÕÏÍ£»ú¹ı³Ì
-#define SL_NORSTOPING       0xEA            //=1ÕıÔÚÕı³£Õı³£Í£»ú¹ı³Ì
-#define	SL_UDSTACOK       	0xEB      		//=1¶¨×ÓÑ¹²î´ïµ½²¢Íøõ¼
-#define SL_CBON_FH       	0xEC            //=1CBON²½Öè±êÖ¾Î»
-#define SL_SERSTOP_FH       0xED            //=1SERSTOP²½Öè±êÖ¾Î»
-#define SL_HIDCOV         	0xEE			//=1ÖĞ¼äÖ±Á÷Õ¶²¨IGBTÓ²¼ş¹ÊÕÏ20120228atbjtu_chopper	BJTULVRT201204
-#define SL_SYN_FH         	0xEF   			//SYN²½Öè±êÖ¾Î»    		    
+#define SL_RESET            0xE1
+#define SL_SIOVST           0xE2
+#define SL_NPR_TLOV         0xE3
+#define SL_MPR_TLOV         0xE4
+#define SL_DRAW			    0xE5			//=1»æÍ¼
+#define SL_CHARGEOK			0xE6			//=1Ô¤³äµçÍê³É
+#define SL_SPEED_IN_RANGE	0xE7			//=1×ªËÙÔÚ·¶Î§ÒÔÄÚ
+#define SL_CONFIGPWM		0xE8			//=1 PWMÂö³åÅäÖÃÍê³É±êÖ¾Î»,²¢ÇÒ±£Ö¤ConfigPwm()Ö»ÄÜÔËĞĞÒ»´Î
+#define SL_RUN				0xE9			//=1ÏµÍ³ÔËĞĞ
+#define SL_STACTRIPEN		0xEA			//=1£¬¶¨×ÓµçÁ÷ºÜĞ¡£¬¶¨×Ó½Ó´¥Æ÷¶Ï¿ªÔÊĞí
+#define	SL_TAOV				0xEB			//Íø²à³¬ÎÂ
+#define SL_TBOV			    0xEC			//»ú²à³¬ÎÂ
+#define SL_SKTOV            0xED            //Èí¼şÅĞ¶ÏSKIIP³¬ÎÂ
+#define SL_NPR_PWMOUT       0xEE            //Íø²àÂö³åÒÑ¾­Ê¹ÄÜ±êÖ¾Î»,²¢ÇÒ±£Ö¤Enepwmio_NPR()Ö»ÄÜÔËĞĞÒ»´Î
+#define SL_MPR_PWMOUT       0xEF            //»ú²àÂö³åÒÑ¾­Ê¹ÄÜ±êÖ¾Î»,²¢ÇÒ±£Ö¤Enepwmio_MPR()Ö»ÄÜÔËĞĞÒ»´Î
+
+
 
 
 //------------------------------------const¶¨Òå--------------------------------------------
@@ -674,71 +580,18 @@ const  Uint16 ONEBYTE[8]={0x0080,0x0040,0x0020,0x0010,0x0008,0x0004,0x0002,0x000
 //AD1544Í¨µÀÑ¡Ôñ
 const  Uint16 AD1544[4]={0x0000,0x2000,0x4000,0x6000};		
 //--------------------------------------±äÁ¿¶¨Òå-------------------------------------------
-Uint16	flag[16];													//±êÖ¾Î»±äÁ¿
-//Uint16	disp[15];													//±êÖ¾±äÁ¿
-
-//---2013-12-13--ZZJÔö¼Óµç»úÀø´Å
-//------------------------µç»úÀø´Å²ÎÊıÊ¶±ğMagnetCurve200909------------------------------------
-struct	MC_DATA{
-	float   x[6];
-	float   y[6];
-	float   temp[6];
-	float   k;
-	float   in;
-}MC_DATA;
-float   MC_y_test;
-float   MC_U_test; 
-float	Uns_ft;
-Uint16	MC_N_test;
-Uint32	MC_F_cnt;
-//---2013-12-13--ZZJÔö¼Óµç»úÀø´Å
-
-Uint32	QEP_CNT1;
-Uint32	QEP_CNT2;
-int16	QEPPHE_N;
-
-
-float   pll_theta; 				//201011PLL
-float   ptheta;
-float   ntheta; 
-float temp_pd;
-float temp_pq;
-float temp_nd;
-float temp_nq; 
-float   NGS_Udq_lv;
-
-float   NGS_Udq_p;
-float   NGS_Udq_n;
-float   NGS_Udq_epsilon;
-float   NGS_Udq_p_ex;		//20130206
-float   NGS_Udq_epsilon_lv;	//20130301
-float   NGS_Udq_pflt;		//20130301
-
-float   LV_A1;				//201011LVRT
-float   LV_A2;
-float   LV_T1;
-float   LV_T2;
-
-float   lv_flag_flt;		//2013-12-6 LVRT±êÖ¾Î»ÑÓÊ±¼ÆÊıÆ÷
+Uint16	flag[15];													//±êÖ¾Î»±äÁ¿
+Uint16	disp[15];													//±êÖ¾±äÁ¿
 
 //ModbusRS485
 Uint16  length485;													//modbus
-Uint16  longtx_num;													//modbus
+
+
 
 float   RUN_mpridrf_exi;
 Uint16  RUN_mpriq;
 Uint16  _OUT3_TEST;
 Uint16  _NQEPPCO;
-Uint16  R_SCOUT;
-float   Ud_lv;
-float   temp_ud;
-
-//float   NGS_Udq_p;
-//float   NGS_Udq_epsilon;
-float   NGS_Udq;
-float   PHAI_d;
-float   PHAI_q;
-float   PHAI_dq;
 
 int32   ET_SUM1;
 int32   ET_SUM2;
@@ -754,15 +607,10 @@ float   u_alfa_MPR=0,u_beta_MPR=0;
 
 //¸ø¶¨Öµ¼Ä´æÆ÷
 struct	GIVE{
-	float   urf;					   //Íø²àÖĞ¼äÖ±Á÷µçÑ¹¸ø¨Öµ
+	float   urf;					   //Íø²àÖĞ¼äÖ±Á÷µçÑ¹¸ø¶¨Öµ
 	float   npriqrf;                   //Íø²àÎŞ¹¦µçÁ÷¸ø¶¨Öµ(½öÍø²àÎŞ¹¦ÔËĞĞÊ±Ê¹ÓÃ)
 	float   toqrf;                      //»ú²à×ª¾Ø¸ø¶¨Öµ(ÓĞ¹¦)
 	float   anglerf;                    //»ú²à¹¦ÂÊÒòÊı½Ç¶È¸ø¶¨Öµ(ÎŞ¹¦) ½Ç¶È
-	float   lvwtiqrf;                   //µÍµçÑ¹´©Ô½ÆÚ¼ä»ú×é×ÜÎŞ¹¦µçÁ÷Ö¸Áî20121103
-	float   toqrfrun;                  //»ú²à×ª¾Ø¸ø¶¨Öµ(ÓĞ¹¦)201205LVRTatZB
-	float   toqrfflt;                   //»ú²à×ª¾Ø¸ø¶¨Öµ(1s´óÂË²¨Æ½¾ùÖµ)201205LVRTatZB
-	float   npriqrf_cl;                   //Íø²àÎŞ¹¦µçÁ÷¸ø¶¨Öµ(½öÍø²àÎŞ¹¦ÔËĞĞÊ±Ê¹ÓÃ)201205LVRTatZB
-	float   toqrf_lv;                      //»ú²à×ª¾Ø¸ø¶¨Öµ(ÓĞ¹¦)	20130128
 }GIVE;
 float OCS_Trf;                          //Ö÷¿Ø¸ø¹ıÀ´µÄ×ª¾ØÖ¸Áî
 
@@ -788,7 +636,6 @@ struct	RUN{
 
 	float   mpridrf_g;						
 	float   mpriqrf_g;					
- 	float   mpriqrf_g_exlv;					//20130221
     
     float   radianrf;
 	float   mpridrf_exi;
@@ -810,42 +657,12 @@ struct	TRANS_DATA{
 	float amp;			//·ùÖµ
 	float ampflt;		//ÂË²¨ºó·ùÖµ
 	float dflt2;	   	//Ğ¡ÂË²¨ºódÖµ20091027atzyÎªÁË¼ì²âµçÍøµøÂä
-//--------20121103--------
-	float dpll;	   		//201011PLL
-	float qpll;	   		//201011PLL
-	float palfa;	    
-	float pbeta;	 
-	float pd;		   	
-	float pq;       
-	float nalfa; 	
-	float nbeta;
-	float nd;		   
-	float nq;
-    float de_pd;
-    float de_pq;
-    float de_nd;
-    float de_nq;
-    float de_fltpd;
-    float de_fltpq;
-    float de_fltnd;
-    float de_fltnq;
-	float de_psintheta;
-	float de_pcostheta;	 
-	float de_nsintheta;
-	float de_ncostheta;	 //201011PLL 
-	float dbsf;		//BJTULVRT201204
-	float qbsf;	
-	float dnbsf;		//BJTULVRT201204
-	float qnbsf;	
-    float ab;          //ab BJTULVRT201204
-	float bc;           //bc
-
 };																 
-struct	TRANS_DATA TRS_NPR_I;   //Íø²à±äÁ÷Æ÷µÄµçÁ÷£¨ÕâÀïNPR×÷Îªºó×º£¬²»ÓÃgrd£¬ÒÔÇø·ÖµçÍøµçÁ÷»¹ÊÇÍø²à±äÁ÷Æ÷µçÁ÷£©
+struct	TRANS_DATA TRS_NPR_I;   //Íø²à±äÁ÷Æ÷µÄµçÁ÷£¨ÕâÀï²ÉÓÃNPR×÷Îªºó×º£¬²»ÓÃgrd£¬ÒÔÇø·ÖµçÍøµçÁ÷»¹ÊÇÍø²à±äÁ÷Æ÷µçÁ÷£©
 struct	TRANS_DATA TRS_MPR_I;   //»ú²à±äÁ÷Æ÷µÄµçÁ÷
 struct	TRANS_DATA TRS_MPR_U;   //»ú²à±äÁ÷Æ÷ËãÂö³åÓÃ
 struct	TRANS_DATA TRS_NPR_U;   //Íø²à±äÁ÷Æ÷ËãÂö³å
-struct	TRANS_DATA TRS_NGS_U;   //ø²àµçÍøµçÑ¹
+struct	TRANS_DATA TRS_NGS_U;   //Íø²àµçÍøµçÑ¹
 struct	TRANS_DATA TRS_STA_I;   //¶¨×ÓµçÁ÷
 struct	TRANS_DATA TRS_STA_U;   //¶¨×ÓµçÑ¹
 struct	TRANS_DATA TRS_GSTA_U;  //Ä¿±ê¶¨×ÓµçÑ¹
@@ -856,16 +673,7 @@ struct	TRANS_DATA DIP_NPR_I;  //ÓÃÓÚ¹¦ÂÊ¼ÆËã
 struct	TRANS_DATA DIP_STA_U;  //ÓÃÓÚ¹¦ÂÊ¼ÆËã 
 struct	TRANS_DATA DIP_STA_I;  //ÓÃÓÚ¹¦ÂÊ¼ÆËã 
 struct	TRANS_DATA DIP_MPR_I;  //ÓÃÓÚ¹¦ÂÊ¼ÆËã  
-struct	TRANS_DATA TRS_GAC_U;  //ÓÃÓÚ201011PLL	
-struct	TRANS_DATA TRS_SCR_I;   //»ú²àcrowbarµçÁ÷BJTULVRT201204
 
-struct I_DATA_PLL				//201011PLL
-{
-   	float last;
-   	float out0;
-   	float out1;
-	float out;
-}I_DATA_PLL; 
 
 //PI»·Ïà¹Ø¼Ä´æÆ÷
 struct PI_DATA
@@ -876,8 +684,6 @@ struct PI_DATA
 	float error;								//Îó²î
 	float integrator;							//Ç°´Î»ıÖ½á¹û
 	float out;
-	float last;							//201011PLL
-	float outflt;						//201011PLL 
 };  
 struct PI_DATA PI_NPR_Id;				//Íø²à±äÁ÷Æ÷dÖáµçÁ÷±Õ»·
 struct PI_DATA PI_NPR_Iq;				//Íø²à±äÁ÷Æ÷qÖáµçÁ÷±Õ»·
@@ -887,8 +693,6 @@ struct PI_DATA PI_NPR_U;				//Íø²à±äÁ÷Æ÷µçÑ¹»·
 struct PI_DATA PI_MPR_U;				//Èí²¢Íø±Õ»·
 struct PI_DATA PI_STA_Id;				//Àø´Å¿ØÖÆd
 struct PI_DATA PI_STA_Iq;				//Àø´Å¿ØÖÆq 
-struct PI_DATA PI_DATA_PLL;				//201011PLL
-struct PI_PARA PI_PARA_DYMI;			//¶¯Ì¬¿í´ø¿íPI¿ØÖÆBJTULVRT201204
 
 struct PI_PARA
 {
@@ -911,33 +715,31 @@ struct PI_PARA PI_PARA_DYNID;
 struct PI_PARA PI_PARA_DYNIQ;
 struct PI_PARA PI_PARA_MPRI;
 struct PI_PARA PI_PARA_STAI;
-struct PI_PARA PI_PARA_PLL;				//201011PLL
 
 
 //÷Ñ­»·¶¨Ê±Æ÷¼°ÑÓÊ±¼ÆÊıÆ÷
 struct	MAIN_LOOP{
-	int32 cnt1;					//Ö÷Ñ­·¶¨Ê±¼ÄæÆ÷5ms
+	int32 cnt1;					//Ö÷Ñ­»·¶¨Ê±¼ÄæÆ÷5ms
 	int32 cnt2;					//Ö÷Ñ­»·¶¨Ê±¼Ä´æÆ÷10ms
 	int32 cnt3;					//Ö÷Ñ­»·¶¨Ê±¼Ä´æÆ÷20ms
 	int32 cnt4;					//Ö÷Ñ­»·¶¨Ê±¼Ä´æÆ÷50ms
-	int32 cnt5;					//÷Ñ­»·¶¨Ê±¼Ä´æÆ÷100ms
-	int32 cnt6;					//Ö÷Ñ­»·¶¨Ê±¼Ä´æ÷1000ms
+	int32 cnt5;					//Ö÷Ñ­»·¶¨Ê±¼Ä´æÆ÷100ms
+	int32 cnt6;					//Ö÷Ñ­»·¶¨Ê±¼Ä´æÆ÷1000ms
+
 	int32 pulse;				//Ö÷Ñ­»··ÖÊ±Âö³å¼Ä´æÆ÷
-    int32 cnt_AMUX;            	//ÂıËÙAD
 	
 	int32 cnt_poweron;			//preparation time delay
 	int32 cnt_pwmout;			//PWMÊä³öÑÓÊ±
 	int32 cnt_nprlamp;			//Íø²àÂö³å·¢³öÖ¸Ê¾µÆÉÁË¸ÑÓÊ±¼ÆÊı
 	int32 cnt_mprlamp;			//»ú²àÂö³å·¢³öÖ¸Ê¾µÆÉÁË¸ÑÓÊ±¼ÆÊı 
-	int32 cnt_freq;			   	//ÆµÂÊÆ«ÒÆ¼Æ±
+
+	int32 cnt_freq;			   //ÆµÂÊÆ«ÒÆ¼Æ±
+	int32 cnt_freq2;
 	int32 cnt_cbfreq;
 	int32 cnt_estop;
 	int32 cnt_rcvr;				//¹ÊÕÏÑÓÊ±»Ö¸´¼ÆÊ±
-	int32 cnt_otser;			//ÑÏÖØ¹ÊÕÏÑÓÊ±
-	int32 cnt_datasave;
-	int32 cnt_datasave2;
+	int32 cnt_otser;			//¬ÊÑÏÖØÑÓÊ?
 
-	int32 cnt_detectdelay;		//¿ª¹ØÒâÍâ¶¯×÷ÇĞ»»ÑÓ±	110818
 	int32 cnt_exfault;
 	int32 cnt_cbtp;
 	int32 cnt_cberror;
@@ -949,15 +751,8 @@ struct	MAIN_LOOP{
 	int32 cnt_qgovload;
 	int32 cnt_canfault;
 	int32 cnt_speedout;
-	int32 cnt_uaclv1;   		//20091027atzy		
-	int32 cnt_gfault1;			//ø²à½ÓµØ¹ÊÕÏ
-	int32 cnt_gfault2;			//»ú²à½ÓµØ¹ÊÕÏ
-	int32 cnt_synfail;			//Í¬²½²¢ÍøÊ§¹ÊÕÏ
-	int32 cnt_nprtlov;			//Íø²àµç¸Ğ³¬ÎÂ
-	int32 cnt_mprtlov;			//»ú²àµç¸Ğ³¬ÎÂ
-	int32 cnt_nskiptov;			//Íø²àSKIIP³¬ÎÂ
-	int32 cnt_mskiptov;			//»ú²àSKIIP³¬ÎÂ
-	int32 cnt_steadyfb;			
+	int32 cnt_uaclv1;   //20091027atzy
+		
 
 	int32 cnt_isteady0;
     int32 cnt_mprsteady0;
@@ -967,24 +762,25 @@ struct	MAIN_LOOP{
 	int32 cnt_qepcntok;
 	int32 cnt_qcapdisturb;
 
-	int32 cnt_ecposcheck;		//»ú²àÆô¶¯ÑÓ³Ù¼ì²â 20130801
-	int32 cnt_ecpostrace;		//Ã¿´Î½Ç¶È±ä»¯£¬ÑÓ³ÙÅĞ¶Ï 20130801
 //sysctl_zl_start
-    int32 cnt_cbon;      		//Ö÷¶Ï±ÕºÏ×Ó³ÌĞò
-	int32 cnt_errstop;          //Ò»°ã¹ÊÕÏÍ£»ú
-	int32 cnt_serstop;          //ÑÏÖØ¹ÊÕÏÍ£»ú
-	int32 cnt_norstop;         	//Õı³£Í£»ú
-	int32 cnt_epwmstop;         //Ò»°ã¹ÊÕÏ·âÂö³åºóÑÓÊ±¶ÏÖ÷¶Ï20110829
-	int32 cnt_synrun;          	//²¢Íø     
-	int32 cnt_sysoff;         	//Õı³£Í£»úÑÓ³Ù£¬20120321
+    int32 cnt_opencontac;      //ÑÏÖØ²»¿É»Ö¸´¹ÊÕÏÏÂ£¬·¢³ö¶ÏÖ÷¶ÏÖ¸Áîºóµ½·¢³ö¶Ï¶¨×Ó½Ó´¥Æ÷ºÍÖ÷½Ó´¥Æ÷µÄÑÓÊ±
+
+	int32 cnt_mkoff;           //½ÓÊÕµ½ÏµÍ³Í£»úÖ¸Áîºó£¬ÑÓÊ±¶ÏÖ÷½Ó´¥Æ÷
+	int32 cnt_cboff;           //½ÓÕµ½ÏµÍ³Í£»úÖ¸Áîºó£¬ÑÓÊ±¶ÏÖ÷¶Ï¼ÆÊı
+
+	int32 cnt_closecb;         //Õı³£Æô¶¯/Í£Ö¹£¬Ö÷¶Ï´¢ÄÜµ½Ö÷¶ÏºÏÕ¢µÄÑÓÊ±¼ÆÊı
+	int32 cnt_precok;          //Õı³£Æô¶¯/Í£Ö¹£¬¼ì²âµ½Vdc´ïµ½950Vµ½·¢³öºÏÖ÷½Ó´¥Æ÷Ö¸ÁîµÄÑÓÊ±¼ÆÊı
+	int32 cnt_steadyfb;        //Õı³£Æô¶¯/Í£Ö¹£¬¼ì²âµ½VdcÎÈ¶¨ÔÚ1100Vµ½ÔÊĞí»ú²àÂö³åµÄÑÓÊ±¼ÆÊı
+
+	int32 cnt_mprstart;
 //sysctl_zl_end 
+    int32 cnt_AMUX;            //ÂıËÙAD
 	int32 cnt_reset;
     int32 cnt_clostacmd;
 	int32 cnt_nprcmd;
 	int32 cnt_mprcmd;
-	int32 cnt_ein;
-	int32 cnt_sysrun;
-	int32 cnt_prec;	
+
+	int32 cnt_async;
 
 	//canopen
 	int32 canopen_rx;
@@ -999,61 +795,13 @@ struct	MAIN_LOOP{
 	int32 cnt_ocssysrun1;     
 	int32 cnt_ocssysrun2;
 
+	int32 cnt_datasave;
 //LVRT
 	int32 cnt_scrizero;
 	int32 cnt_lv_scron;
 	int32 cnt_lv_mpwmstart;
 	int32 cnt_lv_mpwmstop;
 	int32 cnt_mpwmrestart;
-	int32 cnt_npwmrestart;
-	int32 cnt_lv_state;
-	int32 cnt_lv_rcv;
-	int32 cnt_lv_time;
-	int32 cnt_lv_test;
-	int32 cnt_scrondelay;
-	int32 cnt_lv_fault1;
-	int32 cnt_lv_fault2;
-	int32 cnt_mc_ack;   		//MagnetCurve2013-12-13	
-	
-	int32 cnt_resetrn;
-	int32 cnt_phorde;   		//201005atcpc	
-	int32 cnt_encofault;   		//201005atcpc	
-//------20121103atsp-------
-	int32 cnt_lv_test2;
-	int32 cnt_lv_unbalance;		
-	int32 cnt_lv_qworking;	
-	int32 cnt_scrizero2;
-	int32 cnt_lv_phicontrol;	
-	int32 cnt_lv_lowpi;	
-	int32 cnt_lv_mpridvar;	
-	int32 cnt_lv_utlv;
-	int32 cnt_idcov;
-	int32 cnt_idcovdelay;
-	int32 cnt_freqrecv;			//201011PLL
-	int32 cnt_lv_irqdelay;		//20121202
-	int32 cnt_vdscron;			//20121203
-	int32 cnt_vdscroff;			//20121203
-
-//--------20130225atsp--------
-	int32 cnt_lv_scroff1;		//20121210
-	int32 cnt_lv_scroff2;		//20121210
-	int32 cnt_lv_scroff3;		//20130221
-	int32 cnt_lv_unblcscroff1;		//20121210
-	int32 cnt_lv_unblcscroff2;		//20121210
-
-	int32 cnt_lv_nprqworking;		//20130124
-	int32 cnt_lv_npriqrf;			//20130124
-	int32 cnt_lv_mpridrf;			//20130130
-	int32 cnt_lv_kq;				//20130124
-	int32 cnt_lv_unblcscroff3;		//20130124
-	int32 cnt_lv_recmstop;			//20130124
-	int32 cnt_lv_dlrecmstop;		//20130130
-	int32 cnt_lv_xnzkkz;			//20130202
-	int32 cnt_jgvdscron;			//20130205
-	int32 cnt_lv_reciq;				//20130205
-	int32 cnt_lv_holdpow;			//20130205
-	int32 cnt_lv_scrkeepon;			//20130221
-	int32 cnt_chopper;				//2013-12-6	ZZJÕ¶²¨²âÊÔ
 
 }MAIN_LOOP;  
 
@@ -1072,9 +820,6 @@ struct  AMUX{
 	float skiiptempmax;    //SKIIPÄ£¿éµÄÎÂ¶È×î´óÖµ
 	float NPR_skiiptemp;    //Íø²àSKIIPÄ£¿éµÄÎÂ¶È×î´óÖµ
 	float MPR_skiiptemp;    //»ú²àSKIIPÄ£¿éµÄÎÂ¶È×î´óÖµ
-	float Lac_R;   			//½»Á÷µç¸Ğpt100
-	float Ldudt_R; 			//du/dtµÄpt100
-
 }AMUX;
 
 //ADÄ£¿é´¦Àí¼Ä´æÆ÷
@@ -1092,9 +837,8 @@ struct	ADFINAL{
 	int16  ia2;				//µç»ú²àAÏàµçÁ÷
 	int16  ib2;				//µç»ú²àBÏàµçÁ÷
 	int16  ic2;				//µç»ú²àBÏàµçÁ÷
-	int16  isa;              //¶¨×ÓµçÁ÷AÏà 
-    int16  isc;              //¶¨×ÓµçÁ÷CÏà
-    int16  idc;              //chopperµçÁ÷
+	int16  ia;              //¶¨×ÓµçÁ÷AÏà 
+    int16  ib;              //¶¨×ÓµçÁ÷BÏà
     int16  freq;            //VVVFµ÷ÊÔÊ±ÓÃ×öµçÎ»Æ÷¸ø¶¨ÆµÂÊ
 	int16  uab1;			//Íø²àabÏßÑ¹
 	int16  ubc1;			//Íø²àbcÏßÑ¹
@@ -1106,9 +850,6 @@ struct	ADFINAL{
     int16  ubc;			    //Ö÷¶ÏÇ°bcÏßÑ¹
 	int16  uab;			    //Ö÷¶ÏÇ°abÏßÑ¹
     int16  AMUX;            //ÂıËÙADĞÅºÅ
-
-
-
 }ADFINAL;
    
 
@@ -1120,8 +861,7 @@ struct AD_DATA{
 	  float  ab;
 	  float  bc;
 	  float  ac;
-	  float  cb;
-	  float  ba;
+	  float  ba; 
 	  float  a_temp;
 	  float  b_temp;
 	  float  c_temp;
@@ -1141,9 +881,9 @@ struct AD_DATA AD_OUT_STA_I;  //¶¨×Ó²àµçÁ÷
 struct AD_DATA AD_OUT_NGF_U;  //µçÍøµçÑ¹£¨Ö÷¶Ïºó£©´óÂË²¨Í¨µÀ
 struct AD_DATA AD_OUT_STAD_U;  //²îÖµ
 struct AD_DATA AD_OUT_SCR_I;  //ACTIVECROWBARµçÁ÷  
-struct AD_DATA AD_OUT_DC_I;  //CHOPPERµçÁ÷  
+ 
 
-float  AD_OUT_UDC; //AD¼ÆËãºóÊä³öµÄÖ±Á÷µç¹£¨V£©
+float  AD_OUT_UDC; //AD¼ÆËãºóÊä³öµÄÖ±Á÷µçÑ¹£¨V£©
 
 //ÇóÆ½¾ùÖµ
 struct MEAN_DATA{
@@ -1152,10 +892,10 @@ struct MEAN_DATA{
 	   float ia3,ib3,ic3;  			//¶¨×Ó²àµçÁ÷Æ½¾ùÖµÂË²¨
 	   float uab1,ubc1;	   			//Íø²àµçÑ¹Æ½¾ùÖµÂË²¨
 	   float uab2,ubc2;	   			//¶¨×Ó²àµçÑ¹Æ½¾ùÖµÂË²¨
-	   float uab3,ubc3;	   			//Ö÷¶ÏºóµçÍøµçÑ¹,´óÂË²¨Í¨µÀmagnetCurve2013-12-13
 	   float ua1,ub1,uc1;	   		//Íø²àµçÑ¹Æ½¾ùÖµÂË²¨
 	   float uab_d,ubc_d;	   		//Íø²àÓë¶¨×Ó²àµçÑ¹Æ½¾ùÖµ²î ´óÂË²¨Í¨µÀ
 	   float zfia1,zfib1,zfic1; 	//Íø²àµçÁ÷´«¸ĞÆ÷ÁãÆ¯ÂË²¨
+	   float zfia2,zfib2,zfic2; 	//»ú²àµçÁ÷«¸ĞÆ÷ÁãÆ¯ÂË²¨
 	   float zfia3,zfib3,zfic3; 	//¶¨×Ó²àµçÁ÷´«¸ĞÆ÷ÁãÆ¯ÂË²¨
 	   float zfuab1,zfubc1; 		//Íø²àµçÑ¹´«¸ĞÆ÷ÁãÆ¯ÂË²¨
 	   float zfuab2,zfubc2; 		//¶¨×ÓµçÑ¹´«¸ĞÆ÷ÁãÆ¯ÂË²¨
@@ -1164,11 +904,9 @@ struct MEAN_DATA{
 	   float uab,ubc;	   			//Ö÷¶ÏÇ°Íø²àµçÑ¹Æ½¾ùÖµÂË²¨
 	   float zfuab,zfubc; 		    //Ö÷¶ÏÇ°µçÑ¹´«¸ĞÆ÷ÁãÆ¯ÂË²¨
 	   float udc;
-	   float iac3,iba3,icb3;				//¶¨×Ó²àµçÁ÷Æ½¾ùÖµÂË²¨
-	   float psactive;				//¶¨×Ó²àµçÁ÷Æ½¾ùÖµÂË¨
-	   float Lac_temp,Ldudt_temp;   //µç¸ĞÎÂ¶ÈÂË²¨
-	   float ubc_t;					//20130801
-	   	   
+	   float iac3,iba3;				//¶¨×Ó²àµçÁ÷Æ½¾ùÖµÂË²¨
+	   float psactive;				//¶¨×Ó²àµçÁ÷Æ½¾ùÖµÂË²¨
+	   
 }MEAN_DATA;  
 
 //±£»¤Ä£¿é½á¹û±äÁ¿
@@ -1184,24 +922,24 @@ struct	PRO{
 				float	GID_ubc;								//µçÍø²à bcÏßµçÑ¹Êµ¼ÊÖµ(V) 20091026atzy
 				float	rcvr;									//ÑÓ³Ù»Ö¸´Ê±¼ä
 				float   STA_iac;                            	//¶¨×Ó½»Á÷µçÁ÷iac
-				float   STA_icb;                            	//¶¨×Ó½»Á÷µçÁ÷iba
+				float   STA_iba;                            	//¶¨×Ó½»Á÷µçÁ÷iba
    				float   NPR_TLOV;                            	//Íø²àµç¸ĞÎÂ¶È
 				float   MPR_TLOV;                            	//»ú²àµç¸ĞÎÂ¶È 
 				float   speed;                               	//µç»ú×ªËÙ r/min
 				float   speedflt;                               //20090815
 				float   sta_iar;	  							//¶¨×Ó²àaÏàµçÁ÷A RMS
 				float   sta_ibr;	  							//¶¨×Ó²àbÏàµçÁ÷A RMS
-				float   sta_icr;	  							//¶¨×ÓàcµçÁ÷A RMS
+				float   sta_icr;	  							//¶¨×Ó²àcÏàµçÁ÷A RMS
 				float   sta_uar;	  							//¶¨×Ó²àaÏàµçÑ¹V RMS
 				float   sta_ubr;	  							//¶¨×Ó²àbÏàµçÑ¹V RMS
-				float   sta_ucr;	 							//¶¨×ÓàcàµçÑ¹V RMS
+				float   sta_ucr;	 							//¶¨×Ó²àcÏàµçÑ¹V RMS
 				float   npr_uar;	  							//Íø²àaÏàµçÑ¹V RMS
 				float   npr_ubr;	  							//Íø²àbÏàµçÑ¹V RMS
 				float   npr_ucr;	  							//Íø²àcÏàµçÑ¹V RMS
 				float   npr_iar;   								//Íø²à,AÏà²¢ÍøµçÁ÷ÓĞĞ§Öµ,µ¥Î»A
 				float   npr_ibr;	  							//Íø²à,BÏà²¢ÍøµçÁ÷ĞĞ§Öµ,µ¥Î»A
-				float   npr_icr;	  							//ø²à,CÏà²¢øµçÁ÷ÓĞĞ§Öµ,µ¥Î»A
-				float   Psactive; 								//¶¨×Ó²àĞ¹¦¹¦ÂÊ
+				float   npr_icr;	  							//Íø²à,CÏà²¢ÍøµçÁ÷ÓĞĞ§Öµ,µ¥Î»A
+				float   Psactive; 								//¶¨×Ó²àÓĞ¹¦¹¦ÂÊ
 				float   Psreactive; 							//¶¨×Ó²àÎŞ¹¦¹¦ÂÊ
 				float   Ps;          							//¶¨×Ó²àÊÓÔÚ¹¦ÂÊ
 				float   Pnactive;    							//Íø²àÓĞ¹¦¹¦ÂÊ
@@ -1210,32 +948,22 @@ struct	PRO{
 				float   Pgactive;    							//²¢Íø×ÜµÄÓĞ¹¦¹¦ÂÊ	
 				float   Pgreactive;  							//Íø²à×ÜÄŞ¹¦¹¦ÂÊ				
 				float   Pg;       								//¢Íø×ÜµÄÊÓÔÚ¹¦ÂÊ
-				float	CHOP_idc;								//chopperµçÁ÷ÕıÊµ¼ÊÖµ(A)20120228	BJTULVRT201204
-				float   Psactive2; 								//¶¨×Ó²àÓĞ¹¦¹¦ÂÊ
-				float   Psreactive2; 							//¨×Ó²àŞ¹¦¹¦ÂÊ
-				float   Pnactive2;    							//Íø²àÓĞ¹¦¹¦ÂÊ
-				float   Pnreactive2;  							//Íø²àÎŞ¹¦¹¦ÂÊ
-				float   Pgactive2;    							//²¢Íø×ÜµÄÓĞ¹¦¹¦ÂÊ	
-				float   Pgreactive2;  							//Íø²à×ÜÄŞ¹¦¹¦ÂÊ				
-
-				float   Pgactive_lv;   							//LVRTÇ°µÄ¹¦ÂÊ20121210	
-
 		   }PRO; 
  
 //ÏÔÊ¾à¿Ø±äÁ¿
 struct	DISP{										
     			float  npr_iai;   //Íø²à,AÏà²¢ÍøµçÁ÷Ë²Ê±Öµ,µ¥Î»A
 				float  npr_ibi;	  //Íø²à,BÏà²¢ÍøµçÁ÷Ë²Ê±Öµ,µ¥Î»A
-				float  npr_ici;	  //Íøà,CÏà²¢ÍøçÁ÷Ë²Ê±Öµ,¥Î»A
+				float  npr_ici;	  //Íøà,CÏà²¢ÍøçÁ÷Ë²Ê±Öµ,µ¥Î»A
 				float  mpr_iai;	  //µç»ú²à,AÏàµçÁ÷Ë²Ê±Öµ,µ¥Î»A
 				float  mpr_ibi;	  //µç»ú²à,BÏàµçÁ÷±Öµ,µ¥Î»A
-				float  mpr_ici;   //µç»ú²à,CÏàµçÁ÷Ê±Öµ,µ¥Î»A
+				float  mpr_ici;   //µç»ú²à,CÏàµçÁ÷²Ê±Öµ,µ¥Î»A
 				float  npr_iar;   								//Íø²à,AÏà²¢ÍøµçÁ÷ÓĞĞ§Öµ,µ¥Î»A
 				float  npr_ibr;	  							//Íø²à,BÏà²¢Íøµç÷ĞĞ§Öµ,µ¥Î»A
 				float  npr_icr;	  							//Íø²à,CÏà²¢ÍøµçÁ÷ÓĞĞ§Öµ,µ¥Î»A
 				float  mpr_iar;	  //çú²à,AÏàµçÁ÷ÓĞĞ§Öµ,µ¥Î»A
 				float  mpr_ibr;	  //µç»ú²à,BÏàµçÁ÷ÓĞĞ§Öµ,µ¥Î»A
-				float  mpr_icr;   //µç»ú²à,CàµçÁ÷ÓĞĞ§Öµ,¥Î»A 
+				float  mpr_icr;   //µç»ú²à,CÏàµçÁ÷ÓĞĞ§Öµ,¥Î»A 
     			float  npr_uab;	  //Íø²àabÏàµçÑ¹V RMS
 				float  npr_ubc;	  //Íø²àbcÏàµçÑ¹V RMS
 
@@ -1248,7 +976,7 @@ struct	DISP{
 				float  grd_ubc;   //Ö÷¶ÏÇ°Íø²àbcµçÑ¹V RMS
 				float  uab23;     //¶¨×ÓÍ¬²½²¢ÍøÇ°¶¨×ÓÇ°ºóabµçÑ¹²î V
 				float  ubc23;     //¶¨×ÓÍ¬²½²¢ÍøÇ°¶¨×ÓÇ°ºóbcµçÑ¹²î V			
-				float  Lac_temp;  //Íø²àç¸ĞÎÂ¶È ÉãÊÏ¶È
+				float  Lac_temp;  //Íø²àµç¸ĞÎÂ¶È ÉãÊÏ¶È
 				float  Ldudt_temp;  //»ú²àµç¸ĞÎÂ¶È ÉãÊÏ¶È
 				float  NPR_skiptemp;  //SKIIPÎÂ¶È ÉãÊÏ¶È
 				float  MPR_skiptemp;  //SKIIPÎÂ¶È ÉãÊÏ¶È
@@ -1262,7 +990,7 @@ struct	DISP{
 				float  aglrf;
 				float  freq;
 				float  speed;
-				float  pionu;   	//ÍøàµçÑ¹»·Ê³ö
+				float  pionu;   	//ÍøàµçÑ¹»·Êä³ö
 				float  pionid;		//Íø²àµçÁ÷d»·Êä³ö
 				float  pioniq;		//Íø²àµçÁ÷q»·Êä³ö
 				float  mexi;		//
@@ -1294,7 +1022,6 @@ struct CAP_DATA	{
 					float	    mprtrstheta;		//»úàËã·¨Õı±ä»»½Ç¶È
 					float	    mpratitheta;		//»ú²àËã·¨·´±ä»»½Ç¶È
 					float	    stavectheta;	    //¶¨×Ó´ÅÁ´Ïà¶ÔÓëAÏàÖáÏßÎ»ÖÃ	
-					float	    nprtrstheta_lv;		//Íø²àËã·¨Õı±ä»»½Ç¶È 201011LVRT 201011PLL
 				};
 struct CAP_DATA CAP4,CAP5;
 
@@ -1320,7 +1047,7 @@ struct QEPDATA{
 
 //SCIÄ£¿é±äÁ¿
 struct	SCI{
-					Uint16 txb[2100];				//SCIB·¢ËÍÊı¾İ//modbus
+					Uint16 txb[400];				//SCIB·¢ËÍÊı¾İ//modbus
 					Uint16 rxb[SCI485NUM_RX];		//SCIB½ÓÊÕÊı¾İ//modbus
 					int32 cnt_sciover;				//SCI·¢ËÍ/½ÓÊÕ³¬Ê±¶¨Ê±Æ÷
 					int32 cnt_scispace;				//SCI½ÓÊÕµ½·¢ËÍµÄ¼ä¸ô¶¨Ê±Æ÷
@@ -1364,78 +1091,6 @@ struct	RTIMER{
 				Uint16 time[6];				//µ±Ç°Ê±¼ä[5~0]-->Äê ÔÂ ÈÕ Ê± ·Ö Ãë£¨¾ùÎª8Î»Êı¾İ£©
 			  }RTIMER;
 
-//´ÅÁ´¹Û²âBJTULVRT201204
-struct PHI_DATA
-{  
-   float PHId;							//dÖá´ÅÁ´
-   float PHIq;							//qÖá´ÅÁ´
-   float PHIdflt;						//dÖáµçÁ÷²¹³¥Ö¸Áî
-   float PHIqflt;						//qÖáµçÁ÷²¹³¥Ö¸Áî 
-   float PHIdflt2;						//dÖáµçÁ÷²¹³¥Ö¸Áî
-   float PHIqflt2;						//qÖáµçÁ÷²¹³¥Ö¸Áî 
-   float PHIMd;							//dÖá´ÅÁ´ ÓÃÓÚims¶¯Ì¬²¹³¥
-   float PHIMq;							//qÖá´ÅÁ´ ÓÃÓÚims¶¯Ì¬²¹³¥
-   float PHIMdflt;						//dÖá´ÅÁ´ ÓÃÓÚims¶¯Ì¬²¹³¥
-   float PHIMqflt;						//qÖá´ÅÁ´ ÓÃÓÚims¶¯Ì¬²¹³¥ 
-   float Ird;							//dÖá×ª×ÓµçÁ÷
-   float Irq;							//qÖá×ª×ÓµçÁ÷
-   float Isd;							//dÖá¶¨×ÓµçÁ÷
-   float Isq;							//qÖá¶¨×ÓµçÁ÷
-   float Isdflt;							//dÖá¶¨×ÓµçÁ÷
-   float Isqflt;							//qÖá¶¨×ÓµçÁ÷
-   float ISD;							//dÖá¶¨×ÓµçÁ÷
-   float ISQ;							//qÖá¶¨×ÓµçÁ÷
-   float Id;							//dÖáµçÁ÷²¹³¥Ö¸Áî
-   float Iq;							//qÖáµçÁ÷²¹³¥Ö¸Áî
-   float Id_max;						//dÖáµçÁ÷²¹³¥Ö¸ÁîÏŞ·ù
-   float Iq_max;						//qÖáµçÁ÷²¹³¥Ö¸ÁîÏŞ·ù
-   float Id_min;						//dÖáµçÁ÷²¹³¥Ö¸ÁîÏŞ·ù
-   float Iq_min;						//qÖáµçÁ÷²¹³¥Ö¸ÁîÏŞ·ù
-   float theta;							//´ÅÁ´±ä»»½Ç¶È
-   float k;								//Àø´ÅLmĞ£ÕıÏµÊı
-   float PHId0;							//dÖá´ÅÁ´ÎÈÌ¬Öµ 201203
-   float PHIq0;							//qÖá´ÅÁ´ÎÈÌ¬Öµ
-   float IMD;							//×ª×ÓµçÁ÷
-   float IMQ;							//×ª×ÓµçÁ÷
-   float Imd;							//dÖá×ª×ÓµçÁ÷
-   float Imq;							//qÖá×ª×ÓµçÁ÷ 
-   float Imdflt;							//dÖá×ª×ÓµçÁ÷
-   float Imqflt;							//qÖá×ª×ÓµçÁ÷ 
-};
-struct PHI_DATA PHI_DATA_M; 
-
-//201110bs
-struct BS_DATA
-{
-	float in;					//in(k)
-	float inp;					//in(k-1)
-	float infp;					//in(k-2)
-	float out;					//out(k)
-	float outp;					//out(k-1)
-	float outfp;				//out(k-2)
-};  
-struct BS_DATA BS_MPR_Id;				//×ª×Ó²àµçÁ÷dÖá
-struct BS_DATA BS_MPR_Iq;				//×ª×Ó²àµçÁ÷qÖá
-struct BS_DATA BS_STA_Id;				//¶¨×Ó²àµçÁ÷dÖá
-struct BS_DATA BS_STA_Iq;				//¶¨×Ó²àµçÁ÷qÖá
-struct BS_DATA BS_NPR_Ud;				//Íø²à±äÁ÷Æ÷dÖá
-struct BS_DATA BS_NPR_Uq;				//Íø²à±äÁ÷Æ÷dÖá
-struct BS_DATA BS_NPR_Udn;				//Íø²à±äÁ÷Æ÷dÖá
-struct BS_DATA BS_NPR_Uqn;				//Íø²à±äÁ÷Æ÷dÖá
-
-struct BS_PARA
-{
-   float f0;
-   float fb;
-   float outmax;
-};
-struct BS_PARA BS_PARA_MPRI;
-struct BS_PARA BS_PARA_STAI;
-struct BS_PARA BS_PARA_NPRU;
-
-
-
-
 //-----------------------------ÄÚ²¿±äÁ¿----------------------------------------------------------
 Uint16  _NULL_VAL=0;
 Uint16  _MSG_SCOUT1;												//SCOUTĞÅÏ¢¼¶±ğ(Ç°´Î)
@@ -1448,7 +1103,6 @@ float   DM_Lr;							//µ±Ç°ÖØÊÔ´ÎÊı
 float   Te_feedback;                    //Êµ¼Ê×ª¾ØÖµ·´À¡
 float   Pnactive;    					//Íø²àÓĞ¹¦¹¦ÂÊ
 float   Pnreactive;    					//Íø²àÎŞ¹¦¹¦ÂÊ
-float   Pcreactive;    					//Íø²àµçÈİÎŞ¹¦¹¦ÂÊ201205LVRTatZB
 //----------------------------²ÎÊı±äÁ¿------------------------------------------------------------
 Uint16 _MC_TYPE;						//»úĞÍ²ÎÊı
 Uint16 _MC_REV;							//Èí¼ş°æ±¾
@@ -1466,7 +1120,7 @@ Uint16 _MINONTIME;						//Âö³åµÄ×îĞ¡µ¼Í¨Ê±¼ä(us)
 Uint16 _RU_UDCT;						//µçÑ¹Ö¸Áî»ı·ÖÊ±¼ä(ms)
 Uint16 _RU_IDT;							//µçÁ÷Ö¸Áî»ı·ÖÊ±¼ä(ms)
 Uint16 _RU_IQT;							//µçÁ÷Ö¸Áî»ı·ÖÊ±¼ä(ms)
-Uint16 _RU_TOQT;						//×ª¾ØÖ¸Áî»ı·Ö±ä(ms)
+Uint16 _RU_TOQT;						//×ª¾ØÖ¸Áî»ı·ÖÊ±ä(ms)
 Uint16 _RU_AGLT;                        //¹¦ÂÊÒòÊı½ÇÖ¸Áî»ı·ÖÊ±¼ä(ms)
 Uint16 _URF;							//Ö±Á÷µçÑ¹¸ø¶¨Öµ
 Uint16 _MIDRF;							//dÖáµçÁ÷¸ø¶¨Öµ
@@ -1476,7 +1130,14 @@ Uint16 _TOQRF;							//×ª¾ØÖ¸Áî
 Uint16 _AGLRF;							//»ú²à¹¦ÂÊÒòÊı½Ç
 Uint16 _EIDCO;							//ÊÖ¶¯ »ú²àÀø´ÅµçÁ÷µ÷ÕûÏµÊı
 Uint16 _ENCODPOS;						//ÊÖ¶¯ ±àÂëÆ÷³õÊ¼Î»ÖÃ½Ç¶È
-
+Uint16 _EIN;							//
+Uint16 _SYSRUN;							//
+Uint16 _RESET;							//
+Uint16 _PREC;							//
+Uint16 _NRUN;							//
+Uint16 _MRUN;							//
+Uint16 _RUNING;							//
+Uint16 _ERROR;							//
 Uint16 _STDBY1;							//±¸ÓÃ1
 Uint16 _STDBY2;							//±¸ÓÃ2
 Uint16 _STDBY3;							//±¸ÓÃ3
@@ -1484,8 +1145,7 @@ Uint16 _STDBY4;							//±¸ÓÃ4
 Uint16 _STDBY5;							//±¸ÓÃ5
 Uint16 _STDBY6;							//±¸ÓÃ6
 Uint16 _STDBY7;							//±¸ÓÃ7
-//Uint16 _STDBY8;							//±¸ÓÃ8
-Uint16 _MC_OK;							//±¸ÓÃ8	 MagnetCurve2013-12-13
+Uint16 _STDBY8;							//±¸ÓÃ8
 Uint16 _STDBY9;							//±¸ÓÃ9
 Uint16 _STDBY10;						//±¸ÓÃ10
 Uint16 _STDBY11;						//±¸ÓÃ11
@@ -1494,13 +1154,9 @@ Uint16 _STDBY13;						//±¸ÓÃ13
 Uint16 _STDBY14;						//±¸ÓÃ14
 float _eidco;
 float _encodpos;
-float _sc_freq1;
-float _sc_freq2;
-
 //----'Êı×ÖÁ¿±äÁ¿'PC------
 Uint16 _COMMAND1;
 Uint16 _COMMAND2;
-Uint16 _PCEROTRIG;					    //20100308
 Uint16 _DISPLAY;
 Uint16 _STATE1;
 Uint16 _STATE2;
@@ -1510,22 +1166,25 @@ Uint16 _LVRT;
 
 float _stdby01;							//±¸ÓÃ¾­¹ıĞ¡Êıµã´¦ÀíºóÖµ
 float _stdby02;							//±¸ÓÃ¾­¹ıĞ¡Êıµã´¦ÀíºóÖµ
-float _stdby03;							//¸Ó¾­¹ıĞ¡Êıµã´¦íºóÖµ
-float _stdby04;							//±¸ÓÃ­¹ıĞ¡Êıµã´¦ÀíºóÖµ
-float _stdby05;							//±¸ÓÃ¾­¹ıĞ¡Êı´¦ÀíºóÖµ
-float _stdby06;							//±¸ÓÃ¾­¹ıĞ¡Êıµã´¦Öµ
+float _stdby03;							//±¸ÓÃ¾­¹ıĞ¡Êıµã´¦ÀíºóÖµ
+float _stdby04;							//±¸ÓÃ¾­¹ıĞ¡Êıµã´¦ÀíºóÖµ
+float _stdby05;							//±¸ÓÃ¾­¹ıĞ¡Êıµã´¦ÀíºóÖµ
+float _stdby06;							//±¸ÓÃ¾­¹ıĞ¡Êıµã´¦ÀíºóÖµ
 float _stdby07;							//±¸ÓÃ¾­¹ıĞ¡Êıµã´¦ÀíºóÖµ
 float _stdby08;							//±¸ÓÃ¾­¹ıĞ¡Êıµã´¦ÀíºóÖµ
+Uint16 _SCOUTL;							//µÍ16¸ö¹ÊÕÏÂëµ½SCOUT1
+Uint16 _SCOUTH;							//¸ß16¸ö¹ÊÕÏÂëµ½SCOUT2 
 //------------------------ÔËĞĞÄ£Ê½±äÁ¿-------------------------------------------------------------
 Uint16 _ENSCR;							//
+Uint16 _COMP2;							//µç»ú²à±äÁ÷Æ÷ËÀø²¹³¥Ê¹ÄÜ
 
 //-----------------------PI»·²ÎÊı±äÁ¿--------------------------------------------------------------
 Uint16	_NPR_U_Kp;		  		//Íø²à±äÁ÷Æ÷µçÑ¹±Õ»·±ÈÀıÏµÊı
 Uint16	_NPR_U_Ki;		   		//Íø²àäÁ÷Æ÷µçÑ¹±Õ»·»ı·ÖÏµÊı
-Uint16	_NPR_U_Kd;		   		//Íø²àä÷Æ÷µçÑ¹±Õ·Î¢·ÖÏµÊı
+Uint16	_NPR_U_Kd;		   		//Íø²à±äÁ÷Æ÷µçÑ¹±Õ»·Î¢·ÖÏµÊı
 Uint16	_NPR_U_outmax;			//Íø²à±äÁ÷Æ÷çÑ¹±Õ»·Êä³öÏŞ·ù
 Uint16	_NPR_U_errmax;		 	//Íø²à±äÁ÷Æ÷µçÑ¹±Õ»·Îó²îÏŞ·ù
-Uint16	_NPR_U_errmin;		   	//Íø²à±äÁ÷÷µçÑ¹±Õ»·Îó²îîĞÖµ
+Uint16	_NPR_U_errmin;		   	//Íø²à±äÁ÷Æ÷µçÑ¹±Õ»·Îó²îîĞÖµ
 Uint16	_NPR_U_incrementmax;	//Íø²à±äÁ÷Æ÷µçÑ¹±Õ»·ÔöÁ¿ÏŞ·ù
 
 Uint16	_NPR_ID_Kp;				//Íø²à±äÁ÷Æ÷µçÁ÷±Õ»·±ÈÀıÏµÊı
@@ -1584,8 +1243,7 @@ Uint16 _SC_RTRT;													//Á½´Î¹ÊÕÏÖØÊÔ¼ä¸ôÊ±¼ä(ms)
 Uint16 _SC_IACOV1;													//»ù×¼µçÁ÷µÄ°Ù·ÖÖµ)
 Uint16 _SC_UDCOV;													//ÖĞ¼äÖ±Á÷µçÑ¹¹ıÑ¹Öµ(V)
 Uint16 _SC_UDCOVH;													//ÖĞ¼äÖ±Á÷µçÑ¹¹ıÑ¹Öµ£¨ÍøÑ¹µøÂä£©(V)
-Uint16 _SC_IDCOV;													//¸ÄÎªdc-chopperµçÁ÷±£»¤BJTULVRT201204
-//Uint16 _SC_UDCLV;													//ÖĞ¼äÖ±Á÷µçÑ¹Ç·Ñ¹Öµ(V)
+Uint16 _SC_UDCLV;													//ÖĞ¼äÖ±Á÷µçÑ¹Ç·Ñ¹Öµ(V)
 Uint16 _SC_VDCON;													//ÉÏµçµçÑ¹
 Uint16 _SC_UACOV1;													//ÍøÑ¹½»Á÷µçÑ¹¹ıÑ¹¶¯×÷Öµ(V)
 Uint16 _SC_UACLV1;													//½»Á÷µçÑ¹È±Ïà¶¯×÷Öµ(V)
@@ -1594,33 +1252,16 @@ Uint16 _SC_PGOV;													//
 Uint16 _SC_QGOV;													//
 Uint16 _SC_IACOVST;                                                 //¶¨×ÓµçÁ÷¹ıÁ÷±£»¤ 
 
-Uint16 _SC_Rs;														//¶¨×Óµç×è(mohm)
-Uint16 _SC_Lls;														//¶¨×ÓÂ©¿¹(mH)
-Uint16 _SC_Rr;														//×ª×Óµç×è(mohm)
-Uint16 _SC_Llr;														//×ª×ÓÂ©¿¹(mH)
-Uint16 _SC_Lm;														//Àø´Åµç¿¹(mH)
-Uint16 _SC_POLES;													//¼«¶ÔÊı
-Uint16 _SC_Usn;														//¶¨×Ó¶î¶¨µçÑ¹(V)
-Uint16 _SC_Uro;                                                		//×ª×Ó¿ªÂ·µçÑ¹(V)	
-Uint16 _SC_PLSPRVL;													//±àÂëÆ÷Ã¿È¦¹âÕ¤ÊıÁ¿
-Uint16 _SC_MSTDBY;                                               	//µç»ú²ÎÊı±¸ÓÃ
-Uint16 _SC_EXISTY1;                                               	//µç»úÀø´Åµ÷½Ú±¸ÓÃ1
-Uint16 _SC_EXISTY2;                                               	//µç»úÀø´Åµ÷½Ú±¸ÓÃ2
-Uint16 _SC_EXISTY3;                                               	//µç»úÀø´Åµ÷½Ú±¸ÓÃ3
-Uint16 _SC_EXISTY4;                                               	//µç»úÀø´Åµ÷½Ú±¸ÓÃ4
-Uint16 _SC_EXISTY5;                                               	//µç»úÀø´Åµ÷½Ú±¸ÓÃ5
-
 Uint16 _BA_ERR4;													//µÚËÄ´Î¹ÊÕÏĞÅÏ¢
 Uint16 _BA_ERR3;													//µÚÈı´Î¹ÊÕÏĞÅÏ¢
-Uint16 _BA_ERR2;													//µÚ¶ş´Î¹ÊÕÏĞÅÏ¢
+Uint16 _BA_ERR2;													//µÚ¶ş´ÎÊÕÏĞÅÏ¢
 Uint16 _BA_ERR1;													//µÚÒ»´Î¹ÊÕÏĞÅÏ¢
-Uint16 _BA_ERR5;													//Ê¾²¨Æ÷¹ÊÕÏĞÅÏ¢
 //--------------------------------±¨¾¯ĞÅÏ¢±ä¿-----------------------------------------------------
 Uint16 _BA_EMIDRF;													//×îĞÂ¹ÊÕÏÊ±¿Ì dÖáµçÁ÷Ö¸Áî(A)
 Uint16 _BA_ENIQRF;													//×îĞÂ¹ÊÕÏÊ±¿Ì qÖáµçÁ÷Ö¸Áî(A)
-Uint16 _BA_EMIQRF;													//×îÂ¹ÕÏÊ±¿Ì qÖáµçÁ÷Ö¸Áî(A)
+Uint16 _BA_EMIQRF;													//×îĞÂ¹ÊÕÏÊ±¿Ì qÖáµçÁ÷Ö¸Áî(A)
 Uint16 _BA_ETOQRF;													//×îĞÂ¹ÊÕÏÊ±¿Ì ×ª¾ØÖ¸Áî(NM)
-Uint16 _BA_EURF;													//×îĞÂ¹ÊÕÏÊ±¿Ì ÖĞ¼äÖ±Á÷µçÑ¹¸ø¨(V)
+Uint16 _BA_EURF;													//×îĞÂ¹ÊÕÏÊ±¿Ì ÖĞ¼äÖ±Á÷µçÑ¹¸ø¶¨(V)
 Uint16 _BA_EUDC;													//×îĞÂ¹ÊÕÏÊ±¿Ì ÖĞ¼äÖ±Á÷µçÑ¹(V)
 Uint16 _BA_EAGLRF;													//×îĞÂ¹ÊÕÏÊ±¿Ì ÎŞ¹¦½Ç¶ÈÖ¸Áî()
 Uint16 _BA_EIA1;													//×îĞÂ¹ÊÕÏÊ±¿Ì Íø²àAÏàµçÁ÷ÓĞĞ§Öµ(A)
@@ -1634,30 +1275,30 @@ Uint16 _BA_EUBC1;													//×îĞÂ¹ÊÕÏÊ±¿Ì Íø²àBÏàµçÑ¹ÓĞĞ§Öµ(V)
 Uint16 _BA_EUAB2;													//×îĞÂ¹ÊÕÏÊ±¿Ì Íø²àÏàµçÑ¹ÓĞĞ§Öµ(V)
 Uint16 _BA_EUBC2;													//×îĞÂ¹ÊÕÏÊ±¿Ì µç»ú²àAÏàµçÁ÷ÓĞĞ§Öµ(V)
 Uint16 _BA_EUAB0;													//×îĞÂ¹ÊÕÏÊ±¿Ì Ö÷¶ÏÇ°ABÏßµçÑ¹ÓĞĞ§Öµ(V)
-Uint16 _BA_EUBC0;													//×îĞÂ¹ÊÕÏÊ±¿Ì Ö÷ÏÇ°BCÏßµçÑ¹ÓĞĞ§Öµ(V)
+Uint16 _BA_EUBC0;													//×îĞÂ¹ÊÕÏÊ±¿Ì Ö÷¶ÏÇ°BCÏßµçÑ¹ÓĞĞ§Öµ(V)
 Uint16 _BA_EFREQ;													//×îĞÂ¹ÊÕÏÊ±¿Ì µçÍøÆµÂÊ(hz)
 Uint16 _BA_ESPEED;													//×îĞÂ¹ÊÕÏÊ±¿Ì µç»ú×ªËÙ(rpm)
 Uint16 _BA_ENPRUD;              			//dÖáÖ÷¶ÏºóÍøÑ¹·´À¡20091026atzy
 Uint16 _BA_ENPRUQ;          				//qÖáÖ÷¶ÏºóÍøÑ¹·´À¡20091026atzy
 Uint16 _BA_ENPRUD2;          				//dÖáÖ÷¶ÏºóÍøÑ¹·´À¡ ÂË²¨ºó20091026atzy
 Uint16 _BA_ENPRUQ2;          				//qÖáÖ÷¶ÏºóÍøÑ¹·´À¡ ÂË²¨ºó20091026atzy
-Uint16 _BA_ENUDOUT;          				//ø²àdáµçÑ¹Êä³ö20091026atzy
+Uint16 _BA_ENUDOUT;          				//Íø²àdÖáµçÑ¹Êä³ö20091026atzy
 Uint16 _BA_ENUQOUT;          				//Íø²àqÖáµçÑ¹Êä³ö20091026atzy
 Uint16 _BA_ETA1;													//×îĞÂ¹ÊÕÏÊ±¿Ì Íø²à±äÁ÷Æ÷AÇÅ±ÛÎÂ¶È
 Uint16 _BA_ETB1;													//×îĞÂ¹ÊÕÏÊ±¿Ì Íø²à±äÁ÷Æ÷BÇÅ±ÛÎÂ¶È
 Uint16 _BA_ETC1;													//×îĞÂ¹ÊÕÏÊ±¿Ì Íø²à±äÁ÷Æ÷CÇÅ±ÛÎÂ¶È
 Uint16 _BA_ETA2;													//×îĞÂ¹ÊÕÏÊ±¿Ì µç»ú²à±äÁ÷Æ÷AÅ±ÛÎÂ¶È
-Uint16 _BA_ETB2;													//×îĞÂ¹ÊÕÏÊ±¿Ì µç»ú²àäÁ÷Æ÷BÇÅ±ÛÎÂÈ
-Uint16 _BA_ETC2;													//×îÂ¹ÊÕÏÊ±¿Ì µç»ú²à±äÁ÷Æ÷CÇÅ±ÛÎÂ¶È
+Uint16 _BA_ETB2;													//×îĞÂ¹ÊÕÏÊ±¿Ì µç»ú²àäÁ÷Æ÷BÇÅ±ÛÎÂ¶È
+Uint16 _BA_ETC2;													//×îĞÂ¹ÊÕÏÊ±¿Ì µç»ú²à±äÁ÷Æ÷CÇÅ±ÛÎÂ¶È
 Uint16 _BA_EPIONU;													//×îĞÂ¹ÊÕÏÊ±¿Ì Íø²àµçÑ¹»·Êä³ö
 Uint16 _BA_EPIONID;													//×îĞÂ¹ÊÕÏÊ±¿Ì Íø²àdÖáµçÁ÷»·Êä³ö
 Uint16 _BA_EPIONIQ;													//×îĞÂ¹ÊÕÏÊ±¿Ì Íø²àqÖáµçÁ÷»·Êä³ö
 Uint16 _BA_EMEXI;													//×îĞÂ¹ÊÕÏÊ±¿Ì »ú²àÀø´ÅÀíÂÛ¼ÆËãÖµÏÔÊ¾
-Uint16 _BA_EPIOMID;													//×îĞÂ¹ÊÕÏÊ±¿Ì »ú²àdÖáµçÁ÷»·Êäö
+Uint16 _BA_EPIOMID;													//×îĞÂ¹ÊÕÏÊ±¿Ì »ú²àdÖáµçÁ÷»·Êä³ö
 Uint16 _BA_EPIOMIQ;													//×îĞÂ¹ÊÕÏÊ±¿Ì »ú²àqÖáµçÁ÷»·Êä³ö
 Uint16 _BA_ETLAC;													//×îĞÂ¹ÊÕÏÊ±¿Ì Íø²àµç¸ĞÎÂ¶È
 Uint16 _BA_ETLDUDT;													//×îĞÂ¹ÊÕÏÊ±¿Ì »ú²àµç¸ĞÎÂ¶È
-Uint16 _BA_ETSKIIP;													//×îĞÂ¹ÊÕÏÊ±¿Ì SKIIPÎÂÈ
+Uint16 _BA_ETSKIIP;													//×îĞÂ¹ÊÕÏÊ±¿Ì SKIIPÎÂ¶È
 Uint16 _BA_ESTAIAC;	
 Uint16 _BA_ESTAIBA;	
 Uint16 _BA_ETOQFB;	
@@ -1690,15 +1331,8 @@ Uint16 _BA_TIME1_0;													//µÚÒ»´Î¹ÊÕÏÊ±¼ä(Ãë)
 Uint16 _BA_TIME1_1;													//µÚÒ»´Î¹ÊÕÏÊ±¼ä(·Ö)
 Uint16 _BA_TIME1_2;													//µÚÒ»´Î¹ÊÕÏÊ±¼ä(Ê±)
 Uint16 _BA_TIME1_3;													//µÚÒ»´Î¹ÊÕÏÊ±¼ä(ÈÕ)
-Uint16 _BA_TIME1_4;													//µÚÒ»´Î¹ÊÕÏÊ±¼ä(ÔÂ)
+Uint16 _BA_TIME1_4;													//µÚÒ»´Î
 Uint16 _BA_TIME1_5;													//µÚÒ»´Î¹ÊÕÏÊ±¼ä(Äê)
-
-Uint16 _BA_TIME5_0;													//Ê¾²¨Æ÷¹ÊÕÏÊ±¼ä(Ãë)
-Uint16 _BA_TIME5_1;													//Ê¾²¨Æ÷¹ÊÕÏÊ±¼ä(·Ö)
-Uint16 _BA_TIME5_2;													//Ê¾²¨Æ÷¹ÊÕÏÊ±¼ä(Ê±)
-Uint16 _BA_TIME5_3;													//Ê¾²¨Æ÷¹ÊÕÏÊ±¼ä(ÈÕ)
-Uint16 _BA_TIME5_4;													//Ê¾²¨Æ÷¹ÊÕÏÊ±¼ä(ÔÂ)
-Uint16 _BA_TIME5_5;													//Ê¾²¨Æ÷¹ÊÕÏÊ±¼ä(Äê)
 
 //-------------------------------------ÔËĞĞ¼à¿Ø±äÁ¿-----------------------------------------------
 Uint16 _BA_MIDRF;													//dÖáµçÁ÷Ö¸Áî(A)
@@ -1713,7 +1347,7 @@ Uint16 _BA_IA1;														//ÍøàAÏàµçÁ÷ÓĞĞ§Öµ(A)
 Uint16 _BA_IB1;														//Íø²àBÏàµçÁ÷ÓĞ§Ö?A)
 Uint16 _BA_IC1;														//Íø²àCÏàµçÁ÷ÓĞĞ§Öµ(A)
 Uint16 _BA_IA2;														//µç»ú²àAÏàµçÁ÷ÓĞĞ§Öµ(A)
-Uint16 _BA_IB2;														//µç»ú²àBÏàµç÷ÓĞĞ§Öµ(A)
+Uint16 _BA_IB2;														//µç»ú²àBÏàµçÁ÷ÓĞĞ§Öµ(A)
 Uint16 _BA_IC2;														//µç»ú²àCÏàµçÁ÷ÓĞĞ§Öµ(A)
 Uint16 _BA_UAB1;													//Íø²àABÏßµçÑ¹ÓĞĞ§Öµ(V)
 Uint16 _BA_UBC1;													//Íø²àBCÏßµçÑ¹ĞĞ§Öµ(V)
@@ -1737,18 +1371,12 @@ Uint16 _BA_PIOMID;													//»ú²àdÖáµçÁ÷»·Êä³ö
 Uint16 _BA_PIOMIQ;													//»ú²àqÖáµçÁ÷»·Êä³ö
 Uint16 _BA_GRDUD;													//´«¸ĞÆ÷²âÁ¿ÍøÑ¹d
 Uint16 _BA_GRDUQ;													//´«¸ĞÆ÷²âÁ¿ÍøÑ¹q
-
-//Uint16 _BA_STAUD;													//¶¨×ÓµçÑ¹d 2013-12-13ZZJ
-Uint16 _BA_MC_IN;													//Àø´ÅĞ£ÕıÊäÈë2013-12-13ZZJ
-Uint16 _BA_MC_K;													//Àø´ÅĞ£ÕıÊä³ö2013-12-13ZZJ
-//Uint16 _BA_STAUQ;													//¶¨×ÓµçÑ¹q  2013-12-13ZZJ
-
-Uint16 _BA_NPRID;													//´«¸ĞÆ÷²âÁ¿ÍøÑ¹d
-Uint16 _BA_NPRIQ;													//´«¸ĞÆ÷²âÁ¿ÍøÑ¹q
-//Uint16 _BA_EXCID;													//´«¸ĞÆ÷²âÁ¿ÍøÑ¹d
-//Uint16 _BA_EXCIQ;
-Uint16 _BA_SCRIA;													//SCRµçÁ÷a	20110906
-Uint16 _BA_SCRIB;													//SCRµçÁ÷b	20110906
+Uint16 _BA_STAUD;													//¶¨×ÓµçÑ¹d
+Uint16 _BA_STAUQ;													//¶¨×Óµç¹q
+Uint16 _BA_STAID;													//´«¸ĞÆ÷²âÁ¿ÍøÑ¹d
+Uint16 _BA_STAIQ;													//´«¸ĞÆ÷²âÁ¿ÍøÑ¹q
+Uint16 _BA_EXCID;													//´«¸ĞÆ÷²âÁ¿ÍøÑ¹d
+Uint16 _BA_EXCIQ;
 Uint16 _BA_TLAC;
 Uint16 _BA_TLDUDT;
 Uint16 _BA_TNSKIIP;
@@ -1778,18 +1406,14 @@ Uint16 _SC_MPR_UQ;
 Uint16 _SC_MSPEED1;
 Uint16 _SC_MSPEED2;
 Uint16 _SC_UDSTAC;
-Uint16 _SCIB_BAUD;													//485²¨ÌØÂÊ
-Uint16 _SC_SKPTOV;
-Uint16 _SC_FREQ1;
-Uint16 _SC_FREQ2;
+Uint16	_SCIB_BAUD;													//485²¨ÌØÂÊ
+Uint16  _BA_LEDV;
+Uint16  _BA_LEDB;
  
 //-----------------------²âÊÔÓÃ±äÁ¿-----------------------------------------------------------
-int16 	zys[4];			//DA±äÁ¿
-Uint16 	daindex[4]; 	//BJTULVRT201204
 
-
-//int32 	zys = 0;
-//int16 	zys1,zys2,zys3,zys4;
+int32 	zys = 0;
+int16 	zys1,zys2,zys3,zys4;
 Uint32 	i_cnt1=0;  //ÓÃÓÚCCS²¨ĞÎÏÔÊ¾
 Uint32 	i_cnt2=0;  //ÓÃÓÚCCS²¨ĞÎÏÔÊ¾
 Uint32 	i_cnt3=0;  //ÓÃÓÚCCS²¨ĞÎÏÔÊ¾
@@ -1797,46 +1421,6 @@ float   draw1[150]={0.0},draw2[150]={0.0},draw3[150]={0.0},draw4[150]={0.0},draw
 float   draw6[150]={0.0};//,draw7[100]={0.0},draw8[100]={0.0},draw9[100]={0.0},draw10[100]={0.0};
 Uint16 zsector = 0;
 float testtheta;
-
-Uint16 temp_flag3;		//120507
-Uint16 TX_SPEED;		//120507
-
-Uint16	state_n=0;		//110818
-Uint16	state_m=0;		//110818
-Uint16	action1=0;		//110818
-Uint16	action2=0;		//110818
-
-//----------20121103ĞÂÌí¼Ó±äÁ¿--------------
-float   GRD_Ut;
-float   GRD_Utlv;		//201205LVRTatZB
-float   kq;
-Uint16	CNT_SCRON;		//20120602
-float   Te_instant;
-float   Te_instant2;
-float   Te_instant3;
-
-//---------20121210----------
-float   lv_ctrl1=0;
-float   lv_ctrl2=0;
-float   lv_ctrl3=0;
-float   lv_ctrl4=0;
-float   lv_ctrl5=0;
-float   lv_ctrl6=0;
-
-//----20130225atsp----
-float   kq_lv;
-float   NGS_Udq_p_lv;
-float   Te_feedback_lv;                    //Êµ¼Ê×ª¾ØÖµ·´À¡
-Uint16	scrdone=0;		//20130222
-Uint16	scrhold=0;		//20130223
-Uint16	scroff1=0;		//20130303
-Uint16	cnt_lv_clrerram=0;		//20130303
-
-//--------------------
-//---------20130801---------
-Uint16	ecpostep1 = 0;
-Uint16	ecpostep2 = 0;
-Uint16	ecpostep3 = 0;
 
 #ifdef __cplusplus
 }

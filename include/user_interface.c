@@ -1005,11 +1005,6 @@ void READSTATE(void)
 	else								_STATE1 &= 0xFDFF;
 	if(M_ChkFlag(SL_RAMBANKSAVE)!=0)	_STATE1 |= 0x0400;	//Õ‚≤øRAMœ‘ æ–≈œ¢À¯¥Ê±Í÷æ
 	else								_STATE1 &= 0xFBFF;
-//----MagnetCurve2013-12-13
-	if(M_ChkFlag(SL_MC_OK)!=0)			_STATE1 |= 0x0800;	//¿¯¥≈«˙œﬂMagnetCurve200909
-	else								_STATE1 &= 0xF7FF;
-	if(M_ChkFlag(SL_MC_FAIL)!=0)		_STATE1 |= 0x1000;	//¿¯¥≈«˙œﬂMagnetCurve200909
-	else								_STATE1 &= 0xEFFF;
 
 //----DISPLAY------------------------------------------------------------------
 	if(M_ChkFlag(SL_DISPLAY0)!=0)	  	_DISPLAY |= 0x0001;	//Õ¯≤‡±‰¡˜∆˜‘À––
@@ -1183,15 +1178,7 @@ void WRCOMMAND(void)
 	if((_COMMAND1&0x0400)!=0)	M_SetFlag(SL_PC_ERRDATACLR);	 //10 Õ‚≤øRAM Õ∑≈π ’œ ˝æ›÷∏¡ÓPC/CANƒ£ Ωœ¬∂ºø… π”√
 //	else						M_ClrFlag(SL_PC_ERRDATACLR);
 	else if(M_ChkFlag(SL_LV_CLRERRAM)==0)			M_ClrFlag(SL_PC_ERRDATACLR);		//20130306
-//	if((_COMMAND1&0x0800)!=0)	M_SetFlag(SL_PC_BANKDATASAVE);	 //11 Õ‚≤øRAMÀ¯¥Êœ‘ æ ˝æ›÷∏¡ÓPC/CANƒ£ Ωœ¬∂ºø… π”√
-//	else						M_ClrFlag(SL_PC_BANKDATASAVE);
-
-//20130724
-	if((_COMMAND1&0x0800)!=0)
-	{
-		M_SetFlag(SL_PC_BANKDATASAVE);
-		M_SetFlag(SL_TRIG_ERRDSAVE);	 //11 Õ‚≤øRAMÀ¯¥Êœ‘ æ ˝æ›÷∏¡ÓPC/CANƒ£ Ωœ¬∂ºø… π”√
-	}
+	if((_COMMAND1&0x0800)!=0)	M_SetFlag(SL_PC_BANKDATASAVE);	 //11 Õ‚≤øRAMÀ¯¥Êœ‘ æ ˝æ›÷∏¡ÓPC/CANƒ£ Ωœ¬∂ºø… π”√
 	else						M_ClrFlag(SL_PC_BANKDATASAVE);
 
 //----------------------------------------------------------------------------
@@ -1728,21 +1715,15 @@ void Sci_canopenrx(void)
 //---------20130801----------
 		else if(SciaRegs.SCIFFRX.bit.RXFFST >= SCICANOPENRXNUM-2)			//Ω” ’ÕÍ≥…?
 		{
-//				M_NotFlag(SL_PHASEA);            							//2014-05-06¡Ÿ ±≤‚ ‘CANopen
-//				*OUT3_ADDR = _OUT3_DATA;
 			
 				for(i=2;i<SCICANOPENRXNUM;i++)								//∂¡≥ˆΩ” ’ª∫¥Ê(≤ª∞¸¿®±®Õ∑)
 					SCI_canopen.rxb[i]=SciaRegs.SCIRXBUF.all&0x00FF;	//[5]-[12] «4∏ˆ◊÷µƒ÷∏¡Ó ˝æ›,[13] «–£—ÈŒª
 				M_ClrFlag(SL_CANOPENHEADOK);
-				M_ClrFlag(SL_CANOPENHEAD);
 				
 				heartbeat= SCI_canopen.rxb[6] & ONEBYTE[0];  //201105CPC ≥£«£Õ®—∂"–ƒÃ¯Œª" «Bit15
 				if(heartbeat!=SCI_canopen.heartbeat)
-				{
 					SCI_canopen.cnt_heartbeat=0;
-//    				M_NotFlag(SL_PHASEB);								//2014-05-06¡Ÿ ±≤‚ ‘CANopen
-//    				*OUT3_ADDR = _OUT3_DATA;
-				}
+				
 				SCI_canopen.heartbeat = heartbeat;
 
 				xor_data=SCI_canopen.rxb[0];								//“ÏªÚ–£—È
@@ -1751,28 +1732,27 @@ void Sci_canopenrx(void)
 			
 				if(xor_data == SCI_canopen.rxb[SCICANOPENRXNUM-1])							//“ÏªÚ–£—È∑˚∫œ?
 				{
-//					if((SCI_canopen.rxb[5]|SCI_canopen.rxb[6]|SCI_canopen.rxb[7]|SCI_canopen.rxb[8]|SCI_canopen.rxb[9]|SCI_canopen.rxb[10]|SCI_canopen.rxb[11]|SCI_canopen.rxb[12])!=0) //Ãﬁ≥ˆ ˝æ›∂ºµ»”⁄0µƒªµ∞¸20090817
-//					{			
+					if((SCI_canopen.rxb[5]|SCI_canopen.rxb[6]|SCI_canopen.rxb[7]|SCI_canopen.rxb[8]|SCI_canopen.rxb[9]|SCI_canopen.rxb[10]|SCI_canopen.rxb[11]|SCI_canopen.rxb[12])!=0) //Ãﬁ≥ˆ ˝æ›∂ºµ»”⁄0µƒªµ∞¸20090817
+					{			
 					// ˝æ›◊™¥Ê
 					SCI_canopen.rx_controlword=(SCI_canopen.rxb[6]<<8)|SCI_canopen.rxb[5];						//controlword
 				
 					SCI_canopen.rx_torque=(SCI_canopen.rxb[8]<<8)|SCI_canopen.rxb[7];							//torque_ref
 				
 					SCI_canopen.rx_angle=(SCI_canopen.rxb[10]<<8)|SCI_canopen.rxb[9];							//angle_ref
-//					}
-//					else
-//					{
+					}
+					else
+					{
 //						temp=1;		//201105Xgate_testing
-//					}		
+					}		
 				}
 
-/*				if(M_ChkFlag(SL_CANOPENOVER)!=0)	//201101NR
+				if(M_ChkFlag(SL_CANOPENOVER)!=0)	//201101NR
 				{
 			   		 SCI_canopen.rx_controlword=0;
 					 SCI_canopen.rx_torque=0;
 					 SCI_canopen.rx_angle=0; 
 				}
-*/
 		//		SciaRegs.SCICTL1.bit.RXENA =1;
 				SciaRegs.SCIFFRX.bit.RXFIFORESET=1;		// Re-enable RX FIFO operation
 				SciaRegs.SCIFFRX.bit.RXFFOVRCLR=1;
@@ -1905,7 +1885,7 @@ void Sci_canopentx(void)
 **  ‰°°»Î: 	Y(k-1)Œ™…œ¥Œ¬À≤®Ω·π˚¨X(k)™–¬≤…—˘÷µ°£°£
 **  ‰°°≥ˆ: £∫Y(k)Œ™±æ¥Œ¬À≤®Ω·π˚°£  
 ** ◊¢   Õ: 	 ¬À≤®π´ ΩŒ™£∫Y(k)=cY(k-1)+(1-c)X(k),∆‰÷–£¨c=1/(1+2*PAI*fh/fs),fhŒ™µÕÕ®¬À≤®∆˜µƒΩÿ÷π∆µ¬ £¨fsŒ™≤…—˘∆µ¬ .
-			‘⁄“ªΩ◊µÕÕ®¬À®÷–£¨X(k)¥Œ™Y(k)°£
+			‘⁄“ªΩ◊µÕÕ®¬À≤®÷–£¨X(k)¥Œ™Y(k)°£
 			÷±¡˜¡øŒÛ≤Ó1£•Œ™Œ»∂® ±º‰°£
 **-------------------------------------------------------------------------------------------------------
 ** ◊˜°°’ﬂ: 
@@ -2060,7 +2040,7 @@ void Ad8364Ctrl(void)
 	AD.dat[0] = *AD_ASTART;	       // STA.Ubc µÁª˙∂®◊”≤‡µÁ—πUbc
 	AD.dat[1] = *(AD_ASTART+1);    // AMUX£¨¬˝ÀŸ–≈∫≈£¨16—°1π˝¿¥µƒ–≈∫≈
 //	AD.dat[2] = *(AD_ASTART+2);    // GRD.Ubc ÷˜∂œ«∞Ubc
-	AD.dat[2] = *(AD_ASTART+2);    // chopperµÁ¡˜idc	20130805
+	AD.dat[2] = *(AD_ASTART+2);    // // ∂®◊”µÁ¡˜Aœ‡BJTULVRT201204	//chopperµÁ¡˜idc	20130805
 //	AD.dat[3] = *(AD_ASTART+3);    // Ic ±∏”√SKIIPµÁ¡˜∑¥¿°
 //	AD.dat[4] = *(AD_ASTART+4);    // GRD.Uab ÷˜∂œ«∞Uab
 	AD.dat[5] = *(AD_ASTART+5);    // MPR.ic, ª˙≤‡±‰¡˜∆˜MPRµƒµÁ¡˜
@@ -2098,7 +2078,7 @@ void Ad8364Ctrl(void)
 	ADFINAL.uab1 = AD.dat[14];		// Uab Õ¯≤‡µÁ—π		
 	ADFINAL.ubc1 = AD.dat[17];		// Ubc Õ¯≤‡µÁ—π
 	
-	ADFINAL.uab2 = AD.dat[16];		// Uab Áª˙∂®◊”≤‡µÁ—π		
+	ADFINAL.uab2 = AD.dat[16];		// Uab µÁª˙∂®◊”≤‡µÁ—π		
 	ADFINAL.ubc2 = AD.dat[0];		// Ubc µÁª˙∂®◊”≤‡µÁ—π
 
 	ADFINAL.uab3 = AD.dat[6];		// Uab Õ¯≤‡µÁ—π	¥Û¬À≤®Õ®µ¿ 	
@@ -2351,11 +2331,6 @@ void Ad8364Ctrl(void)
 	DataFilter(0.9999,&MEAN_DATA.ub1,tempb); //Õ¯≤‡µÁ—π	∆Ωæ˘÷µ¬À≤®10S
 	DataFilter(0.9999,&MEAN_DATA.uc1,tempc); //Õ¯≤‡µÁ—π	∆Ωæ˘÷µ¬À≤®10S
 
-	tempa = abs(AD_OUT_NGF_U.ab);			  //MagnetCurve2013-12-13
-	tempb = abs(AD_OUT_NGF_U.bc);
-	DataFilter(0.9999,&MEAN_DATA.uab3,tempa); //÷˜∂œ∫ÛµÁÕ¯µÁ—π,¥Û¬À≤®Õ®µ¿	∆Ωæ˘÷µ¬À≤®10S
-	DataFilter(0.9999,&MEAN_DATA.ubc3,tempb); //÷˜∂œ∫ÛµÁÕ¯µÁ—π,¥Û¬À≤®Õ®µ¿	∆Ωæ˘÷µ¬À≤®10S
-
 //	tempa = abs(AD_OUT_NGF_U.ab);			  //MagnetCurve200909
 //	tempb = abs(AD_OUT_NGF_U.bc);
 //	DataFilter(0.9999,&MEAN_DATA.uab3,tempa); //÷˜∂œ∫ÛµÁÕ¯µÁ—π,¥Û¬À≤®Õ®µ¿	∆Ωæ˘÷µ¬À≤®10S
@@ -2391,126 +2366,6 @@ void Ad8364Ctrl(void)
 	tempb = abs(AMUX.Ldudt_temp);
 	DataFilter(0.9999,&MEAN_DATA.Lac_temp,tempa); 	//Õ¯≤‡µÁ∏–Œ¬∂»	∆Ωæ˘÷µ¬À≤®10S
 	DataFilter(0.9999,&MEAN_DATA.Ldudt_temp,tempb); //ª˙≤‡µÁ∏–Œ¬∂»	∆Ωæ˘÷µ¬À≤®10S
-
-//--------------------¿¯¥≈≤Œ ˝±Ê ∂MagnetCurve2013-12-13--ZZJ--------------------------------------------------------------
-//BJTULVRT201204º∆À„±»¬ Uns_ft“∆µΩinput¿ÔΩ⁄‘ºT0◊ ‘¥		
-//	Uns_ft = 0.5 * ((MEAN_DATA.uab3/MEAN_DATA.uab1)+(MEAN_DATA.ubc3/MEAN_DATA.ubc1));//¥Û¬À≤®∑˘÷µÀ•ºı±»¿˝
-//	Uns_ft = 0.848;		//R=20k,C=0.1uF,fh=80Hz,¿Ì¬€À•ºı±»¿˝Avh=0.848, µº ≤…”√…œ Ω≤‚¡øº∆À„÷µŒ™0.83◊Û”“£°2010-10-2
-
-//--------20121011--------
-
-	if(_SC_MSTDBY==1)	 //Us=50%
-	{
-		MC_U_test = (float)_SC_Usn * 0.5 * Uns_ft - (0.5 * 1.110721 * (MEAN_DATA.uab2+MEAN_DATA.ubc2));
-		MC_DATA.temp[1] = _SC_EXISTY1 * 0.001;
-		MAIN_LOOP.cnt_mc_ack=0;	
-		MC_F_cnt = 0;
-		MC_N_test= 0;
-	}
-	else if(_SC_MSTDBY==2)//Us=75%
-	{
-		MC_U_test =  (float)_SC_Usn * 0.75 * Uns_ft - (0.5 * 1.110721 * (MEAN_DATA.uab2+MEAN_DATA.ubc2));
-		MC_DATA.temp[2] = _SC_EXISTY2 * 0.001;	
-		MAIN_LOOP.cnt_mc_ack=0;	
-		MC_F_cnt = 0;
-		MC_N_test= 0;
-	}
-	else if(_SC_MSTDBY==3)//Us=90%
-	{
-		MC_U_test =  (float)_SC_Usn * 0.9 * Uns_ft - (0.5 * 1.110721 * (MEAN_DATA.uab2+MEAN_DATA.ubc2));
-		MC_DATA.temp[3] = _SC_EXISTY3 * 0.001;	
-		MAIN_LOOP.cnt_mc_ack=0;	
-		MC_F_cnt = 0;
-		MC_N_test= 0;
-	}
-	else if(_SC_MSTDBY==4)//Us=100%
-	{
-		MC_U_test =  (float)_SC_Usn * 1.0 * Uns_ft - (0.5 * 1.110721 * (MEAN_DATA.uab2+MEAN_DATA.ubc2));
-		MC_DATA.temp[4] = _SC_EXISTY4 * 0.001;
-		MAIN_LOOP.cnt_mc_ack=0;	
-		MC_F_cnt = 0;
-		MC_N_test= 0;
-	}
-	else if(_SC_MSTDBY==5)//Us=110% 
-	{
-		MC_U_test =  (float)_SC_Usn * 1.1 * Uns_ft - (0.5 * 1.110721 * (MEAN_DATA.uab2+MEAN_DATA.ubc2));
-		MC_DATA.temp[5] = _SC_EXISTY5 * 0.001;
-		MAIN_LOOP.cnt_mc_ack=0;	
-		MC_F_cnt = 0;
-		MC_N_test= 0;
-	}
-	else if(_SC_MSTDBY==99)//»∑∂®¿¯¥≈≤Œ ˝±Ê ∂ÕÍ≥…
-	{
-		if(M_ChkFlag(SL_MC_FAIL)!=0)
-		{
-			_MC_OK = 0;
-			MC_DATA.y[0] = 1;
-			MC_DATA.y[1] = 1;
-			MC_DATA.y[2] = 1;
-			MC_DATA.y[3] = 1;
-			MC_DATA.y[4] = 1;
-			MC_DATA.y[5] = 1;			
-		} 
-		else if(M_ChkFlag(SL_MC_OK)==0)
-		{
-	    	MC_DATA.y[0] = _SC_EXISTY1 * 0.001;
- 	   		MC_DATA.y[1] = _SC_EXISTY1 * 0.001;
-			MC_DATA.y[2] = _SC_EXISTY2 * 0.001;
-			MC_DATA.y[3] = _SC_EXISTY3 * 0.001;
-			MC_DATA.y[4] = _SC_EXISTY4 * 0.001;
-			MC_DATA.y[5] = _SC_EXISTY5 * 0.001; 
-			
-			MC_U_test =  (float)_SC_Usn * (0.5 + MC_N_test * 0.1) * Uns_ft - (0.5 * 1.110721 * (MEAN_DATA.uab2+MEAN_DATA.ubc2));
-			MC_F_cnt++;
-
-//			if(MC_F_cnt>32766) MC_F_cnt=32766;//test
-
-			if(abs(MC_U_test) < 25)
-			{
-				if(M_ChkCounter(MAIN_LOOP.cnt_mc_ack,DELAY_MC_ACK)>=0)	//0.5s
-				{
-					MC_F_cnt = 0;
-					MAIN_LOOP.cnt_mc_ack=0;
-					if(MC_N_test < 6)	 MC_N_test++;	//0-6			
-					else
-					{
-						M_SetFlag(SL_MC_OK);
-						MC_N_test = 0;
-					}					
-				}
-			}		
-			else if(MC_F_cnt > 5e4)		//≥¨ ±¥ÔµΩ10s,»œŒ™¿¯¥≈«˙œﬂ≤‚ªÊ ß∞‹,–Ë“™÷ÿ–¬≤‚¡ø
-			{
-				M_SetFlag(SL_MC_FAIL);
-				MC_F_cnt = 0;
-				MC_N_test= 0;
-				MAIN_LOOP.cnt_mc_ack=0;
-			}
-			else	MAIN_LOOP.cnt_mc_ack=0;		
-		}
-		else
-		{
-			_MC_OK = 1;
-		}
-					
-	}
-	else if(_SC_MSTDBY==100)		//”√ªß“™«Û÷ÿ–¬≤‚ªÊ¿¯¥≈«˙œﬂ
-	{
-		M_ClrFlag(SL_MC_OK);
-		M_ClrFlag(SL_MC_FAIL);
-		MC_F_cnt  = 0;
-		MC_N_test = 0;
-		_MC_OK 	  = 0;	
-		MAIN_LOOP.cnt_mc_ack=0;	
-	}
-	else
-	{
-		MC_U_test = MEAN_DATA.uab3 + MEAN_DATA.ubc3 - (MEAN_DATA.uab2+MEAN_DATA.ubc2);		//BJTULVRT_201011
-		MC_F_cnt  = 0;
-		MC_N_test = 0;
-		MAIN_LOOP.cnt_mc_ack=0;		
-	}
-//---------2013-12-13---ZZJ--------
 
 //-------------------------------------------------------------------------------------------------
 	*AD_DA_CTRL     = AD8364_CONVERT;	               	  	//∆Ù∂Øœ¬ªAD◊™ªª
@@ -3319,9 +3174,7 @@ if(M_ChkFlag(SL_ENPCOPER)==0)
 	_stdby05 = _STDBY5;			        					//±∏”√
     _stdby06 = _STDBY6;			        					//±∏”√
 	_stdby07 = _STDBY7;			        					//±∏”√
-//    _stdby08 = _STDBY8;			        					//±∏”√
-//º∆À„∂®◊”µÁ—πAD¥Û¬À≤®±»¬ 2013-12-13--ZZJ
-	Uns_ft = 0.5 * ((MEAN_DATA.uab3/MEAN_DATA.uab1)+(MEAN_DATA.ubc3/MEAN_DATA.ubc1));//¥Û¬À≤®∑˘÷µÀ•ºı±»¿˝
+    _stdby08 = _STDBY8;			        					//±∏”√
 
 	daindex[0] = (Uint16)_NPR_U_Kd;	//da output select BJTULVRT201204
 	daindex[1] = (Uint16)_NPR_ID_Kd;
