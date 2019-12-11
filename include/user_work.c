@@ -112,7 +112,7 @@ void PwmDrive(void)
 	        
 	 //--------Íø²à±äÁ÷Æ÷Âö³åÔÊÐí,ÇÒÃ»ÓÐ¹ÊÕÏ--------------
 //	        if((M_ChkFlag(SL_NPR_RUNING)!=0)&&(M_ChkFlag(SL_ERRSTOP)==0)&&(M_ChkFlag(SL_SERIESTOP)==0)) 
-	        if((M_ChkFlag(SL_NPR_RUNING)!=0)&&(M_ChkFlag(SL_ERRSTOP)==0)&&(M_ChkFlag(SL_SERIESTOP)==0)&&(M_ChkFlag(SL_LV_NSTOP)==0)) //201007BJTULVRT
+	        if((M_ChkFlag(SL_NPR_RUNING)!=0)&&(M_ChkFlag(SL_ERRSTOP)==0)&&(M_ChkFlag(SL_SERIESTOP)==0)&&(M_ChkFlag(SL_NSTOP)==0)) //201007BJTULVRT
 	        {
 		       if(M_ChkFlag(SL_NPR_PWMOUT)==0)  					//±£Ö¤Enepwmio_NPR()Ö»ÄÜÔËÐÐÒ»´Î
 		       {
@@ -131,13 +131,13 @@ void PwmDrive(void)
 	        }
      //------»ú²à±äÁ÷Æ÷Âö³åÊ¹ÄÜ,ÇÒÃ»ÓÐ¹ÊÕÏ---------------
 //            if((M_ChkFlag(SL_MPR_RUNING)!=0)&&(M_ChkFlag(SL_ERRSTOP)==0)&&(M_ChkFlag(SL_SERIESTOP)==0))
-            if((M_ChkFlag(SL_MPR_RUNING)!=0)&&(M_ChkFlag(SL_ERRSTOP)==0)&&(M_ChkFlag(SL_SERIESTOP)==0)&&(M_ChkFlag(SL_LV_MSTOP)==0)) //201007BJTULVRT
+            if((M_ChkFlag(SL_MPR_RUNING)!=0)&&(M_ChkFlag(SL_ERRSTOP)==0)&&(M_ChkFlag(SL_SERIESTOP)==0)&&(M_ChkFlag(SL_MSTOP)==0)) //201007BJTULVRT
 	        {
 		       if(M_ChkFlag(SL_MPR_PWMOUT)==0)	//±£Ö¤Enepwmio_MPR()Ö»ÄÜÔËÐÐÒ»´Î
 		       {
 			      Enepwmio_MPR();      
 			      M_SetFlag(SL_MPR_PWMOUT);
-			      M_SetFlag(SL_LV_MPWMOUT);		// LVRT	         
+			      M_SetFlag(SL_HVLV_MPWMOUT);		// LVRT	         
 		       }
 			   MAIN_LOOP.cnt_lv_mpwmstop=0;
 	        }
@@ -146,7 +146,7 @@ void PwmDrive(void)
 			   Disepwmio_MPR();       
 			   M_ClrFlag(SL_MPR_PWMOUT); 
 			   if(M_ChkCounter(MAIN_LOOP.cnt_lv_mpwmstop,DELAY_MPWMSTOP)>0)	//0ms LVRT 20100125cpcÊÔÑéÈ·¶¨
-			   		M_ClrFlag(SL_LV_MPWMOUT);	      						//Âö³å·âµôºóÑÓÊ±0msÔÊÐí¿ªÍ¨SCR
+			   		M_ClrFlag(SL_HVLV_MPWMOUT);	      						//Âö³å·âµôºóÑÓÊ±0msÔÊÐí¿ªÍ¨SCR
 	        } 
 	}
     else   //ÏµÍ³ÕýÔÚÉÏµç,»òÔ¤³äµçÕ¢Ã»ÓÐÇÐ³ý
@@ -155,7 +155,7 @@ void PwmDrive(void)
 		M_ClrFlag(SL_RUN);											//2010
 		M_ClrFlag(SL_NPR_PWMOUT);
 		M_ClrFlag(SL_MPR_PWMOUT);
-		M_ClrFlag(SL_LV_MPWMOUT);	      							//Âö³å·âµôºóÑÓÊ±1msÔÊÐí¿ªÍ¨SCR
+		M_ClrFlag(SL_HVLV_MPWMOUT);	      							//Âö³å·âµôºóÑÓÊ±1msÔÊÐí¿ªÍ¨SCR
 		M_ClrFlag(SL_CONFIGPWM);			        				//Âö³å·âËø
 		MAIN_LOOP.cnt_pwmout=0;										//Çå³ýÏµÍ³¹¤×÷ÔÊÐíÑÓÊ±
 		MAIN_LOOP.cnt_lv_mpwmstop=0;
@@ -238,7 +238,7 @@ void SVPWM_NPR(float alfa, float beta)
 //------------------------ ±È½Ï¼Ä´æÆ÷Öµ¼ÆËã---------------------------------------------------------
   switch(sector)
     {
-      	case 1:    temp1=(Uint16) (t0 * SW_NPR);				//SW_NPRÎªPWMÖÜÆÚ¼Ä´æÆ÷µ,Îª¿ª¹ØÖÜÆÚµÄÒ»°ë
+      	case 1:    temp1=(Uint16) (t0 * SW_NPR);				//SW_NPRÎªPWMÖÜÆÚ¼Ä´æÆ÷?,Îª¿ª¹ØÖÜÆÚµÄÒ»°ë
            	       temp2=(Uint16)((t0 + t1) * SW_NPR);
                	   temp3=(Uint16)((t0 + t1 + t2) * SW_NPR);
             	   break;
@@ -451,7 +451,7 @@ void Anti_Transform_2r_2s(struct TRANS_DATA *var2)
 
 /*********************************************************************************************************
 ** º¯ÊýÃû³Æ: PI_Loop
-** ¹¦ÄÜÃèÊö: PIµ÷÷
+** ¹¦ÄÜÃèÊö: PIµ÷?
 ** Êä¡¡Èë:   kp ±ÈÀý·Å´óÏµÊý
              ki »ý·ÖÏµÊý
 			 outmax Êä³öÏÞ·ù
@@ -518,6 +518,7 @@ void PI_Loop(struct PI_DATA *var,struct PI_PARA PI_var)
 ** ÈÕ¡¡ÆÚ:201011PLL
 **------------------------------------------------------------------------------------------------------
 ***********************************************************************************************/
+#pragma CODE_SECTION(PLLCtrl, "ramfuncs");	
 void PLLCtrl(void)
 {  
 	float n,p;
@@ -573,7 +574,9 @@ void PLLCtrl(void)
 
 	NGS_Udq_p = sqrt(TRS_GAC_U.de_fltpd * TRS_GAC_U.de_fltpd + TRS_GAC_U.de_fltpq * TRS_GAC_U.de_fltpq); 
 	NGS_Udq_n = sqrt(TRS_GAC_U.de_fltnd * TRS_GAC_U.de_fltnd + TRS_GAC_U.de_fltnq * TRS_GAC_U.de_fltnq); 
-	NGS_Udq_epsilon = 100 * NGS_Udq_n / NGS_Udq_p;
+	NGS_Udq_n2p = 100 * NGS_Udq_n / NGS_Udq_p;
+	NGS_Udq_n2pex = 100 * NGS_Udq_n / NGS_Udq_p_ex;
+
 } 
 
 /*********************************************************************************************************
@@ -741,6 +744,54 @@ void I_Loop(struct PI_DATA *var6)
 //--------20121103--------
 
 /***************************************************************************************************
+** º¯ÊýÃû³Æ: Magnet_Curve
+** ¹¦ÄÜÃèÊö: µç»úÀø´ÅÇúÏßº¯Êý(·Ö¶ÎÏßÐÔ²åÖµ)
+** Êä¡¡Èë:   ²åÖµ×Ô±äÁ¿x[n],²åÖµº¯ÊýÖµy[n],¼ÆËãº¯Êýµãin
+** Êä¡¡³ö:   Àø´ÅµçÁ÷Ð£ÕýÏµÊýout  
+** ×¢  ÊÍ: 	 
+**-------------------------------------------------------------------------------------------------------
+** ×÷¡¡Õß: MagnetCurve2013-12-13
+** ÈÕ¡¡ÆÚ: 2013-12-13
+**-------------------------------------------------------------------------------------------------------
+** ÐÞ¸ÄÈË:
+** ÈÕ¡¡ÆÚ:
+**------------------------------------------------------------------------------------------------------
+***********************************************************************************************/
+void Magnet_Curve(struct MC_DATA *var)	//·Ö¶ÎÏßÐÔ²åÖµ
+{
+	float temp_m,temp_k;
+	Uint16 i,j,s;
+
+//---------------²åÖµµãÏÞ·ù------------------------------------------------    
+	if(var->in < var->x[0])	var->in= var->x[0];
+	else if(var->in > var->x[7])	var->in= var->x[7];
+
+//---------------ÅÐ¶Ï²åÖµµãÇø¼ä[0,4]------------------------------------------------    
+	if(var->in <= var->x[1])	s=0;
+	else if((var->in > var->x[1])&&(var->in <= var->x[2]))	s=1;
+	else if((var->in > var->x[2])&&(var->in <= var->x[3]))	s=2;
+	else if((var->in > var->x[3])&&(var->in <= var->x[4]))	s=3;
+	else if((var->in > var->x[4])&&(var->in <= var->x[5]))	s=4;
+	else if((var->in > var->x[5])&&(var->in <= var->x[6]))	s=5;
+	else if((var->in > var->x[6])&&(var->in <= var->x[7]))	s=6;
+
+	temp_k = 0;
+	for(i=s;i<(s+2);i++)
+	{
+		temp_m = 1;
+		for(j=s;j<(s+2);j++)
+		{
+			if(i!=j)	
+			{
+				temp_m = temp_m * (var->in - var->x[j]) / (var->x[i] - var->x[j]);
+			}
+		}
+		temp_k = temp_k + temp_m * var->y[i];
+	}
+	var->k = temp_k;
+}  
+
+/***************************************************************************************************
 ** º¯ÊýÃû³Æ: Give_Integral
 ** ¹¦ÄÜÃèÊö: ¸ø¶¨»ý·Ö×Óº¯Êý
 ** Êä¡¡Èë:   »ý·Ö²½³¤step£¬¸ø¶¨Ö¸ÁîÖµgive
@@ -792,7 +843,7 @@ void Give(void)
 	if(M_ChkFlag(SL_NPR_START)==0 && M_ChkFlag(SL_MPR_START)==0)
 	{
 		M_ClrFlag(SL_NPR_RUN);			    						//Íø²à¹¤×÷ÔÊÐí±êÖ¾Çå0
-		M_ClrFlag(SL_MPR_RUN);			    						//»ú¹¤×÷ÔÊÐí±êÖ¾Çå0
+		M_ClrFlag(SL_MPR_RUN);			    						//»ú¹¤×÷êÖ¾Ç?0
 		GIVE.urf      = _URF;										//Íø²à¸ø¶¨µçÑ¹Îªµ±Ç°VdcÖµ
 		GIVE.npriqrf  = 0;											//Íø²à¸ø¶¨µçÁ÷Îª0
         GIVE.toqrf    = 0;                  						//»ú²à¸ø¶¨×ª¾ØÎª0
@@ -802,7 +853,7 @@ void Give(void)
 	else
 	{
 //		if(M_ChkFlag(SL_LV_QWORKING)==0) 	NGS_Udq_p_ex = NGS_Udq_p;		//ÅÐ¶ÏLVRTÖ®Ç°ÍøÑ¹ 20130206
-		if(M_ChkFlag(SL_LV_QWORKING)==0) 	NGS_Udq_p_ex = NGS_Udq_pflt;		//ÅÐ¶ÏLVRTÖ®Ç°ÍøÑ¹ 20130301
+		if(M_ChkFlag(SL_LV_QWORKING)==0||M_ChkFlag(SL_HV_QWORKING)==0) 	NGS_Udq_p_ex = NGS_Udq_pflt;		//ÅÐ¶ÏLVRTÖ®Ç°ÍøÑ¹ 20130301
 
 /*		if(M_ChkFlag(SL_OCS_NPREIN)!=0)					           //Íø²àÎÞ¹¦²¢Íø,Íø²à¸ø¶¨Ö±Á÷µçÑ¹ºÍÎÞ¹¦µçÁ÷Öµ
 		{
@@ -847,11 +898,12 @@ void Give(void)
                			GIVE.toqrf  =  (int16) _TOQRF;              //ÕýÖµÎª·¢µç
 						GIVE.anglerf=  (int16) _AGLRF;  			//¸ø¹¦ÂÊÒòÊý½ÇÖ¸Áî¸³Öµ,-360 -- 360
 
-					    if(M_ChkFlag(SL_LV_QWORKING)!=0)  		   	//LVRT»ú²à·¢ÓÐ¹¦»òÕßÎÞ¹¦
+					    if(M_ChkFlag(SL_LV_QWORKING)!=0||M_ChkFlag(SL_HV_QWORKING)!=0)  		   	//HVRT LVRT»ú²à·¢ÓÐ¹¦»òÕßÎÞ¹¦
 			            {
-//					    	GIVE.toqrf  = (int16)_PROSTDBY2;   		//201007BJTULVRT
+//					    	GIVE.toqrf  = (int16)_PROSTDBY2;   		//201007BJTULVRT//×ª¾Ø²»ÐÞ¸Ä¾ÍÊÇÈÎÈ»½ÓÊÜ×ª¾ØÖ¸Áî
 							GIVE.anglerf= 0;						//20110829
 			   			}
+						
 					}
 					else
       		   		{
@@ -873,7 +925,7 @@ void Give(void)
                			temp_aglrf     =  (int16)SCI_canopen.rx_angle;               
       		   			GIVE.anglerf   =  temp_aglrf * CAN_ANGLEN / 16383.0;  
 
-					    if(M_ChkFlag(SL_LV_QWORKING)!=0)  		   	//LVRT»ú²à·¢ÓÐ¹¦»òÕßÎÞ¹¦
+					    if(M_ChkFlag(SL_LV_QWORKING)!=0||M_ChkFlag(SL_HV_QWORKING)!=0)  		   	//LVRT»ú²à·¢ÓÐ¹¦»òÕßÎÞ¹¦
 			            {
 //					    	GIVE.toqrf  = (int16)_PROSTDBY2;   		//201007BJTULVRT
 							GIVE.anglerf= 0;						//20110829
@@ -887,6 +939,11 @@ void Give(void)
      		   		}             				
 			   
 			   }
+
+				if     (GIVE.anglerf > 0)
+					GIVE.anglerf = GIVE.anglerf * 1.35;		//20140503LJDµçÄÜÖÊÁ¿ 20150204XD
+				else if     (GIVE.anglerf < 0)
+					GIVE.anglerf = GIVE.anglerf * 1.1;			//20140503LJDµçÄÜÖÊÁ¿
 
 			   if     (GIVE.anglerf <-30.0)                      GIVE.anglerf     = -30.0;
 			   else if(GIVE.anglerf > 30.0)                      GIVE.anglerf     =  30.0;
@@ -913,13 +970,14 @@ void Give(void)
 ***********************************************************************************************/
 void RunCtrl(void)
 {
-    float udc_max,id_max,iq_max,toq_max,agl_max,temp;
-	Uint16 temp_n,temp_ud,temp_iqexi,temp_number;
+    float udc_max,id_max,iq_max,toq_max,agl_max,temp,temp_var;//2013-12-9ZZJÔö¼Ótemp_var
+//	Uint16 temp_n,temp_ud,temp_iqexi,temp_number;
 //	float  temp_exi,temp_iqk;
 //	float  temp_Qc,temp_Qg,temp_tan;
-	float  temp_exi,temp_iqk,temp_npriqrf,temp_idrfmax,temp_iqrfmax;
+//	float  temp_exi,temp_iqk,temp_npriqrf,temp_idrfmax,temp_iqrfmax;
+	float  temp_exi,temp_npriqrf,temp_idrfmax;
 
-//----------------------------ø²àÔËÐÐ¸ø¶¨¿ØÖÆ---------------------------------------------------------
+//----------------------------ø²àÔËÐÐ¸ø¶¨¿ØÖ?---------------------------------------------------------
 
 //-----Íø²àÕýÔÚÔËÐÐÇÒÒªÇóÕý³£Í£»ú
     if((M_ChkFlag(SL_NPR_RUNING)!=0)&&(M_ChkFlag(SL_NPR_RUN)==0))  				//Íø²àÎÞ¹¦µçÁ÷½«Îª0ºóÔÙÍ£Âö³å
@@ -936,26 +994,35 @@ void RunCtrl(void)
 //-----ÒªÇóÍø²àÔËÐÐ
     else if(M_ChkFlag(SL_NPR_RUN)!= 0) 
     {  
-       M_SetFlag(SL_NPR_RUNING);                 								//Íø²àÕýËÐÐ£¬¿ªÊ¼·¢Íø²àÂö³å
+       M_SetFlag(SL_NPR_RUNING);                 								//Íø²àÕýËÐÐ£¬¿ªÊ¼·¢Íø²àÂö³?
        MAIN_LOOP.cnt_isteady0= 0;
 	                
-	   RUN.urf = Give_Integral(GIVE.urf,RUN.ustep,RUN.urf);     				//µçÑ¹¸ø¶¨»ý·Ö
 
-//       if(M_ChkFlag(SL_LV_NSTOP)!=0)	RUN.urf=AD_OUT_UDC; 					//20121103							
-
-       if(RUN.urf == GIVE.urf)	    M_SetFlag(SL_STEADYGV);        				//¸ø¶¨»ý·ÖÍê³É,ÖÃÎÈ¶¨±êÖ¾Î»
-	   else							M_ClrFlag(SL_STEADYGV);
+	   if(M_ChkFlag(SL_HV_QWORKING)!= 0)	    
+	   {
+		RUN.urf = (NGS_Udq_p - NGS_Udq_p_ex)/SQRT3 + GIVE.urf;
+		if(RUN.urf <= GIVE.urf)	    RUN.urf=GIVE.urf;        			   
+	   	else if(RUN.urf >= 1200)	RUN.urf=1200;	   		   
+	   }
+	   else
+	   {
+		RUN.urf = Give_Integral(GIVE.urf,RUN.ustep,RUN.urf);     				//µçÑ¹¸ø¶¨»ý·Ö
+       	if(RUN.urf == GIVE.urf)	    M_SetFlag(SL_STEADYGV);        			   //¸ø¶¨»ý·ÖÍê³É,ÖÃÎÈ¶¨±êÖ¾Î»
+	   	else						M_ClrFlag(SL_STEADYGV);
+	   }
+	   
+       	if(M_ChkFlag(SL_NSTOP)!=0)	RUN.urf=AD_OUT_UDC; 					   //20121103		
 
 //-------Íø²àÎÞ¹¦µçÁ÷¿ØÖÆBJTULVRT20121103--------
 		if(M_ChkFlag(SL_LV_QWORKING)!=0)  		   			//LVRTÍø·¢ÎÞ¹¦¹¦ÂÊ
 		{				
-		 if(M_ChkCounter(MAIN_LOOP.cnt_lv_nprqworking,20)>=0)		//20130225
+		 if(M_ChkCounter(MAIN_LOOP.cnt_gridfault_last,20)>=0)		//20130225  20msºó²Å¿ªÊ¼·¢ÎÞ¹¦
 		 {
 			temp_npriqrf   = -(int16)_PROSTDBY1;   			//Íø²àÎÞ¹¦Ö¸Áî¼ÆËã20111103
 			if((_COMMAND2&0x0400)!=0)	//±¸ÓÃ10 20111106
 			{
 				if(M_ChkFlag(SL_LV_STATE)==0)
-					temp_npriqrf   = -450; 	//1100V¶î¶¨ÍøÑ¹ÏÂÍø²àÎÞ¹¦µçÁ÷·åÖµÐëÐ¡ÓÚ460A
+					temp_npriqrf   = -450; 	//¶ÔÓ¦ºóÃæµÄiqÏÞ·ù£¬¶î¶¨ÍøÑ¹ÏÂÍø²àÎÞ¹¦µçÁ÷·åÖµÐëÐ¡ÓÚ460A£¬¶ÔÓ¦µÄÊÇ¹ÊÕÏ»Ö¸´ºóµÄÒ»¶ÎÊ±¼ä
 			}
 
 			GIVE.npriqrf_cl   = -GIVE.lvwtiqrf - DIP_STA_I.qflt;   		//Itq=100A Isq201205LVRTatZB
@@ -967,22 +1034,22 @@ void RunCtrl(void)
 
 			if(GIVE.npriqrf < temp_npriqrf)	GIVE.npriqrf=temp_npriqrf;
 			else if(GIVE.npriqrf > 0)		GIVE.npriqrf=0;
-//--------20130124----Íø²à·¢ÎÞ¹¦Ìî²¹µøÂä³õÆÚÎÞ¹¦µÄ²»×ã----
-			if(M_ChkCounter(MAIN_LOOP.cnt_lv_npriqrf,120)<=0)
+//--------20130124----Íø²à·¢ÎÞ¹¦Ìî²¹µøÂä³õÆÚÎÞ¹¦µÄ²»×ã£¬1.2±¶À´·¢ÎÞ¹¦----
+			if(M_ChkCounter(MAIN_LOOP.cnt_gridfault_last,120)<=0)     //Ç°120ms
 			{
 //				GIVE.npriqrf = - kq * lv_ctrl5 * 400;
-				if((NGS_Udq_epsilon < 30) && (NGS_Udq_p < (0.43 * NGS_Udq_p_ex)))		//Ö»3ph-20¼°35Çé¿öÏÂ²Å·¢	20130308
-					GIVE.npriqrf = - kq * lv_ctrl5 * 400;	//20130308
+				if((NGS_Udq_n2p < 30) && (NGS_Udq_p < (0.43 * NGS_Udq_p_ex)))		//Ö»3ph-20¼°35Çé¿öÏÂ²Å·¢	20130308
+					GIVE.npriqrf = - kq * lv_ctrl5 * 400;	//20130308 lv_ctrl5 Ä¬ÈÏ1.2
 			}
 //--------20130124--------
 //--------²»¶Ô³ÆµøÂäÍø²àÎÞ¹¦¿ØÖÆ20130221--------
-//			if((NGS_Udq_epsilon > 27) && (PRO.Pgactive_lv>600000) && (NGS_Udq_p < (0.71 * NGS_Udq_p_ex)) && (M_ChkFlag(SL_LV_SCRRUNING)!=0))
-//			if((NGS_Udq_epsilon > 27) && (NGS_Udq_p < (0.71 * NGS_Udq_p_ex)) && (M_ChkFlag(SL_LV_SCRRUNING)!=0))	//20%/35%ËùÓÐ¹¤¿ö	20130222
-			if((NGS_Udq_epsilon > 38) && (PRO.Pgactive_lv>600000) && (NGS_Udq_p < (0.61 * NGS_Udq_p_ex)) && (M_ChkFlag(SL_LV_SCRRUNING)!=0))	//20%/35%ËùÓÐ¹¤¿ö	20130306
+//			if((NGS_Udq_n2p > 27) && (PRO.Pgactive_lv>600000) && (NGS_Udq_p < (0.71 * NGS_Udq_p_ex)) && (M_ChkFlag(SL_SCRRUNING)!=0))
+//			if((NGS_Udq_n2p > 27) && (NGS_Udq_p < (0.71 * NGS_Udq_p_ex)) && (M_ChkFlag(SL_SCRRUNING)!=0))	//20%/35%ËùÓÐ¹¤¿ö	20130222
+			if((NGS_Udq_n2p > 38) && (PRO.Pgactive_lv>600000) && (NGS_Udq_p < (0.61 * NGS_Udq_p_ex)) && (M_ChkFlag(SL_SCRRUNING)!=0))	//20%/35%ËùÓÐ¹¤¿ö	20130306
 			{
 				GIVE.npriqrf = - 10 * lv_ctrl1;		//³õÖµÉè¶¨Îª600A
 			}
-			else if(NGS_Udq_epsilon > 15)
+			else if(NGS_Udq_n2p > 15)
 			{
 				GIVE.npriqrf = - _stdby03;			//³õÖµÉè¶¨Îª300A
 //				GIVE.npriqrf = - 300;			//³õÖµÉè¶¨Îª300A
@@ -995,21 +1062,27 @@ void RunCtrl(void)
 			else if(GIVE.npriqrf >0)		GIVE.npriqrf=0;
 		 }
 		}
-		else		//20130124
+		else if (M_ChkFlag(SL_HV_QWORKING)!=0)
 		{
-			MAIN_LOOP.cnt_lv_npriqrf = 0;
-			MAIN_LOOP.cnt_lv_nprqworking = 0;		//20130124Íø²à·¢ÎÞ¹¦±Ü¹ý20ms
+			if(M_ChkCounter(MAIN_LOOP.cnt_gridfault_last,100)<=0)
+			GIVE.npriqrf = (NGS_Udq_p - NGS_Udq_p_ex) /(CAP4.omigasyn * NPR_L); 
+			else
+			{
+				GIVE.npriqrf = kq * 1776;
+			}
+			if(GIVE.npriqrf > 850)	    GIVE.npriqrf = 850;
+			else if(GIVE.npriqrf <0)		GIVE.npriqrf=0;
 		}
 
-
- 	   if(M_ChkFlag(SL_STEADYGV)!=0)											//´ýµçÑ¹¸ø¶¨Íê³ÉºóÔÙ¸ø¶¨ÎÞ¹¦µçÁ÷
-	 	   RUN.npriqrf = Give_Integral(GIVE.npriqrf,RUN.npriqstep,RUN.npriqrf); //Íø²à¹¦µçÁ÷¸ø¶¨»ý·Ö	         
-
-//	   if(M_ChkFlag(SL_LV_NSTOP)!=0)  	RUN.npriqrf=0; 							//201007BJTULVRT							
-	   if((M_ChkFlag(SL_LV_NSTOP)!=0) || (M_ChkFlag(SL_LV_STATE)!=0 && M_ChkFlag(SL_LV_QWORKING)==0))  
+		if(M_ChkFlag(SL_HV_QWORKING)!=0)
+		   RUN.npriqrf = Give_Integral(GIVE.npriqrf,100,RUN.npriqrf); //Ã¿ms 100A
+ 	   	else if(M_ChkFlag(SL_STEADYGV)!=0)											//´ýµçÑ¹¸ø¶¨Íê³ÉºóÔÙ¸ø¶¨ÎÞ¹¦µçÁ÷
+	 	   RUN.npriqrf = Give_Integral(GIVE.npriqrf,RUN.npriqstep,RUN.npriqrf); //Íø²àÎÞ¹¦µçÁ÷¸ø¶¨»ý·Ö	         
+						
+	   if(M_ChkFlag(SL_NSTOP)!=0)  
 	   		RUN.npriqrf=0;		//20121103		Íø²àÁÙÊ±·âÂö³åÊ±½«ÎÞ¹¦Ö¸ÁîÇåÁã					
 
-//	   if(M_ChkFlag(SL_UNBALANCE)!=0 && (NGS_Udq_epsilon > 35))	//20121103
+//	   if(M_ChkFlag(SL_UNBALANCE)!=0 && (NGS_Udq_n2p > 35))	//20121103
 //	   		RUN.npriqrf=0; //²»¶Ô³ÆµøÂäºÜ´óÊ±·âÂö³åÊ±½«ÎÞ¹¦Ö¸ÁîÇåÁã					
 //	   		RUN.npriqrf = - (int16)_PROSTDBY1 * lv_ctrl1;		//²»¶Ô³ÆµøÂä·¢ÉÙÁ¿ÎÞ¹¦ÒÔµÖÏûµçÍøÎÞ¹¦ÎüÊÕ20121210					
 	}
@@ -1046,7 +1119,7 @@ void RunCtrl(void)
 
 //----------------------------»ú²àÔËÐÐÓÐ¹¦µçÁ÷Öµ¸ø¶¨»ý·Ö-------------------------------------
 
-//-----ú²àÕýÔÚÔËÐÐ²¢ÒªÇóÍ£»ú
+//-----»ú²àÕýÔÚÔËÐÐ²¢ÍøÒªÇóÍ£»ú
     if((M_ChkFlag(SL_MPR_RUNING)!=0)&&(M_ChkFlag(SL_MPR_RUN)==0)) 
     {      
 		if(M_ChkFlag(SL_MPR_SYNOK)!=0)												//systest201005atcpc
@@ -1057,9 +1130,10 @@ void RunCtrl(void)
 
 //		    RUN.mpriqrf_g  =  - RUN.toqrf  / (IRQTOTE * TRS_NGS_U.dflt);   			//¸ø¶¨qÖáµçÁ÷Ö¸Áî¼ÆËã
 	    	RUN.mpriqrf_g  =  - RUN.toqrf * STAROTRTO / (1.5 * SQRT3 * POLEPAIRES * MPR_Lm * TRS_NGS_U.dflt / (314.15926 *  MPR_Ls));   //¸ø¶¨qÖáµçÁ÷Ö¸Áî¼ÆËã201005atcpc
- 
-			RUN_mpridrf_exi  = - (TRS_NGS_U.dflt * SQRT3 * STAROTRTO / (MPR_Lm * 314.15926));  //¸ººÅ:ÍøÑ¹edÓë»ú²àdÖáÏà²î180¶È             
-            RUN.mpridrf_exi  =  RUN_mpridrf_exi * _eidco;          						//³Ëµ÷ÕûÏµÊý,ÓÉ²Ù×÷Æ÷¸ø¶¨ 20100622
+//----MagnetCurve2013-12-13--ZZJ--ÒÔÏÂÁ½¾äÈ¡Ïû£¬Ã¿´ÎÍ£»ú°´ÕÕÔËÐÐÊ±idÖ¸ÁîÖµ MagnetCurve200909- 
+//			RUN_mpridrf_exi  = - (TRS_NGS_U.dflt * SQRT3 * STAROTRTO / (MPR_Lm * 314.15926));  //¸ººÅ:ÍøÑ¹edÓë»ú²àdÖáÏà²î180¶È             
+//          RUN.mpridrf_exi  =  RUN_mpridrf_exi * _eidco;          						//³Ëµ÷ÕûÏµÊý,ÓÉ²Ù×÷Æ÷¸ø¶¨ 20100622
+/*--MagnetCurve2013-12-13---ZZJ
         	temp_ud = (Uint16)(TRS_NGS_U.dflt * SQRT3 / SQRT2);
         	if     (temp_ud < 540) 		temp_ud = 540;
         	else if(temp_ud > 800) 	    temp_ud = 800;
@@ -1067,7 +1141,7 @@ void RunCtrl(void)
         	temp_exi = TAB_EXI[temp_n];
         	RUN.mpridrf_exi =  RUN.mpridrf_exi * temp_exi;          				//²é±íµ÷ÕûÏµÊý,Óë¿ÕÔØ¸ÐÓ¦µçÊÆÓÐ¹Ø
 //      	    RUN.mpridrf_exi  =  RUN_mpridrf_exi * _eidco;          					//³Ëµ÷ÕûÏµÊý,ÓÉ²Ù×÷Æ÷¸ø¶¨		20100622		
-/*//20091022atzy
+///20091022atzy
 			RUN_mpriq = (Uint16)(- RUN.mpriqrf_g);
 			if     (RUN_mpriq < 290)   temp_iqexi = 290;
 			else if(RUN_mpriq > 600)   temp_iqexi = 600;
@@ -1118,21 +1192,20 @@ void RunCtrl(void)
 		if(M_ChkFlag(SL_LV_QWORKING)!=0)  		   	//LVRT»ú²à·¢ÓÐ¹¦»òÕßÎÞ¹¦
 		{
 //			GIVE.toqrf  = GRD_Ut * GIVE.toqrf;   	//201205LVRTatZB
-			GIVE.anglerf= 0;						//20110829
-			RUN.toqrf = GIVE.toqrf;					//20130228
+			RUN.toqrf = GIVE.toqrf;					//20130228 //µÍ´©×´Ì¬Ö±½Ó¸ø¶¨×ª¾Ø£¬²»ÐèÒªÐ±ÆÂ»ý·Ö xly£¿
 //			if(M_ChkFlag(SL_UNBALANCE)!=0)
 //				GIVE.toqrfrun  = 0;   					//20121013LVRTatBJTU ²»¶Ô³ÆµøÂäÏÂ×ª¾Ø²»±£³Ö
 		}
 		else
 		{
 //			DataFilter(0.994,&GIVE.toqrfflt,GIVE.toqrf); //Ö÷¿Ø¸ø¶¨×ª¾ØÆ½¾ùÖµ1s Ã¿1msÖ´ÐÐÒ»´Î201205LVRTatZB
- 			GIVE.toqrfrun = GIVE.toqrf;
+ 			GIVE.toqrfrun = GIVE.toqrf;  //ÓÃÓÚ±£´æ¹ÊÕÏÇ°µÄ×ª¾ØÖ¸Áî
  		}	   
 //----------------
 		RUN.toqrf = Give_Integral(GIVE.toqrf,RUN.toqstep,RUN.toqrf);  				//»ú²à×ª¾Ø¸ø¶¨»ý·Ö
 		RUN.aglrf = Give_Integral(GIVE.anglerf,RUN.aglstep,RUN.aglrf);  			//»ú²à¹¦ÂÊÒòÊý½Ç¸ø¶¨»ý·Ö
 //-----20121103-------
-		if(M_ChkFlag(SL_LV_MSTOP)!=0 || (M_ChkFlag(SL_LV_STATE)!=0 && M_ChkFlag(SL_UNBALANCE)!=0))												//201007BJTULVRT
+		if(M_ChkFlag(SL_MSTOP)!=0 || (M_ChkFlag(SL_LV_STATE)!=0 && M_ChkFlag(SL_UNBALANCE)!=0))												//201007BJTULVRT
 		{				
 			RUN.toqrf = 0;  		//201205LVRTatZB ²»Æ½ºâÏÂµÄ×ª¾ØÔËÐÐÖ¸ÁîÒªÇåÁã		
 			RUN.aglrf = 0;  			
@@ -1141,7 +1214,7 @@ void RunCtrl(void)
  
 //	    RUN.mpriqrf_g  =  - RUN.toqrf  / (IRQTOTE * TRS_NGS_U.dflt);   				//¸ø¶¨qÖáµçÁ÷Ö¸Áî¼ÆËã
 	    RUN.mpriqrf_g  =  - RUN.toqrf * STAROTRTO / (1.5 * SQRT3 * POLEPAIRES * MPR_Lm * TRS_NGS_U.dflt / (314.15926 *  MPR_Ls));   //¸ø¶¨qÖáµçÁ÷Ö¸Áî¼ÆËã201005atcpc
- 
+/*---MagnetCurve2013-12-13---ZZJ
 		RUN_mpridrf_exi  = - (TRS_NGS_U.dflt * SQRT3 * STAROTRTO / (MPR_Lm * 314.15926));  //¸ººÅ:ÍøÑ¹edÓë»ú²àdÖáÏà²î180¶È             
         RUN.mpridrf_exi  =  RUN_mpridrf_exi * _eidco;          						//³Ëµ÷ÕûÏµÊý,ÓÉ²Ù×÷Æ÷¸ø¶¨ 20100622
         temp_ud = (Uint16)(TRS_NGS_U.dflt * SQRT3 / SQRT2);							//ÍøÑ¹ÏßµçÑ¹ÓÐÐ§Öµ 690V
@@ -1151,7 +1224,7 @@ void RunCtrl(void)
         temp_exi = TAB_EXI[temp_n];
         RUN.mpridrf_exi =  RUN.mpridrf_exi * temp_exi;          					//²é±íµ÷ÕûÏµÊý,ÓÉ²Ù×÷Æ÷¸ø¶¨ 
 //      	RUN.mpridrf_exi  =  RUN_mpridrf_exi * _eidco;          					//³Ëµ÷ÕûÏµÊý,ÓÉ²Ù×÷Æ÷¸ø¶¨	20100622			
-
+*///---MagnetCurve2013-12-13---ZZJ
 /*//20091022atzy 
 		RUN_mpriq = (Uint16)(- RUN.mpriqrf_g);
 		if     (RUN_mpriq < 290)   temp_iqexi = 290;
@@ -1161,7 +1234,50 @@ void RunCtrl(void)
 		temp_iqk = TAB_IQEXI[temp_number];
         RUN.mpridrf_exi = RUN.mpridrf_exi * temp_iqk;          						//²é±íµ÷ÕûÏµÊý,ÓÉ¸ºÔØµçÁ÷Irq¸ø¶¨È·¶¨ 
 *///20091022atzy 
-   
+//----MagnetCurve2013-12-13 ZZJÔö¼ÓÀø´Åµ÷ÕûÄÚÈÝ---
+//----MagnetCurve200909 test_start-----------------------
+
+   		if(_SC_MSTDBY==0)
+   		{
+			RUN_mpridrf_exi  = - (TRS_NGS_U.dflt * SQRT3 * STAROTRTO / (MPR_Lm * 314.15926));
+        	RUN.mpridrf_exi  =  RUN_mpridrf_exi * _eidco;
+
+ 			if(_MC_OK==1)				//µç»úÀø´ÅÇúÏß»æÖÆÍê³É
+			{								
+ 				MC_DATA.in = 100 * TRS_NGS_U.dflt * SQRT3 / ((float)_SC_Usn * SQRT2);
+				if(MC_DATA.in < 50)			MC_DATA.in = 50;		//ÊäÈëÏÞ·ù[50,110]
+				else if(MC_DATA.in > 130)	MC_DATA.in = 130;		//ÊäÈëÏÞ·ù
+ 				Magnet_Curve(&MC_DATA);
+        		RUN.mpridrf_exi =  RUN.mpridrf_exi * MC_DATA.k;
+        	}
+		}
+		else
+		{
+			temp_exi  = - ((float)_SC_Usn * SQRT2 * STAROTRTO / (MPR_Lm * 314.15926));  //¼ÆËãÀíÂÛ¶î¶¨ÍøÑ¹ed=563Ê±»ú²àdÖáÀø´ÅµçÁ÷Öµ            
+        	if(_SC_MSTDBY==1)		RUN_mpridrf_exi = 0.5  * _SC_EXISTY1 * 0.001 * temp_exi;
+			else if(_SC_MSTDBY==2)	RUN_mpridrf_exi = 0.75 * _SC_EXISTY2 * 0.001 * temp_exi;
+			else if(_SC_MSTDBY==3)	RUN_mpridrf_exi = 0.9  * _SC_EXISTY3 * 0.001 * temp_exi;
+			else if(_SC_MSTDBY==4)	RUN_mpridrf_exi = 1.0  * _SC_EXISTY4 * 0.001 * temp_exi;
+			else if(_SC_MSTDBY==5)	RUN_mpridrf_exi = 1.1  * _SC_EXISTY5 * 0.001 * temp_exi;
+			else if(_SC_MSTDBY==6)	RUN_mpridrf_exi = 1.2  * 1.644  * temp_exi;
+			else if(_SC_MSTDBY==7)	RUN_mpridrf_exi = 1.3  * 2.1765 * temp_exi;
+//--------------------Ð£Ñé»·½Ú------------------------------------------------------------
+			else if(_SC_MSTDBY==99)
+			{
+				MC_DATA.in = 50 + MC_N_test * 10;	//[MC_test_n , Us]=[0;1;6 , 50;10;110]
+				Magnet_Curve(&MC_DATA);
+        		RUN_mpridrf_exi =  (0.5 + MC_N_test * 0.1) * temp_exi * MC_DATA.k;
+			}
+
+//----------------------------------------------------------------------------------------
+			RUN.mpridrf_exi =  RUN_mpridrf_exi;     
+		}		
+//----MagnetCurve200909 test_end-----------------------
+
+
+//----MagnetCurve2013-12-13 ZZJÔö¼ÓÀø´Åµ÷ÕûÄÚÈÝ---end
+
+
  	    RUN.radianrf    = RUN.aglrf * 0.017453292;									//½Ç¶È×ª»¡¶È360->2PAI	 0.01745329=2 * PAI / 360
 	    RUN.mpridrf_var = RUN.mpriqrf_g * sin(RUN.radianrf) / cos(RUN.radianrf); //Í£»úÊ±£¬±£Ö¤¶¨×ÓµçÁ÷Îª0£¬¼´¹¦ÂÊÒòÊýÎª1
 			   	    																//RUN.aglrf>0,×ª×ÓÀø´ÅÔö¼Ó,·¢³ö¸ÐÐÔÎÞ¹¦;·´Ö®,ÈÝÐÔ
@@ -1169,9 +1285,17 @@ void RunCtrl(void)
 //	    temp_Qg = PRO.Pgactive * sin(RUN.radianrf) / cos(RUN.radianrf);
 //		temp_tan    = (temp_Qg - temp_Qc) / PRO.Psactive;
 //	    RUN.mpridrf_var = RUN.mpriqrf_g * temp_tan;
+//----MagnetCurve2013-12-13 ZZJÔö¼ÓÀø´Åµ÷ÕûÄÚÈÝ---
+		if(_MC_OK==1)				//µç»úÀø´ÅÇúÏß»æÖÆÍê³ÉBJTULVRT201204
+		{
+	 		RUN.mpridrf_var = 	RUN.mpridrf_var	* MC_DATA.k;
+		}
+//----MagnetCurve2013-12-13 ZZJÔö¼ÓÀø´Åµ÷ÕûÄÚÈÝ---end
 
+		temp_var = RUN.mpridrf_var;//2013-12-9ZZJÐÞ¸ÄÎÞ¹¦Ö¸ÁîÏìÓ¦ÎÊÌâ  ÏÈ±£´æÕý³£Çé¿öµÄÎÞ¹¦id£¬µçÑ¹¹ÊÕÏ»Ö¸´ºóÑ¸ËÙ»Ö¸´
 //----20121103-----
-//-------»ú²àÎÞ¹¦µçÁ÷¿ØÖÆBJTULVRT201204-------·ûºÅ20121129-----------
+//-------»ú²àÎÞ¹¦µçÁ÷¿ØÖÆBJTULVRT201204------------------
+//½øÈëµçÍø¹ÊÕÏ³ÌÐòÖ®Ç°£¬ÒÑ¾­¼ÆËãºÃÁËÖ÷¿ØÒªÇóµÄÎÞ¹¦¹¦ÂÊµçÁ÷RUN.mpridrf_var »ù±¾Àø´ÅµçÁ÷RUN.mpridrf_exi ×ª¾ØµçÁ÷RUN.mpriqrf_g 
 //		if(M_ChkFlag(SL_LV_STATE)!=0)  		   			//!!!!!!20120601night 201205LVRTatZB
 		if(M_ChkFlag(SL_LV_QWORKING)!=0)  		   			//LVRT»ú²à·¢ÎÞ¹¦µçÁ÷ 20120603night¸Ä»ØÑÓÊ±ÏìÓ¦Ö÷¿Ø×ª¾ØÖ¸Áî
 		{
@@ -1185,12 +1309,12 @@ void RunCtrl(void)
 				GRD_Utlv = GRD_Ut;
 				NGS_Udq_p_lv = NGS_Udq_p; 		//20130124
 				kq_lv = kq;				//Íø²à¿ØÖÆÓÃ 20130124
-				NGS_Udq_epsilon_lv = NGS_Udq_epsilon;	//20130301
+				NGS_Udq_n2p_lv = NGS_Udq_n2p;	//20130301
 //				Te_feedback_lv=Te_feedback; 	//20130124
 //--------·ÖÇé¿ö·µ»ØÖ÷¿Ø×ª¾ØÖµ20130221--------
 //				if(PRO.Pgactive_lv<600000)
 				if((PRO.Pgactive_lv<600000) || (NGS_Udq_p > (NGS_Udq_p_ex * 0.83)))		//¼ÓÈë90%ºÍÁ½Ïà75%µÄÇé¿ö	20130303
-					Te_feedback_lv = GIVE.toqrf_lv;		//·´À¡Ö÷¿Ø×ª¾ØÎ¬³Ö20130128
+					Te_feedback_lv = GIVE.toqrf_lv;		//·´À¡Ö÷¿Ø×ª¾ØÎ¬³Ö20130128  ¹ÊÕÏÇ°µÄ×ª¾Ø
 				else
 					Te_feedback_lv = GIVE.toqrf_lv * GRD_Utlv;
 //--------·ÖÇé¿ö·µ»ØÖ÷¿Ø×ª¾ØÖµ20130221--------
@@ -1199,32 +1323,33 @@ void RunCtrl(void)
 			{
 //				RUN.mpriqrf_g  = - (GRD_Utlv/GRD_Ut) * GIVE.toqrfrun * STAROTRTO / (1.5 * SQRT3 * POLEPAIRES * MPR_Lm * GRD_UN / (314.15926 *  MPR_Ls));   //201205LVRTatZB
 				RUN.mpriqrf_g  = - (GRD_Utlv/GRD_Ut) * GIVE.toqrfrun * STAROTRTO / (1.5 * SQRT3 * POLEPAIRES * MPR_Lm * NGS_Udq_p_ex / (314.15926 *  MPR_Ls));   //20130301LVRTatZB
-													//20120531
+													//GRD_UtÔÚµçÑ¹»Ö¸´µÄÊ±ºò»á±ä´ó£¬×ª¾ØµçÁ÷»á±äÐ¡£¬ÕâÑù¿ÉÒÔÔÚµçÑ¹»Ö¸´Ê±±£³Ö×ª¾Ø²»±ä
 //				if(PRO.Pgactive_lv<600000)		RUN.mpriqrf_g = RUN.mpriqrf_g_exlv;
 				if((PRO.Pgactive_lv<600000) || (NGS_Udq_p_lv > (NGS_Udq_p_ex * 0.83)))	//¼ÓÈë90%ºÍÁ½Ïà75%µÄÇé¿ö	20130303
-					RUN.mpriqrf_g = RUN.mpriqrf_g_exlv;
+				RUN.mpriqrf_g = RUN.mpriqrf_g_exlv;   //Ð¡·ùµøÂä£¬»Ö¸´µøÂäÇ°µÄ×ª¾Ø
 			}
-//--------90%Î¬³Ö¹¦ÂÊ²»±ä20130205--------
-			if(M_ChkCounter(MAIN_LOOP.cnt_lv_holdpow,10)>=0)
+//--------90%Î¬³Ö¹¦ÂÊ²»±ä20130205--------2013-12-6 È¡ÏûÁ½Ïà75%ºÍ90%ÓÐ¹¦±£³Ö¹¦ÄÜ
+/*			if(M_ChkCounter(MAIN_LOOP.cnt_lv_holdpow,10)>=0)
 			{
 //				if((NGS_Udq_p>(NGS_Udq_p_ex * 0.85)) && M_ChkFlag(SL_LV_STRICTLV)!=0)		//20130222
-//				if((NGS_Udq_p>(NGS_Udq_p_ex * 0.85)) && (NGS_Udq_epsilon<9) && M_ChkFlag(SL_LV_STRICTLV)!=0)		//2ph-75ÅÅ³ýÔÚÍâ 20130309
+//				if((NGS_Udq_p>(NGS_Udq_p_ex * 0.85)) && (NGS_Udq_n2p<9) && M_ChkFlag(SL_LV_STRICTLV)!=0)		//2ph-75ÅÅ³ýÔÚÍâ 20130309
 //					RUN.mpriqrf_g = RUN.mpriqrf_g * 1.14;
 
-				if((_STDBY9&0x0008)==0 && (PRO.Pgactive_lv>600000) && (NGS_Udq_p>(NGS_Udq_p_ex * 0.83)) && (NGS_Udq_epsilon>8) && M_ChkFlag(SL_LV_STRICTLV)!=0)  //116.3	20130314
+				if((_STDBY9&0x0008)==0 && (PRO.Pgactive_lv>600000) && (NGS_Udq_p>(NGS_Udq_p_ex * 0.83)) && (NGS_Udq_n2p>8) && M_ChkFlag(SL_LV_STRICTLV)!=0)  //116.3	20130314
 					RUN.mpriqrf_g = - 400;		//2ph-75´ó·çÓÐ¹¦¿ØÖÆ	20130314
-				else if((NGS_Udq_p>(NGS_Udq_p_ex * 0.85)) && (NGS_Udq_epsilon<9) && M_ChkFlag(SL_LV_STRICTLV)!=0)		//2ph-75ÅÅ³ýÔÚÍâ 20130309
+				else if((NGS_Udq_p>(NGS_Udq_p_ex * 0.85)) && (NGS_Udq_n2p<9) && M_ChkFlag(SL_LV_STRICTLV)!=0)		//2ph-75ÅÅ³ýÔÚÍâ 20130309
 //					RUN.mpriqrf_g = RUN.mpriqrf_g * 1.14;
 					RUN.mpriqrf_g = RUN.mpriqrf_g * 1.02;
 			}
+*/
 //--------20130205--------
 
 			if(M_ChkCounter(MAIN_LOOP.cnt_lv_mpridvar,DELAY_LVMIDVAR)>=0)	//ÑÓÊ±¸ø¶¨ÎÞ¹¦µçÁ÷201201
 			{				
-				if(M_ChkFlag(SL_LV_SYNCON)==0)	//201201
+				if(M_ChkFlag(SL_LV_SYNCON)==0)	//201201  »ú²àÃ»ÓÐ·âËøÂö³å
 				{
 //					RUN.mpridrf_var	= - kq * 605.0;				//20111201 Ir_varn=116A 1.5MWÊÇIrn=kq*505A
-					RUN.mpridrf_var	= - kq * 645.0;				//20111201 Ir_varn=116A 1.5MWÊÇIrn=kq*505A	20130309
+					RUN.mpridrf_var	= - kq * 645.0;				//20111201 Ir_varn=116A 1.5MWÊÇIrn=kq*505A	20130309XLY?¾­¹ý¼ÆËãÎª615A£¬»ú²à²¿·ÖÎª512A£¬ÕâÀï¸ø´óÁË
 //					RUN.mpridrf_var	= - kq * 116.0;				//20111201 Ir_varn=116A
 //					temp_idrfmax = -(int16)_PROSTDBY2;
 //					if(RUN.mpridrf_var < temp_idrfmax)	RUN.mpridrf_var=temp_idrfmax;	//»ú²àÎÞ¹¦Ö¸ÁîÏÞ·ù
@@ -1234,8 +1359,7 @@ void RunCtrl(void)
 				}
 				else	RUN.mpridrf_var = 0;
 			}
-
-			temp_idrfmax = - (int16)_PROSTDBY2;			//ÎÞ¹¦µçÁ÷ÏÞ·ù
+			temp_idrfmax = - (int16)_PROSTDBY2;			//ÎÞ¹¦µçÁ÷ÏÞ·ù665A
 			if(RUN.mpridrf_var < temp_idrfmax)	RUN.mpridrf_var=temp_idrfmax;	//»ú²àÎÞ¹¦Ö¸ÁîÏÞ·ù
 
 //--------20130130----»ú²à·¢ÎÞ¹¦Ìî²¹µøÂä³õÆÚÎÞ¹¦µÄ²»×ã----
@@ -1251,15 +1375,16 @@ void RunCtrl(void)
 
 //--------20121202--------
 //			if(M_ChkFlag(SL_LV_SYNCON)!=0)
-			if(M_ChkFlag(SL_LV_SYNCON)!=0 && M_ChkFlag(SL_LV_SCRRUNING)!=0)		//20130202
+			if(M_ChkFlag(SL_LV_SYNCON)!=0 && M_ChkFlag(SL_SCRRUNING)!=0)		//20130202
 			{
 				RUN.mpriqrf_g = 0;
 				MAIN_LOOP.cnt_lv_irqdelay=0;
 			}
 //			else
-			else if(M_ChkFlag(SL_LV_STRICTLV)!=0)				//ÍøÑ¹»Ö¸´ºó²»ÑÓ³Ù·¢ÓÐ¹¦ 20130228
+			else if(M_ChkFlag(SL_LV_STRICTLV)!=0)				//scrÔËÐÐºó60ms²»·¢ÓÐ¹¦£¬ÍøÑ¹»Ö¸´ºóÁ¢¼´·¢ÓÐ¹¦ 20130228
 			{
-				if(M_ChkCounter(MAIN_LOOP.cnt_lv_irqdelay,60)<=0)		RUN.mpriqrf_g = 0;
+				if(M_ChkCounter(MAIN_LOOP.cnt_lv_irqdelay,60)<=0)		
+				RUN.mpriqrf_g = 0;
 			}
 //--------20121202--------
 
@@ -1272,7 +1397,7 @@ void RunCtrl(void)
 			MAIN_LOOP.cnt_lv_mpridvar = 0;
 			MAIN_LOOP.cnt_lv_utlv = 0;	//201205LVRTatZB
 			MAIN_LOOP.cnt_lv_mpridrf = 0;	//20130130
-			RUN.mpridrf_var	= 0;		//201205LVRTatZB 20120601night
+			RUN.mpridrf_var	= temp_var;		//2013-12-9ZZJÐÞ¸ÄÎÞ¹¦Ö¸ÁîÏìÓ¦ÎÊÌâ
 			NGS_Udq_p_lv = NGS_Udq_p; 		//20130124
 //			Te_feedback_lv=Te_feedback; 	//20130124
 			GIVE.toqrf_lv=GIVE.toqrf; 	//20130128
@@ -1286,12 +1411,12 @@ void RunCtrl(void)
 //			else if(RUN.mpriqrf_g < 0)			RUN.mpriqrf_g = 0;
 
 
-//-----------------------------------------------------------------
+//-----------------------------------------------------------------xly µ±Ç°ÅäÖÃ£¬²»Æ½ºâÏÂ·¢ÉÙÁ¿ÓÐ¹¦£¬²»·¢ÎÞ¹¦
 		if(M_ChkFlag(SL_LV_STATE)!=0 && M_ChkFlag(SL_UNBALANCE)!=0)//201205LVRTatZB
 		{
 //			RUN.mpriqrf_g   = 0;	//¼ì²âµ½²»Æ½ºâºó²»·¢ÓÐ¹¦ºÍÎÞ¹¦
 			if(_STDBY9&0x0010!=0)	RUN.mpriqrf_g   = 0;	//116.4	20130228
-			else	RUN.mpriqrf_g   = - kq * lv_ctrl2;		//20130228
+			else	RUN.mpriqrf_g   = - kq * lv_ctrl2;		//20130228Ä¿Ç°kq*100
 			RUN.mpridrf_var = 0;
 //			RUN.mpridrf_var = - (int16)_PROSTDBY2 * lv_ctrl5;		//²»¶Ô³ÆµøÂä·¢ÉÙÁ¿ÎÞ¹¦ÒÔµÖÏûµçÍøÎÞ¹¦ÎüÊÕ20121210
 		}
@@ -1302,7 +1427,7 @@ void RunCtrl(void)
 		RUN.mpridrf = Give_Integral(RUN.mpridrf_g,RUN.mpridstep,RUN.mpridrf);  		//»ú²àÓÐ¹¦µçÁ÷¸ø¶¨»ý·Ö
 		RUN.mpriqrf = Give_Integral(RUN.mpriqrf_g,RUN.mpriqstep,RUN.mpriqrf);  		//»ú²àÎÞ¹¦µçÁ÷¸ø¶¨»ý·Ö
 
-		if(M_ChkFlag(SL_LV_MSTOP)!=0)	 											//201007BJTULVRT							
+		if(M_ChkFlag(SL_MSTOP)!=0)	 											    //201007BJTULVRT							
 		{
 			RUN.mpridrf=0;				
 			RUN.mpriqrf=0;
@@ -1310,7 +1435,7 @@ void RunCtrl(void)
 //------ÔÊíÊÊ±¦Àø´Å¸ø¶¨»ý·ÖBJTULVRT20121103
 		id_max     =  (float)FUNC[NO_MIDRF].max;
 	    temp       =  (float)_RU_IDT;
-	    RUN.mpridstep  = abs(id_max)/temp;											//¼ÆËãÓÐ¦µçÁ÷¸ø¶¨²½³¤ 
+	    RUN.mpridstep  = abs(id_max)/temp;											//¼ÆËãÓÐ¦µçÁ÷¸ø¶¨²½³? 
 
     } 
 //-----´ý»ú
@@ -1360,7 +1485,7 @@ void RunCtrl(void)
 
     } 
 
-	if(M_ChkFlag(SL_LV_MSTOP)!=0)	//LVRT
+	if(M_ChkFlag(SL_MSTOP)!=0)	//LVRT
 	{
 	    PI_MPR_Id.reference = 0;
 	    PI_MPR_Id.feedback = 0;
@@ -1372,7 +1497,7 @@ void RunCtrl(void)
  	    PI_MPR_Iq.integrator = 0;	
 	} 
 
-	if(M_ChkFlag(SL_LV_NSTOP)!=0)	//LVRT
+	if(M_ChkFlag(SL_NSTOP)!=0)	//LVRT
 	{
 	   PI_NPR_U.reference = 0;
 	   PI_NPR_U.feedback = 0;
@@ -1393,10 +1518,10 @@ void RunCtrl(void)
  
  
 /*************************************************************************************************
-** º¯ÊýÃû³Æ:  QepEncodPos
+** º¯Êýû³:  QepEncodPos
 ** ¹¦ÄÜÃèÊö:  µ÷ÕûÎ»ÖÃ¼ÆÊýÆ÷ÎªÔö¼ÆÊýÄ£Ê½£¬±àÂëÆ÷Î»ÖÃ¼ì²â
-** Êä¡¡Èë:    ÎÈÌ¬ÏÂµÄ×ª×ÓµçÁ÷£¬¶¨×ÓµçÑ¹
-** Êä¡¡ö:    ±àÂëÆ÷Î»ÖÃrad  
+** Êä¡¡Èë:    ÎÈÌ¬ÏÂµÄ×ª×ÓµçÁ÷£¬¶¨×ÓÑ¹
+** Êä¡¡?:    ±àÂëÆ÷Î»ÖÃrad  
 ** ×¢  ÊÍ:    ¶¨×Ó½Ó´¥Æ÷ºÏÕ¢Ç°ÔËÐÐ£¬ºÏÕ¢ºó½ûÖ¹ÔËÐÐ¡£Ã¿¸ö²ÉÑùÖÜÆÚÔËÐÐÒ»´Î¡£·ÇÌØ±ðÖ¸Ã÷µÄ½Ç¶È¾ùÎªµç½Ç¶È
 **--------------------------------------------------------------------------------------------------
 ** ×÷¡¡Õß: 	 
@@ -1406,13 +1531,14 @@ void RunCtrl(void)
 ** ÈÕ  ÆÚ:  20090409
 **--------------------------------------------------------------------------------------------------
 ***********************************************************************************************/
+#pragma CODE_SECTION(QepEncodPos, "ramfuncs");
  void QepEncodPos(void)
 {
 //	Uint16 temp1;
 	float temp_pos;
 /*//20091021atzy¾­¼ì²âÅÐ¶Ï£¬¼ÆÊýABÐÅºÅ²»±Ø¶Ôµ÷£¬Ô­ÏÈ¾ÍÊÇÔö¼ÆÊý£¬ÏÖ³¡½«¶Ôµ÷³ÌÐòÆÁ±ÎÁË
-//----------------------ÅÐ¶ÏPOSCNT¼ÆÊý½Ïò£¬È·±£Ôö¼ÆÊýÄ£Ê½------------------------------------------
-	if(M_ChkFlag(SL_QCAPSPDIN)!=0 && M_ChkFlag(SL_SPEED_HIGH)!=0)	//20091020atzy·ç»ú´ý»úÊ±µç»úÖá»á×óÓÒª¶¯//×ªËÙ¼ì²âÕý³£ºó£¬µ÷Õû±àÂëÆ÷¹¤×÷Ä£Ê½
+//----------------------ÅÐ¶ÏPOSCNT¼ÆÊý½Ïò£¬È·±£Ôö¼ÆÊýÄ£Ê?------------------------------------------
+	if(M_ChkFlag(SL_QCAPSPDIN)!=0 && M_ChkFlag(SL_SPEED_HIGH)!=0)	//20091020atzy·ç»ú´ý»úÊ±µç»úÖá»á×óÓÒª¶?//×ªËÙ¼ì²âÕý³£ºó£¬µ÷Õû±àÂëÆ÷¹¤×÷Ä£Ê½
 	{
 		temp1 = EQep2Regs.QEPSTS.bit.QDF;   				//¼ÆÊý·½Ïò  0-ÄæÊ±Õë-¼õ   1-Ë³Ê±Õë-Ôö
 		if (temp1 == 0 && M_ChkFlag(SL_QEPSWP)==0) 			//Èç¹ûµ±Ç°´¦ÓÚ¼õ¼ÆÊýÄ£Ê½£¬²¢ÇÒÎ´¶Ôµ÷¹ýAB
@@ -1465,8 +1591,15 @@ void RunCtrl(void)
    	TRS_MPR_I.b     = AD_OUT_MPR_I.b;
   	TRS_MPR_I.c     = AD_OUT_MPR_I.c;
 	Transform_3s_2s_2r(&TRS_MPR_I);
-	DataFilter(0.4,&TRS_MPR_I.dflt,TRS_MPR_I.d); 			//»ú²àµçÁ÷·´À¡ÖµË²¨£¬ Ts=200us,fh=1.2kHz,ÂËµô¿ª¹ØÆµÂÊ´Î
+	DataFilter(0.4,&TRS_MPR_I.dflt,TRS_MPR_I.d); 			//»ú²àµçÁ÷·´À¡ÖµË²¨£? Ts=200us,fh=1.2kHz,ÂËµô¿ª¹ØÆµÂÊ´Î
 	DataFilter(0.4,&TRS_MPR_I.qflt,TRS_MPR_I.q); 			//»ú²àµçÁ÷·´À¡ÖµÂË²¨£¬ Ts=200us,fh=1.2kHz,ÂËµô¿ª¹ØÆµÂÊ´Î
+
+	TRS_STA_I.a = AD_OUT_STA_I.a;
+	TRS_STA_I.b = AD_OUT_STA_I.b;
+	TRS_STA_I.c = AD_OUT_STA_I.c;
+	Transform_3s_2s_2r(&TRS_STA_I);
+	DataFilter(0.4,&TRS_STA_I.dflt,TRS_STA_I.d); 			//»ú²àµçÁ÷·´À¡ÖµË²¨£? Ts=200us,fh=1.2kHz,ÂËµô¿ª¹ØÆµÂÊ´Î
+	DataFilter(0.4,&TRS_STA_I.qflt,TRS_STA_I.q); 			//»ú²àµçÁ÷·´À¡ÖµÂË²¨£¬ Ts=200us,fh=1.2kHz,ÂËµô¿ª¹ØÆµÂÊ´Î
 
 //--------20121103--------
 
@@ -1476,7 +1609,7 @@ void RunCtrl(void)
 //		temp_pos = _encodpos;
 //		QEPDATA.encodpos =  - temp_pos;   	//ÓÉ²Ù×÷Æ÷Ö±½Ó¸ø¶¨³õÊ¼Î»ÖÃ½Ç¶È										
 //--------20130801--------
-	   if((_STDBY9&0x0040)!=0)	//116¿ª¹ØÁ¿±¸ÓÃ6
+	   if((_STDBY9&0x0040)!=0)	//116.6¿ª¹ØÁ¿±¸ÓÃ
 	   {
 		temp_pos = _encodpos;
 		QEPDATA.encodpos =  - temp_pos;   	//ÓÉ²Ù×÷Æ÷Ö±½Ó¸ø¶¨³õÊ¼Î»ÖÃ½Ç¶È	
@@ -1607,7 +1740,7 @@ void RunCtrl(void)
 //	else	M_SetFlag(SL_GRDFQE);								//·ñÔòÖÃÆµÂÊÓÐÎó±êÖ¾Î»	
 		
 /*
-//----------------¼ÆËãUbc¬UabÏà»-----------------------------------------------------------------
+//----------------¼ÆËãUbc¬UabÏà?-----------------------------------------------------------------
 	temp = (float)ECap5Regs.TSCTR;
 	CAP5.phase = temp * CAP5.radpertb;							//Ö÷¶ÏÇ°ÍøÑ¹UbcÏàÎ» 
 	temp = (float)ECap6Regs.TSCTR;
@@ -1639,7 +1772,7 @@ void RunCtrl(void)
 		if(AD_OUT_NGS_U.ab < 0)
 		{
 			if(M_ChkCounter(MAIN_LOOP.cnt_phorde,DELAY_PHORDE)>0)	//12s ÉÏµçÑÓÊ±ÅÐ¶ÏÍø²àÏàÐò¹ÊÕÏ 201005atcpc
-			M_SetFlag(SL_PHORDE);			//DSPÉÏµçºó	ÏàÐòÓÐó±êÖ¾Î»ÖÃ1 20090817
+			M_SetFlag(SL_PHORDE);			//DSPÉÏµçºó	ÏàÐòÓÐó±êÖ¾Î»Ö?1 20090817
 		}
 		else
 		{
@@ -1665,6 +1798,7 @@ void RunCtrl(void)
 ** ÈÕ  ÆÚ:	20090812 at cpc
 **--------------------------------------------------------------------------------------------------
 **************************************************************************************************/
+#pragma CODE_SECTION(CapQepCtrl, "ramfuncs");
  void CapQepCtrl(void)
 {
 	float	temp,temp1,radpert0;
@@ -1673,7 +1807,7 @@ void RunCtrl(void)
  if((_COMMAND2&0x0001)!=0)	//¿ª¹ØÁ¿±¸ÓÃ0  201011PLL
  {
 
-//------------¼ÆËãÍø²àÍøÑ¹ÂÊ¡¢÷Ö½ÇÆµÂÊ¡¢CAP¥Î»Ê±¼äÄÚÍøÑ¹ÏàÎ»ÔöÁ¿-----------------------------------
+//------------¼ÆËãÍø²àÍøÑ¹ÂÊ¡¢÷Ö½ÇÆµÂÊ¡¢CAP¥Î»Ê±¼äÄÚÍøÑ¹ÏàÎ»ÔöÁ?-----------------------------------
 	temp2 = ECap4Regs.CAP1;
 	temp  =	(float)temp2;									//²¶»ñÊÂ¼þÖÜÆÚÖµ
 	
@@ -1697,7 +1831,7 @@ void RunCtrl(void)
 
 //-----------¼ÆËãÍø²àËã·¨Õý±ä»»½Ç¶È----------------------------------------------------------------                         
 	
-	radpert0       = TWOPAI * CAP4.freq * 0.2e-3;   		//¼ÆËãÒ»¸öT0ÖÐÏÖÜÆÚ½Ç¶ÈÔöÁ¿ T0=0.2ms
+	radpert0       = TWOPAI * CAP4.freq * 0.2e-3;   		//¼ÆËãÒ»¸öT0ÖÐÏÖÜÆÚ½Ç¶ÈÔöÁ? T0=0.2ms
   
     if(M_ChkFlag(SL_GRDFQE)!=0)
 	{
@@ -1734,7 +1868,7 @@ void RunCtrl(void)
 			CAP4.freq      = CAP4.freqtmp;				    	//¸üÐÂÍøÑ¹ÆµÂÊ CAP4.freqtmpÊÇÊµ¼ÊÊµÊ±ÍøÆµ
 			CAP4.omigasyn  = temp;			
 			CAP4.radpertb  = CAP4.omigasyn / 150.0e6;			//¼ÆËãÒ»¸ö¼ÆÊýÖÜÆÚ½Ç¶ÈÔöÁ¿			
-			M_ClrFlag(SL_GRDFQE);					   	   	 	//ÇåÆµÂÊ§°Ü±êÖ¾	
+			M_ClrFlag(SL_GRDFQE);					   	   	 	//ÇåÆµÂÊ§°Ü±êÖ?	
 		}
 	}
 	else	
@@ -1868,7 +2002,7 @@ void RunCtrl(void)
    		  		
 	QEPDATA.omigarote = POLEPAIRES * QEPDATA.omigamec;								//×ª×Óµç½ÇÆµÂÊrad/s
 //	DataFilter(0.985,&QEPDATA.omigaroteflt,QEPDATA.omigarote); 						//×ªËÙ·´À¡ÖµÂË²¨£¬ Ts=200us,Tr=100ms 20090815
-	QEPDATA.rotradpret0 = QEPDATA.omigarote * 0.2e-3;								//Ã¿´ÎT0ÖÜÆÚ×ª×Óµç½Ç¶ÈÔöÁ¿£¬µ¥Î»»¡¶È 20090815
+	QEPDATA.rotradpret0 = QEPDATA.omigarote * 0.2e-3;								//Ã¿´ÎT0ÖÜÆÚ×ªÓµç½Ç¶ÈÔöÁ¿£¬µ¥Î»»¡¶? 20090815
 
 //-----------×ª²î½ÇÆµÂÊ----------------------------------------------------------------------------
 	CAP4.omigaslp = CAP4.omigasyn - QEPDATA.omigarote;  	//×ª²î½ÇÆµÂÊ  20090815
@@ -2005,14 +2139,14 @@ void RunCtrl(void)
 //-----------¼ÆËãÍø²à·´±ä»»½Ç¶È--------------------------------------------------------------------
 	if(M_ChkT1Direction() == 0)  							//CTR¼õ¼ÆÊý 
     	temp3 = EPwm1Regs.TBPRD + EPwm1Regs.TBCTR;
-	else 													//CTRö¼ÆÊý
+	else 													//CTRö¼ÆÊ?
 		temp3 = 3 * EPwm1Regs.TBPRD - EPwm1Regs.TBCTR;
 
 	temp3 = temp3 * 2; 										//±ä»»µ½CAP4µÄÊ±ÖÓÆµÂÊ£º150M
 
 //	temp2 = ECap4Regs.TSCTR;     //problem:²»ÄÜÓÐÐ§¿¹ÍøÆµ¸ÉÈÅ
 //	temp2 = temp2 + temp3;									//¹À¼ÆÏÂ´ÎÂö³å·¢Ê±ECap4Regs.TSCTRµÄÖµ		
-//	temp  = temp2 * CAP4.radpertb;							//Íø²à´±ä»»½Ç¶È£¬Î´È¡Ä££¬Ô¼£¨0---2PAI£©
+//	temp  = temp2 * CAP4.radpertb;							//Íø²à´±ä»»½Ç¶È£¬Î´È¡Ä££¬Ô¼£?0---2PAI£©
 	temp  = CAP4.nprtrstheta + (float)temp3 * CAP4.radpertb;//²ÉÓÃ¿¹¸ÉÈÅºó½Ç¶È¼ÆËã·´±ä»»½Ç¶È201005atcpc		
 	
 	if (temp > TWOPAI)	temp = temp - TWOPAI;				//È¡Ä£2 * PAI
@@ -2068,6 +2202,9 @@ void RunCtrl(void)
 	TRS_MPR_U.sintheta = sin(CAP4.mpratitheta);				//×ª×Ó¿ØÖÆµçÑ¹½Ç¶È 
 	TRS_MPR_U.costheta = cos(CAP4.mpratitheta);		
 
+	TRS_STA_I.sintheta = -TRS_NPR_I.costheta;				//×ª×Ó¿ØÖÆµçÑ¹½Ç¶È 
+	TRS_STA_I.costheta =  TRS_NPR_I.sintheta;		
+
 }
 
 /**************************************************************************************************
@@ -2075,7 +2212,7 @@ void RunCtrl(void)
 ** ¹¦ÄÜÃèÊö:  	»ú²à±äÁ÷Æ÷¿ØÖÆËã·¨
 ** Êä¡¡Èë:   	
 ** Êä¡¡³ö: 		 
-** ×¢  ÊÍ: 		÷³ö×ª×ÓÎªÕý	
+** ×¢  ÊÍ: 		÷³ö×ª×ÓÎªÕ?	
 **-------------------------------------------------------------------------------------------------
 ** ×÷¡¡Õß: 		
 ** ÈÕ¡¡ÆÚ: 	
@@ -2084,9 +2221,11 @@ void RunCtrl(void)
 ** ÈÕÆÚ:	 
 **-------------------------------------------------------------------------------------------------
 ***********************************************************************************************/
+#pragma CODE_SECTION(MPR_CONTROL, "ramfuncs");
 void MPR_CONTROL(void)
 {
-   float temp_d,temp_q,temp_exi;
+   float temp_d,temp_q,temp_ud;
+//   float temp_d,temp_q,temp_exi;
 //	Uint16 temp_n,temp_ud;
 
 //------------------»ú²àµçÁ÷dqÖµ--------------------------------------------------------------------
@@ -2118,16 +2257,16 @@ void MPR_CONTROL(void)
 //			}
 //			else
 //			{
-				if(M_ChkFlag(SL_LV_PHICON)!=0)
-				{
-					 PI_MPR_Id.reference    = RUN.mpridrf + PHI_DATA_M.Id;		//¶¯Ì¬ÅÁ´µÖÏû
+//				if(M_ChkFlag(SL_LV_PHICON)!=0)
+//				{
+//					 PI_MPR_Id.reference    = RUN.mpridrf + PHI_DATA_M.Id;		//¶¯Ì¬ÅÁ´µÖÏ?
 //					 PR_M_Id.reference      = RUN.mpridrf + PHI_DATA_M.Id;		//¶¯Ì¬´ÅÁ´µÖÏûPR				
-				}
-				else 
-				{
+//				}
+//				else 
+//				{
 					PI_MPR_Id.reference    = RUN.mpridrf;
 //					PR_M_Id.reference      = RUN.mpridrf;
-				}
+//				}
 //			}
 		
 			PI_MPR_Id.feedback     = TRS_MPR_I.dflt; 			//»ú²àdÖáµçÁ÷»·
@@ -2152,16 +2291,16 @@ void MPR_CONTROL(void)
 //			}
 //			else
 //			{
-				if(M_ChkFlag(SL_LV_PHICON)!=0)
-				{
-						PI_MPR_Iq.reference    = RUN.mpriqrf + PHI_DATA_M.Iq;		 //¶¯Ì¬´ÅÁ´µÖÏû 
+//				if(M_ChkFlag(SL_LV_PHICON)!=0)
+//				{
+//						PI_MPR_Iq.reference    = RUN.mpriqrf + PHI_DATA_M.Iq;		 //¶¯Ì¬´ÅÁ´µÖÏû 
 //						PR_M_Iq.reference      = RUN.mpriqrf + PHI_DATA_M.Iq;		 //¶¯Ì¬´ÅÁ´µÖÏû 
-				}
-				else	
-				{
+//				}
+//				else	
+//				{
 					PI_MPR_Iq.reference    = RUN.mpriqrf;		  
 //					PR_M_Iq.reference      = RUN.mpriqrf;		  
-				}
+//				}
 //			}	  	  
 		
 			PI_MPR_Iq.feedback     = TRS_MPR_I.qflt;			//»ú²àqÖáµçÁ÷»·
@@ -2196,7 +2335,7 @@ void MPR_CONTROL(void)
 
 	}
    
-//--------------MPRÊä³öµçÑ¹Ëã¨---------------------------------------------------------------------
+//--------------MPRÊä³öµçÑ¹Ëã?---------------------------------------------------------------------
 
 //   DM_imrd = - (TRS_NGS_U.dflt * SQRT3 * STAROTRTO / (MPR_Lm * CAP4.omigasyn));	//20100121
 //   DM_imrq = - (TRS_NGS_U.qflt * SQRT3 * STAROTRTO / (MPR_Lm * CAP4.omigasyn));  //ÍøÑ¹qÖáÇ°À¡½âñîÏî
@@ -2209,26 +2348,30 @@ void MPR_CONTROL(void)
     DM_imrd =  DM_imrd * temp_exi;          										//²é±íµ÷ÕûÏµÊý,ÓÉ²Ù×÷Æ÷¸ø¶¨ 
 
 */
+
+//´ÅÁ´¼ÆËã
+	PHAI_d = TRS_STA_I.dflt * MPR_Ls + TRS_MPR_I.dflt * MPR_Lm / STAROTRTO;
+	PHAI_q = TRS_STA_I.qflt * MPR_Ls + TRS_MPR_I.qflt * MPR_Lm / STAROTRTO;
+
+
 //--------------MPRÊä³öµçÑ¹¼ÆËãBJTULVRT20121103--------------------------------------------------------------------
 //	if(M_ChkFlag(SL_MPR_SYNOK)!=0 || (_SC_MSTDBY!=0))  //201201	
-	if(M_ChkFlag(SL_MPR_SYNOK)!=0)  //20121103	
-		DM_imrd =  - (TRS_NGS_U.dflt * SQRT3 * STAROTRTO / (MPR_Lm * CAP4.omigasyn));	////201112fluxobs
+	if(M_ChkFlag(SL_MPR_SYNOK)!=0)  //20121103			
+	{
+		PHI_DATA_M.PHIsd =  - (TRS_NGS_U.dflt * SQRT3 * STAROTRTO / CAP4.omigasyn);	////201112fluxobs
+		temp_ud = TRS_NGS_U.dflt;
+	}
 	else
-		DM_imrd =  - RUN.mpridrf / RUN.mpridrf_g * (TRS_NGS_U.dflt * SQRT3 * STAROTRTO / (MPR_Lm * CAP4.omigasyn));	//201112fluxobs
-/*
-	temp_d = - PI_MPR_Id.out + SIGMA * CAP4.omigaslp * MPR_Lr * PI_MPR_Iq.feedback;	//½âñîÏî¼ÆËã
-
-//	temp_d = temp_d	- CAP4.omigaslp * MPR_Lr * DM_imrq;								//ÍøÑ¹qÖáÇ°À¡½âñîÏî
-
-  	temp_q = - PI_MPR_Iq.out - SIGMA * CAP4.omigaslp * MPR_Lr * PI_MPR_Id.feedback;	//½âñîÏî¼ÆËã
-	temp_q = temp_q	- CAP4.omigaslp * MPR_Lr * DM_imrd;                               
-*/
+	{
+		PHI_DATA_M.PHIsd =  - RUN.mpridrf / RUN.mpridrf_g * (TRS_NGS_U.dflt * SQRT3 * STAROTRTO / CAP4.omigasyn);	//ÂýÂýÉÏÉý
+		temp_ud = RUN.mpridrf / RUN.mpridrf_g * TRS_NGS_U.dflt;
+	}
 	if((M_ChkFlag(SL_UNBALANCE)==0) && (M_ChkFlag(SL_LV_STATE)!=0) && (NGS_Udq_p_lv < (0.8 * NGS_Udq_p_ex)))		  //20130223
 	{
 		temp_d = - PI_MPR_Id.out + SIGMA * CAP4.omigaslp * MPR_Lr * PI_MPR_Iq.feedback + TRS_MPR_I.dflt * _stdby02;	//½âñîÏî¼ÆËã
 
 	  	temp_q = - PI_MPR_Iq.out - SIGMA * CAP4.omigaslp * MPR_Lr * PI_MPR_Id.feedback;	//½âñîÏî¼ÆËã
-		temp_q = temp_q	- CAP4.omigaslp * MPR_Lr * DM_imrd + TRS_MPR_I.qflt * _stdby02;
+		temp_q = temp_q	- CAP4.omigaslp * MPR_Lm * PHI_DATA_M.PHIsd / MPR_Ls + TRS_MPR_I.qflt * _stdby02;
 
 	}
 	else
@@ -2236,10 +2379,12 @@ void MPR_CONTROL(void)
 		temp_d = - PI_MPR_Id.out + SIGMA * CAP4.omigaslp * MPR_Lr * PI_MPR_Iq.feedback;	//½âñîÏî¼ÆËã
 
 	 	temp_q = - PI_MPR_Iq.out - SIGMA * CAP4.omigaslp * MPR_Lr * PI_MPR_Id.feedback;	//½âñîÏî¼ÆËã
-		temp_q = temp_q	- CAP4.omigaslp * MPR_Lr * DM_imrd;
+		temp_q = temp_q	- CAP4.omigaslp * MPR_Lm * PHI_DATA_M.PHIsd / MPR_Ls;
+
+//		temp_d = - PI_MPR_Id.out + SIGMA * CAP4.omigaslp * MPR_Lr * PI_MPR_Iq.feedback+MPR_Lm/MPR_Ls*(MPR_Rs*PHAI_d/MPR_Ls-QEPDATA.omigarote*PHAI_q-TRS_NGS_U.qflt);
+//	 	temp_q = - PI_MPR_Iq.out - SIGMA * CAP4.omigaslp * MPR_Lr * PI_MPR_Id.feedback+MPR_Lm/MPR_Ls*(MPR_Rs*PHAI_q/MPR_Ls+QEPDATA.omigarote*PHAI_d+temp_ud);
 
 	}
-
 
 //	temp_d = temp_d - MPR_Rr * PI_MPR_Id.feedback;
 //	temp_q = temp_q - MPR_Rr * PI_MPR_Iq.feedback;									//×ª×Óµç×èÑ¹½µ
@@ -2285,6 +2430,7 @@ void MPR_CONTROL(void)
 ** ÈÕÆÚ:
 **------------------------------------------------------------------------------------------------------
 ***********************************************************************************************/
+#pragma CODE_SECTION(NPR_CONTROL, "ramfuncs");
 void NPR_CONTROL(void)
 { 
 //	float temp_d,temp_q;
@@ -2295,7 +2441,7 @@ void NPR_CONTROL(void)
 	TRS_NPR_I.c = AD_OUT_NPR_I.c;
 	Transform_3s_2s_2r(&TRS_NPR_I);							//×ø±ê±ä»»
 	DataFilter(0.4,&TRS_NPR_I.dflt,TRS_NPR_I.d); 			//Íø²àµçÁ÷·´À¡ÖµÂË²¨£¬ Ts=200us,fh=1.2kHz,ÂËµô¿ª¹ØÆµÂÊ´Î
-	DataFilter(0.4,&TRS_NPR_I.qflt,TRS_NPR_I.q); 			//Íø²àµçÁ÷´À¡ÖµÂË²¨£¬ Ts=200us,fh=1.2kHz£¬20090615¸Ä
+	DataFilter(0.4,&TRS_NPR_I.qflt,TRS_NPR_I.q); 			//Íø²àµçÁ÷´À¡ÖµÂË²¨£? Ts=200us,fh=1.2kHz£¬20090615¸Ä
 
 //----------¼ÆËãÍøÑ¹dqÖµ----------------------------------------------------------------------------
 	TRS_NGS_U.a = AD_OUT_NGS_U.a;							//»ñÈ¡µçÍøµçÑ¹
@@ -2315,11 +2461,11 @@ void NPR_CONTROL(void)
 	{
 
 //----------ÔËÐÐµçÑ¹Íâ»·----------------------------------------------------------------------------
-	  if(M_ChkFlag(SL_STEADYGV)==0)  						//VdcÃ»ÓÐÎÈ¶¨£¬ÇÒ²ÉÓÃÎÈÌ¬PI²ÎÊý
+	  if(M_ChkFlag(SL_HV_QWORKING)==0)  						//VdcÃ»ÓÐÎÈ¶¨£¬ÇÒ²ÉÓÃÎÈÌ¬PI²ÎÊý
 	  {
 
 		PI_NPR_U.reference     = - RUN.urf;   				//»ñÈ¡ÖÐ¼äµçÑ¹Ö¸Áî
-		PI_NPR_U.feedback      = - AD_OUT_UDC;				//»ñÈ¡ÖÐäµçÑ¹·´À¡Öµ
+		PI_NPR_U.feedback      = - AD_OUT_UDC;				//»ñÈ¡ÖÐäµçÑ¹·´À¡Ö?
     	PI_Loop(&PI_NPR_U,PI_PARA_DYNU);
       }	
 	  else                                                   //²ÉÓÃÎÈÌ¬PI²ÎÊý
@@ -2331,7 +2477,7 @@ void NPR_CONTROL(void)
 //--------¶Ô35%-2ph¹¤¿ö×öµçÑ¹»·ÏÞ·ù20130222--------
 		if(M_ChkFlag(SL_LV_STATE)!=0)
 		{
-			if(M_ChkFlag(SL_UNBALANCE)!=0 && (NGS_Udq_epsilon < 50) && M_ChkFlag(SL_LV_SCRRUNING)==0)	//³ý20%-2ph£¬ÆäÓà2ph¶¼ÏÞÖµ
+			if(M_ChkFlag(SL_UNBALANCE)!=0 && (NGS_Udq_n2p < 50) && M_ChkFlag(SL_SCRRUNING)==0)	//³ý20%-2ph£¬ÆäÓà2ph¶¼ÏÞÖµ
 			{
 				if(PI_NPR_U.out > lv_ctrl6)				PI_NPR_U.out = lv_ctrl6;	//20130223
 				else if(PI_NPR_U.out < -lv_ctrl6)		PI_NPR_U.out = -lv_ctrl6;	//20130223
@@ -2339,13 +2485,13 @@ void NPR_CONTROL(void)
 		}
 
 //---------ÔËÐÐdÖáµçÁ÷»·----------------------------------------------------------------------------
-   		PI_NPR_Id.reference      = PI_NPR_U.out; 			//»ñÈ¡dÖáµçÁ÷¸Áî£¬×¢ÒâÕý¸ººÅ
+   		PI_NPR_Id.reference      = PI_NPR_U.out; 			//»ñÈ¡dÖáµçÁ÷¸Áî£¬×¢ÒâÕý¸ºº?
 		PI_NPR_Id.feedback       = TRS_NPR_I.dflt;			//»ñÈ¡dÖáµçÁ÷·´À¡ÂË²¨Öµ
 		PI_Loop(&PI_NPR_Id,PI_PARA_NPRID);
 
 //---------ÔËÐÐqÖáµçÁ÷»·----------------------------------------------------------------------------
 		PI_NPR_Iq.reference      = RUN.npriqrf; 			//qÖáµçÁ÷Ö¸Áî
-		PI_NPR_Iq.feedback       = TRS_NPR_I.qflt;	  		//»ñÈ¡qáµçÁ÷·´À¡ÂË²¨Öµ
+		PI_NPR_Iq.feedback       = TRS_NPR_I.qflt;	  		//»ñÈ¡qáµçÁ÷·´À¡ÂË²¨Ö?
 		PI_Loop(&PI_NPR_Iq,PI_PARA_NPRIQ);	  	  
 	}
 
@@ -2437,7 +2583,7 @@ void SysCtrl(void)
 	}
 	else if(M_ChkFlag(SL_MPR_SYNOK)==0)							//¶¨×Ó²¢ÍøÊÇ·ñÒÑÍê³É
 	{
-		RUN_SYN();												//Ö´ÐÐÔ¤äµçµ½Í¬²½²¢Íø²Ù×÷
+		RUN_SYN();												//Ö´ÐÐÔ¤äµçµ½Í¬²½²¢Íø²Ù×?
 	}
 	else														//Ö´ÐÐ¶¨×Ó²¢ÍøºóÔËÐÐ¿ØÖÆ
 	{
@@ -2459,7 +2605,7 @@ void SysCtrl(void)
 
 /**************************************************************************************************
 ** Ãû³Æ: RUN_SYN
-** ¹¦ÄÜÃèö: 1.5MW±äÁ÷Æ÷ÏµÍ³Âß¼­¿ØÖÆ-Í¬²½²¢Íø	
+** ¹¦ÄÜÃè?: 1.5MW±äÁ÷Æ÷ÏµÍ³Âß¼­¿ØÖÆ-Í¬²½²¢Íø	
 ** Êä¡¡Èë:   	
 ** Êä¡¡³ö: 		 
 ** ×¢  ÊÍ: 			
@@ -2506,7 +2652,7 @@ void RUN_SYN(void)
 	{
 		M_SetFlag(SL_OCS_NPRSTART);									//Æô¯DSP_PWMÅäÖÃ
 
-		if(M_ChkFlag(SL_CONFIGPWM)!=0)   M_SetFlag(SL_NPR_START);	//pwmdriveÅäÖÃPWMÍê³É,ø²à±äÁ÷Æ÷ÔËÐÐ		  
+		if(M_ChkFlag(SL_CONFIGPWM)!=0)   M_SetFlag(SL_NPR_START);	//pwmdriveÅäÖÃPWMÍê³É,ø²à±Á÷Æ÷ÔËÐÐ		  
 		else   	                         M_ClrFlag(SL_NPR_START); 
 
 		if(AD_OUT_UDC>(_URF - 20) && AD_OUT_UDC<(_URF + 20) && M_ChkFlag(SL_NPR_PWMOUT)!=0) //Íø²àÂö³åÒÑ·¢³öÇÒVdcÎÈ¶¨
@@ -2521,7 +2667,7 @@ void RUN_SYN(void)
 		else
 		{
 			M_ClrFlag(SL_STEADYFB);          						//ÇåVdcÎÈ¶¨
-			MAIN_LOOP.cnt_synrun=0;           						//å¼ÆÊýÆ÷		
+			MAIN_LOOP.cnt_synrun=0;           						//å¼ÆÊýÆ?		
 		}	
 	}
 	else if(M_ChkFlag(SL_SYN_S1)!=0)								//S1=Ô¤³äµç
@@ -2544,7 +2690,7 @@ void RUN_SYN(void)
 	{
       	if(M_ChkFlag(SL_SPEED_IN_RANGE)!=0)     					//×ªËÙÔÚ·¶Î§ÄÚ
 		{
-			M_SetFlag(CL_PRE);          	 						//±ÕºÏ¤³äµç½Ó´¥Æ÷
+			M_SetFlag(CL_PRE);          	 						//±ÕºÏ¤³äµç½Ó´¥Æ?
 			M_SetFlag(SL_SYN_S1);									//ÖÃ²½Öè±êÖ¾Î»
 			MAIN_LOOP.cnt_synrun=0;           						//Çå¼ÆÊýÆ÷	
 		}
@@ -2614,7 +2760,7 @@ void NOR_STOP(void)
 			MAIN_LOOP.cnt_norstop=0;           						//Çå¼ÆÊýÆ÷	
 		}
 	}
-	else if(M_ChkFlag(SL_NORSTOP_S1)!=0)							//S1=¶Ï¿ª¶¨×Ó½Ó´¥Æ÷Í£»ú²à
+	else if(M_ChkFlag(SL_NORSTOP_S1)!=0)							//S1=¶Ï¿ª¶¨Ó½Ó´¥Æ÷Í£»ú²?
 	{        
 		if(M_ChkFlag(SL_IN1_STATORK)==0)							//¶¨×Ó½Ó´¥Æ÷¶Ï¿ª
 		{
@@ -2664,10 +2810,11 @@ void SER_STOP(void)
 { 
 	if(M_ChkFlag(SL_SERSTOP_FH)!=0)
 	{
-		if(M_ChkCounter(MAIN_LOOP.cnt_serstop,DELAY_SERSTOP)>0)		//2s Ö÷¶Ï¶Ï¿ªÑÓÊ±ºóÔÙ¶Ï¶¨×Ó½Ó´¥Æ÷ºÍÖ÷½Ó´¥Æ÷
-		{
-			M_ClrFlag(CL_MAINK);    		  						//¶ÏÖ÷½Ó´¥Æ÷ºÍÂË²¨÷
-		   	M_ClrFlag(CL_PRE); 										//Ù¶ÏÔ¤³äµç½Ó´¥Æ÷
+//------2015-11-3----------
+//		if(M_ChkCounter(MAIN_LOOP.cnt_serstop,DELAY_SERSTOP)>0)		//2s Ö÷¶Ï¶Ï¿ªÑÓÊ±ºóÔÙ¶Ï¶¨×Ó½Ó´¥Æ÷ºÍÖ÷½Ó´¥Æ÷
+//		{
+			M_ClrFlag(CL_MAINK);    		  						//¶ÏÖ÷½Ó´¥Æ÷ºÍÂË²¨?
+		   	M_ClrFlag(CL_PRE); 										//Ù¶ÏÔ¤³äµç½Ó´¥Æ?
 		   	M_ClrFlag(CL_STATORK);    	  							//¶Ï¶¨×Ó½Ó´¥Æ÷	
 		   	M_ClrFlag(SL_CHARGEOK);          						//ÇåÔ¤³äµçÍê³É
 			M_ClrFlag(SL_FAN_WORK);									//Í£Ö¹·ç»úÔËÐÐ
@@ -2679,7 +2826,7 @@ void SER_STOP(void)
 				M_ClrFlag(SL_SERSTOP_FH);							//Çå²½Öè±êÖ¾Î»
 				M_ClrFlag(SL_SERIESTOPING);							//Çå ÕýÔÚÑÏÖØ¹ÊÕÏÍ£»úÖÐ ±êÖ¾
 			}
-		}
+//		}
 	}
 	else
 	{
@@ -2700,7 +2847,7 @@ void SER_STOP(void)
 		M_ClrFlag(SL_SYN_S3);										//ÇåSYN²½Öè±êÖ¾Î»
 		M_ClrFlag(SL_SYN_S2);										//ÇåSYN²½Öè±êÖ¾Î»
 		M_ClrFlag(SL_SYN_S1);										//ÇåSYN²½Öè±êÖ¾Î»
-		M_ClrFlag(SL_NORSTOPING);          							//Çå ýÔÚÕý³£Í£»úÖÐ ±êÖ¾
+		M_ClrFlag(SL_NORSTOPING);          							//Çå ýÔÚÕý³£Í£»úÖ? ±êÖ¾
 		M_ClrFlag(SL_NORSTOP_FH);									//ÇåNORSTOP²½Öè±êÖ¾Î»
 		M_ClrFlag(SL_NORSTOP_S2);									//ÇåNORSTOP²½Öè±êÖ¾Î»
 		M_ClrFlag(SL_NORSTOP_S1);									//ÇåNORSTOP²½Öè±êÖ¾Î»
@@ -2713,7 +2860,7 @@ void SER_STOP(void)
 
 /**************************************************************************************************
 ** Ãû³Æ: ERR_STOP
-** ¹¦ÄÜÃèÊö: 1.5MW±äÁ÷Æ÷ÏµÍ³Âß¼­¿ØÖÆ-»°ã¹ÊÕÏÍ£»ú 	
+** ¹¦ÄÜÃèÊö: 1.5MW±äÁ÷Æ÷ÏµÍ³Âß¼­¿ØÖÆ-»°ã¹ÊÕÏÍ£»? 	
 ** Êä¡¡Èë:   	
 ** Êä¡¡³ö: 		 
 ** ×¢  ÊÍ: 			
@@ -2722,20 +2869,21 @@ void SER_STOP(void)
 ** ÈÕ¡¡ÆÚ: 2010-4-27		
 **-------------------------------------------------------------------------------------------------
 ** ÐÞ¸ÄÈË:
-** ÈÕÆÚ:	20121103¸Ä³ÉÓë»ª´´Ò»ù£¬ÏÈ¶ÏÖ÷¶ÏÔÙ¶Ï¶¨×Ó½Ó´¥Æ÷
+** ÈÕÆÚ:	20121103¸Ä³ÉÓë»ª´´Ò»ù£¬ÏÈ¶ÏÖ÷¶ÏÔÙ¶Ï¶¨×Ó½Ó´¥Æ?
 **-------------------------------------------------------------------------------------------------
 ***********************************************************************************************/ 
 void ERR_STOP(void)         
 {
 	if(M_ChkFlag(SL_ERRSTOP_FH)!=0)
 	{
-		if(M_ChkCounter(MAIN_LOOP.cnt_errstop,DELAY_ERRSTOP)>0)		//2s Ö÷¶Ï¶Ï¿ªÑÓÊ±ºóÔÙ¶Ï¶¨×Ó½Ó´¥Æ÷ºÍÖ÷½Ó´¥Æ÷
-		{
+//----------2013-11-3------------
+//		if(M_ChkCounter(MAIN_LOOP.cnt_errstop,DELAY_ERRSTOP)>0)		//2s Ö÷¶Ï¶Ï¿ªÑÓÊ±ºóÔÙ¶Ï¶¨×Ó½Ó´¥Æ÷ºÍÖ÷½Ó´¥Æ÷
+//		{
 			M_ClrFlag(CL_MAINK);    		  						//¶ÏÖ÷½Ó´¥Æ÷ºÍÂË²¨Æ÷
 		   	M_ClrFlag(CL_PRE); 										//ÔÙ¶ÏÔ¤³äµç½Ó´¥Æ÷
 		   	M_ClrFlag(CL_STATORK);    	  							//¶Ï¶¨×Ó½Ó´¥Æ÷	
 		   	M_ClrFlag(SL_CHARGEOK);          						//ÇåÔ¤³äµçÍê³É
-			M_ClrFlag(SL_FAN_WORK);									//Í£Ö¹·çúÔËÐÐ
+			M_ClrFlag(SL_FAN_WORK);									//Í£Ö¹·çúÔËÐ?
 		   	M_ClrFlag(SL_MPR_SYNOK);          						//Çå¶¨×Ó²¢ÍøÍê³É
 		   	M_ClrFlag(SL_UDSTACOK);          						//Çå¶¨×ÓÂú×ã²¢ÍøÌõ¼þ
 		
@@ -2743,9 +2891,9 @@ void ERR_STOP(void)
 			{
 				M_ClrFlag(SL_ERRSTOP_FH);							//Çå²½Öè±êÖ¾Î»
 				M_ClrFlag(SL_ERRSTOP_S1);							//Çå²½Öè±êÖ¾Î»
-				M_ClrFlag(SL_ERRSTOPING);							//Çå ÕýÔÚÑÏÖØ¹ÊÕÏÍ£»úÖÐ ±ê¾
+				M_ClrFlag(SL_ERRSTOPING);							//Çå ÕýÔÚÑÏÖØ¹ÊÕÏÍ£»úÖÐ ±ê?
 			}
-		}
+//		}
 	}
 	else if(M_ChkFlag(SL_ERRSTOP_S1)!=0)
 	{
@@ -2810,7 +2958,7 @@ void ERR_STOP(void)
 		M_ClrFlag(SL_NPR_START);									//ÇåÍø²àÂö³åÖ¸Áî
 		M_ClrFlag(SL_MPR_START);									//Çå»ú²àÂö³åÖ¸Áî
 		M_ClrFlag(CL_STATORK);    	  								//¶Ï¶¨×Ó½Ó´¥Æ÷	
-		M_ClrFlag(SL_UDSTACOK);          							//Çå¶¨×ÓÂúã²¢ÍøÌõ¼þ
+		M_ClrFlag(SL_UDSTACOK);          							//Çå¶¨×ÓÂúã²¢ÍøÌõ¼?
 		M_ClrFlag(SL_MPR_SYNOK);          							//Çå¶¨×Ó²¢ÍøÍê³É
 
 //		if(M_ChkFlag(SL_NPR_PWMOUT)==0 && M_ChkFlag(SL_MPR_PWMOUT)==0 && M_ChkFlag(SL_IN1_STATORK)==0)
@@ -2865,9 +3013,9 @@ void CB_ON(void)
 	}
 	else
 	{
-	   	M_SetFlag(CL_CBLVC);         							//±ÕºÏÖ÷¶ÏÇ·Ñ¹´
+	   	M_SetFlag(CL_CBLVC);         							//±ÕºÏÖ÷¶ÏÇ·Ñ¹?
 	   	M_SetFlag(CL_CBFCON);            						//±ÕºÏ¹ÊÕÏÁ´
-		M_SetFlag(SL_CBON_FH);									//ÖÃ²½Öè±ê¾Î»
+		M_SetFlag(SL_CBON_FH);									//ÖÃ²½Öè±ê¾Î?
 		MAIN_LOOP.cnt_cbon=0;           						//Çå¼ÆÊýÆ÷	
 	}
 }
@@ -2883,7 +3031,7 @@ void CB_ON(void)
 ** ×÷¡¡Õß: 	 
 ** ÈÕ¡¡ÆÚ: 2010-5-22		
 **-------------------------------------------------------------------------------------------------
-** ÐÞ¸ÄË:
+** ÐÞ¸Ä?:
 ** ÈÕÆÚ:	
 **-------------------------------------------------------------------------------------------------
 ***********************************************************************************************/ 
@@ -2896,9 +3044,9 @@ void CB_ON(void)
 void CONTACTOR_TEST(void)         								//systest 201005atcpc
 { 
 	M_ClrFlag(CL_CBON);    		     							//ÇåÖ÷¶ÏºÏÕ¢Ö¸Áî
-   	M_ClrFlag(CL_CBLVC);         								//ÇåÇ·Ñ¹Á´Ï¿ª£¬Ö÷¶Ï¶Ï¿ª 
+   	M_ClrFlag(CL_CBLVC);         								//ÇåÇ·Ñ¹Á´Ï¿ª£¬Ö÷¶Ï¶Ï¿? 
    	M_ClrFlag(CL_CBFCON);            							//¶Ï¿ª¹ÊÕÏÁ´
-  	M_ClrFlag(SL_OCS_NPRSTART);         						//ÇåÍøàÔËÐÐÖ¸Áî
+  	M_ClrFlag(SL_OCS_NPRSTART);         						//ÇåÍøàÔËÐÐÖ¸Á?
 	M_ClrFlag(SL_NPR_START);									//ÇåÍø²àÂö³åÖ¸Áî
 	M_ClrFlag(SL_MPR_START);									//Çå»ú²àÂö³åÖ¸Áî
    	M_ClrFlag(SL_CBCLOSED);			 							//ÇåÖ÷¶Ï±ÕºÏÍê³É
@@ -2915,7 +3063,7 @@ void CONTACTOR_TEST(void)         								//systest 201005atcpc
 	else
 	{
    		M_ClrFlag(CL_MAINK);    		  						//¶ÏÖ÷½Ó´¥Æ÷ºÍÂË²¨Æ÷
-  		M_ClrFlag(CL_PRE); 										//Ù¶ÏÔ¤³äµç½Ó´¥Æ÷	
+  		M_ClrFlag(CL_PRE); 										//Ù¶ÏÔ¤³äµç½Ó´¥Æ?	
 	}
 
     if(M_ChkFlag(SL_OCS_OPENSTAC)==0)							//Íâ²¿¿ØÖÆ£¬Îª0²ÅÔÊÐí±ÕºÏSTAC
