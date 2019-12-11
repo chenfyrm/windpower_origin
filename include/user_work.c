@@ -2217,9 +2217,10 @@ void RunCtrl(void)
 	TRS_MPR_U.costheta = cos(CAP4.mpratitheta);		
 
 	TRS_STA_I.sintheta = -TRS_NPR_I.costheta;				//转子控制电压角度 
-	TRS_STA_I.costheta =  TRS_NPR_I.sintheta;	
 
-	TRS_STA_U.sintheta = -TRS_NPR_I.costheta;				//转子控制电压角度 
+	TRS_STA_I.costheta =  TRS_NPR_I.sintheta;
+
+	TRS_STA_U.sintheta = -TRS_NPR_I.costheta;				//转子控制电压角度
 	TRS_STA_U.costheta =  TRS_NPR_I.sintheta;	
 
 
@@ -2393,7 +2394,7 @@ void MPR_CONTROL(void)
 	}
 
 
-	urdc=STAROTRTO * MPR_Lm/MPR_Ls*(MPR_Rs*PHAI_d/MPR_Ls - QEPDATA.omigarote*PHAI_q-TRS_STA_U.qflt;
+	urdc=STAROTRTO * MPR_Lm/MPR_Ls*(MPR_Rs*PHAI_d/MPR_Ls - QEPDATA.omigarote*PHAI_q-TRS_STA_U.qflt);
 	urqc=STAROTRTO * MPR_Lm/MPR_Ls*(MPR_Rs*PHAI_q/MPR_Ls + QEPDATA.omigarote*PHAI_d+temp_ud);
 	urdc_steady=0;
 	urqc_steady=- CAP4.omigaslp * MPR_Lm * PHI_DATA_M.PHIsd / MPR_Ls;

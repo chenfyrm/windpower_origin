@@ -687,7 +687,7 @@ void ACrowbar(void)
 				gridfault_flag_flt2=0;
 			}
 			
-			if(M_ChkFlag(SL_LV_STATE)==0 && (TRS_NPR_U.ampflt3<(0.9 * NGS_Udq_p_ex)))//2013-12-6小于0.91延时1ms置位
+			if(M_ChkFlag(SL_LV_STATE)==0 && (TRS_NPR_U.ampflt<(0.9 * NGS_Udq_p_ex)))//2013-12-6小于0.91延时1ms置位
 			{
 				gridfault_flag_flt3++;
 				if(gridfault_flag_flt3>=10)
@@ -750,7 +750,10 @@ void ACrowbar(void)
 		if((_STDBY9&0x0002)==0)		M_ClrFlag(CL_ZKHVLVRT);		//20121107
 		MAIN_LOOP.cnt_hvlv_rcv = 0;
 		MAIN_LOOP.cnt_gridok_last=0;
-		gridfault_flag_flt=0;
+		gridfault_flag_flt1=0;
+		gridfault_flag_flt2=0;
+		gridfault_flag_flt3=0;
+		gridfault_flag_flt4=0;
 		MAIN_LOOP.cnt_gridfault_last = 0;
 	} 
 //--------20130225--------
@@ -3485,12 +3488,41 @@ void BANK_Datasave(void)
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 16 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_Iq.out);			//16=网侧iq环PI输出
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 17 + BANK_RAMDATA_POS)) = (int16)(PHAI_d);					//17=定子磁链d轴分量
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 18 + BANK_RAMDATA_POS)) = (int16)(PHAI_q);				    //18=定子磁链q轴分量
-			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 19 + BANK_RAMDATA_POS)) = (int16)(PI_MPR_Id.out);			//19=机侧id电流环输出
-			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 20 + BANK_RAMDATA_POS)) = (int16)(PI_MPR_Iq.out);			//20=机侧iq电流环输出
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 19 + BANK_RAMDATA_POS)) = (int16)(PHAI_d;			//19=机侧id电流环输出
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 20 + BANK_RAMDATA_POS)) = (int16)(PHAI_q);			//20=机侧iq电流环输出
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 21 + BANK_RAMDATA_POS)) = (int16)(urdc * 10);		//21=机侧d轴电压输出
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 22 + BANK_RAMDATA_POS)) = (int16)(urqc * 10);		//22=机侧q轴电压输出
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 23 + BANK_RAMDATA_POS)) = (int16)(urdc_dynamic * 10);		//23=网侧d轴输出
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 24 + BANK_RAMDATA_POS)) = (int16)(urqc_dynamic * 10);		//24=网侧q轴输出
+			*(BANK_RAMEND) = BANK_RAMDATA_POS;		
+			}
+			else if(_NPR_ID_Kd==3000)
+			{
+			*(BANK_RAMSTART+ BANK_RAMDATA_POS) = (int16)(NGS_Udq_p * 10);							        //0=网压正序分量
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 1 +  BANK_RAMDATA_POS)) = (int16)(CAP4.mprtrstheta*1000);	//1=机侧定向角度
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 2 +  BANK_RAMDATA_POS)) = (int16)(NGS_Udq_n2pex * 10);		//2=网压负序分量与跌落前电压正序分量之比
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 3 +  BANK_RAMDATA_POS)) = (int16)(kq * 100);				//3=无功发生系数
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 4 +  BANK_RAMDATA_POS)) = (int16)(M_ChkFlag(SL_HV_STATE)* 10);	//4=高电压穿越状态
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 5 +  BANK_RAMDATA_POS)) = (int16)(M_ChkFlag(SL_UNBALANCE)* 10);	//5=电网不平衡状态
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 6 +  BANK_RAMDATA_POS)) = (int16)(M_ChkFlag(SL_MSTOP)* 10);		//6=机侧封脉冲
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 7 +  BANK_RAMDATA_POS)) = (int16)(M_ChkFlag(SL_NSTOP)* 10);		//7=网侧封脉冲
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 8 +  BANK_RAMDATA_POS)) = (int16)(DIP_STA_I.qflt * 10);			//8=定子侧q轴无功电流滤波后
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 9 +  BANK_RAMDATA_POS)) = (int16)(PI_NPR_U.reference);			//9=直流电压参考值
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 10 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_U.feedback);			//10=直流电压反馈值
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 11 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_Iq.reference);		 	//11=网侧无功电流参考值
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 12 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_Iq.feedback);			//12=网侧无功电流反馈值
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 13 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_Id.reference);			//13=网侧有功电流参考值
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 14 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_Id.feedback);			//14=网侧无功电流反馈值
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 15 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_Id.out);			//15=网侧id环PI输出
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 16 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_Iq.out);			//16=网侧iq环PI输出
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 17 + BANK_RAMDATA_POS)) = (int16)(PHAI_d);					//17=定子磁链d轴分量
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 18 + BANK_RAMDATA_POS)) = (int16)(PHAI_q);				    //18=定子磁链q轴分量
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 19 + BANK_RAMDATA_POS)) = (int16)(TRS_STA_U.dflt;			//19=机侧id电流环输出
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 20 + BANK_RAMDATA_POS)) = (int16)(TRS_STA_U.qflt;			//20=机侧iq电流环输出
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 21 + BANK_RAMDATA_POS)) = (int16)(TRS_STA_I.dflt;		//21=机侧d轴电压输出
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 22 + BANK_RAMDATA_POS)) = (int16)(TRS_STA_I.qflt;		//22=机侧q轴电压输出
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 23 + BANK_RAMDATA_POS)) = (int16)(TRS_MPR_I.dflt);		//23=网侧d轴输出
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 24 + BANK_RAMDATA_POS)) = (int16)(TRS_MPR_I.qflt);		//24=网侧q轴输出
 			*(BANK_RAMEND) = BANK_RAMDATA_POS;		
 			}
 			BANK_RAMDATA_POS++;
