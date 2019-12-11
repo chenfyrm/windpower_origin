@@ -2134,6 +2134,11 @@ void RunCtrl(void)
 	else if (temp1 > TWOPAI)  	temp1 = temp1 - TWOPAI;		//AD采样时刻转子位置取模(0-TWOPAI)
 							
 //	temp = TWOPAI_3 + CAP4.nprtrstheta - temp1;				//正变换角度，未取模，（-1.3PAI---2.7PAI） 
+
+	temp = TWOPAI_3 + CAP4.nprtrstheta_lv ;
+	if		(temp > TWOPAI)	 	temp = temp - TWOPAI;	
+	CAP4.stavectheta = temp;
+
 	temp = TWOPAI_3 + CAP4.nprtrstheta_lv - temp1;			//正变换角度（-1.3PAI---2.7PAI） 20121103LVRT
 															//定子绕组角接,B相电压过零时，电压矢量为30degree
 	if		(temp > TWOPAI)	 	temp = temp - TWOPAI;	
@@ -2216,12 +2221,11 @@ void RunCtrl(void)
 	TRS_MPR_U.sintheta = sin(CAP4.mpratitheta);				//转子控制电压角度 
 	TRS_MPR_U.costheta = cos(CAP4.mpratitheta);		
 
-	TRS_STA_I.sintheta = -TRS_NPR_I.costheta;				//转子控制电压角度 
+	TRS_STA_I.sintheta = sin(CAP4.stavectheta);				//转子控制电压角度 
+	TRS_STA_I.costheta = cos(CAP4.stavectheta);
 
-	TRS_STA_I.costheta =  TRS_NPR_I.sintheta;
-
-	TRS_STA_U.sintheta = -TRS_NPR_I.costheta;				//转子控制电压角度
-	TRS_STA_U.costheta =  TRS_NPR_I.sintheta;	
+	TRS_STA_U.sintheta = TRS_STA_I.sintheta;				//转子控制电压角度
+	TRS_STA_U.costheta = TRS_STA_I.costheta;	
 
 
 }
