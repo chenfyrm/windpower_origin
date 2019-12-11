@@ -1401,6 +1401,10 @@ void RunCtrl(void)
 			if(RUN.mpriqrf_g < -680)	RUN.mpriqrf_g = -680;	//有功电流限幅
 			else if(RUN.mpriqrf_g > 0)			RUN.mpriqrf_g = 0;
 		}
+		else if (M_ChkFlag(SL_HV_QWORKING)!=0)
+		{
+			RUN.mpriqrf_g = - RUN.toqrf * STAROTRTO / (1.5 * SQRT3 * POLEPAIRES * MPR_Lm * NGS_Udq_p / (314.15926 *  MPR_Ls));
+		}
 		else
 		{
 			GRD_Utlv = GRD_Ut;
@@ -2213,7 +2217,11 @@ void RunCtrl(void)
 	TRS_MPR_U.costheta = cos(CAP4.mpratitheta);		
 
 	TRS_STA_I.sintheta = -TRS_NPR_I.costheta;				//转子控制电压角度 
-	TRS_STA_I.costheta =  TRS_NPR_I.sintheta;		
+	TRS_STA_I.costheta =  TRS_NPR_I.sintheta;	
+
+	TRS_STA_U.sintheta = -TRS_NPR_I.costheta;				//转子控制电压角度 
+	TRS_STA_U.costheta =  TRS_NPR_I.sintheta;	
+
 
 }
 
@@ -2246,6 +2254,14 @@ void MPR_CONTROL(void)
 	DataFilter(0.4,&TRS_MPR_I.dflt,TRS_MPR_I.d); 			//机侧电流反馈值滤波， Ts=200us,fh=1.2kHz,滤掉开关频率次
 	DataFilter(0.4,&TRS_MPR_I.qflt,TRS_MPR_I.q); 			//机侧电流反馈值滤波， Ts=200us,fh=1.2kHz,滤掉开关频率次
 *///不转移到QepEncodPos里面计算，得到快读磁链值BJTULVRT201204
+	
+	TRS_STA_U.a = AD_OUT_NGS_U.ab;
+	TRS_STA_U.b = AD_OUT_NGS_U.bc;
+	TRS_STA_U.c = -TRS_STA_U.a - TRS_STA_U.b;
+	Transform_3s_2s_2r(&TRS_STA_U);	
+	DataFilter(0.4,&TRS_STA_U.dflt,TRS_STA_U.d); 			//网侧电流反馈值滤波， Ts=200us,fh=1.2kHz,滤掉开关频率次
+	DataFilter(0.4,&TRS_STA_U.qflt,TRS_STA_U.q); 			//网侧电流蠢≈德瞬ǎ? Ts=200us,fh=1.2kHz，20090615改
+
 
 //----------------运行机侧电流环-------------------------------------------------------------------
 	if(M_ChkFlag(SL_MPR_RUNING)!=0)							//机侧调节需要运行
@@ -2363,19 +2379,27 @@ void MPR_CONTROL(void)
 	PHAI_d = TRS_STA_I.dflt * MPR_Ls + TRS_MPR_I.dflt * MPR_Lm / STAROTRTO;
 	PHAI_q = TRS_STA_I.qflt * MPR_Ls + TRS_MPR_I.qflt * MPR_Lm / STAROTRTO;
 
-
 //--------------MPR输出电压计算BJTULVRT20121103--------------------------------------------------------------------
 //	if(M_ChkFlag(SL_MPR_SYNOK)!=0 || (_SC_MSTDBY!=0))  //201201	
 	if(M_ChkFlag(SL_MPR_SYNOK)!=0)  //20121103			
 	{
 		PHI_DATA_M.PHIsd =  - (TRS_NGS_U.dflt * SQRT3 * STAROTRTO / CAP4.omigasyn);	////201112fluxobs
-		temp_ud = TRS_NGS_U.dflt;
+		temp_ud = TRS_STA_U.dflt;
 	}
 	else
 	{
 		PHI_DATA_M.PHIsd =  - RUN.mpridrf / RUN.mpridrf_g * (TRS_NGS_U.dflt * SQRT3 * STAROTRTO / CAP4.omigasyn);	//慢慢上升
-		temp_ud = RUN.mpridrf / RUN.mpridrf_g * TRS_NGS_U.dflt;
+		temp_ud = RUN.mpridrf / RUN.mpridrf_g * TRS_STA_U.dflt ;
 	}
+
+
+	urdc=STAROTRTO * MPR_Lm/MPR_Ls*(MPR_Rs*PHAI_d/MPR_Ls - QEPDATA.omigarote*PHAI_q-TRS_STA_U.qflt;
+	urqc=STAROTRTO * MPR_Lm/MPR_Ls*(MPR_Rs*PHAI_q/MPR_Ls + QEPDATA.omigarote*PHAI_d+temp_ud);
+	urdc_steady=0;
+	urqc_steady=- CAP4.omigaslp * MPR_Lm * PHI_DATA_M.PHIsd / MPR_Ls;
+
+	urdc_dynamic=urdc;
+	urqc_dynamic=urqc-urqc_steady;
 
 	if((M_ChkFlag(SL_UNBALANCE)==0) && (M_ChkFlag(SL_LV_STATE)!=0) && (NGS_Udq_p_lv < (0.8 * NGS_Udq_p_ex)))		  //20130223
 	{
@@ -2387,13 +2411,16 @@ void MPR_CONTROL(void)
 	}
 	else
 	{
+		if(_NPR_IQ_Kd==0)
+		{		
 		temp_d = - PI_MPR_Id.out + SIGMA * CAP4.omigaslp * MPR_Lr * PI_MPR_Iq.feedback;	//解耦项计算
-	 	temp_q = - PI_MPR_Iq.out - SIGMA * CAP4.omigaslp * MPR_Lr * PI_MPR_Id.feedback;	//解耦项计算
-		temp_q = temp_q	- CAP4.omigaslp * MPR_Lm * PHI_DATA_M.PHIsd / MPR_Ls;
-
-//		temp_d = - PI_MPR_Id.out + SIGMA * CAP4.omigaslp * MPR_Lr * PI_MPR_Iq.feedback+MPR_Lm/MPR_Ls*(MPR_Rs*PHAI_d/MPR_Ls-QEPDATA.omigarote*PHAI_q-TRS_NGS_U.qflt);
-//	 	temp_q = - PI_MPR_Iq.out - SIGMA * CAP4.omigaslp * MPR_Lr * PI_MPR_Id.feedback+MPR_Lm/MPR_Ls*(MPR_Rs*PHAI_q/MPR_Ls+QEPDATA.omigarote*PHAI_d+temp_ud);
-
+	 	temp_q = - PI_MPR_Iq.out - SIGMA * CAP4.omigaslp * MPR_Lr * PI_MPR_Id.feedback+urqc_steady;	//解耦项计算
+		}
+		else
+		{		
+		temp_d = - PI_MPR_Id.out + SIGMA * CAP4.omigaslp * MPR_Lr * PI_MPR_Iq.feedback + urdc;
+	 	temp_q = - PI_MPR_Iq.out - SIGMA * CAP4.omigaslp * MPR_Lr * PI_MPR_Id.feedback + urqc;
+		}
 	}
 
 //	temp_d = temp_d - MPR_Rr * PI_MPR_Id.feedback;
@@ -2462,8 +2489,8 @@ void NPR_CONTROL(void)
 	if(TRS_NGS_U.q > 200)			TRS_NGS_U.q = 200;		//20130228
 	else if(TRS_NGS_U.q < -200)		TRS_NGS_U.q = -200;		//20130228
 
-	DataFilter(0.4,&TRS_NGS_U.dflt,TRS_NGS_U.d); 			//网压反值滤波，Ts=200us,fh=1.2kHz 20090608change to ok
-	DataFilter(0.4,&TRS_NGS_U.qflt,TRS_NGS_U.q); 			//网压反馈德瞬ǎ琓s=200us,fh=1.2kHz 20090608change to ok
+	DataFilter(0.443,&TRS_NGS_U.dflt,TRS_NGS_U.d); 			//网压反值滤波，Ts=200us,fh=1.2kHz 20090608change to ok
+	DataFilter(0.443,&TRS_NGS_U.qflt,TRS_NGS_U.q); 			//网压反馈德瞬ǎ琓s=200us,fh=1.2kHz 20090608change to ok
 //	DataFilter(0.1,&TRS_NGS_U.dflt2,TRS_NGS_U.d); 			//网压反馈值滤波，Ts=200us,fh=7.9kHz,126us,为监测网跌，20091026
 
 

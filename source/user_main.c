@@ -612,13 +612,14 @@ void ACrowbar(void)
 //	NGS_Udq_lv = sqrt(TRS_NGS_U.dnpr * TRS_NGS_U.dnpr + TRS_NGS_U.qnpr * TRS_NGS_U.qnpr);  //计算网压幅值-仅适用于正序-跌落
 
 	NGS_Udq = sqrt(TRS_NGS_U.dflt * TRS_NGS_U.dflt + TRS_NGS_U.qflt * TRS_NGS_U.qflt);  //20110326计算网压幅值-仅适用于正序-跌落
+
 //  由PLL输出的NGS_Udq_p替代BJTULVRT201204
 
 	NGS_U_D    = 0.3333333 * (2 * AD_OUT_NGS_U.a - AD_OUT_NGS_U.b - AD_OUT_NGS_U.c);	//用静止坐标分量计算网压幅值
 	NGS_U_Q    = SQRT3_3 * (AD_OUT_NGS_U.b - AD_OUT_NGS_U.c);
 	TRS_NPR_U.amp = sqrt(NGS_U_D * NGS_U_D + NGS_U_Q * NGS_U_Q);   //20110328
+	DataFilter(0.443,&TRS_NPR_U.ampflt,TRS_NPR_U.amp); 			//c=0.4,Ts=200us,fh=1.2kHz,滤掉开关频率次
 
-	DataFilter(0.4,&TRS_NPR_U.ampflt,TRS_NPR_U.amp); 			//c=0.4,Ts=200us,fh=1.2kHz,滤掉开关频率次
 	if(M_ChkFlag(SL_LV_QWORKING)==0||M_ChkFlag(SL_HV_QWORKING)==0)	DataFilter(0.998,&NGS_Udq_pflt,NGS_Udq_p);		//100ms	20130303
 
 //-----计算无功补偿系数kq-----BJTULVRT201204
@@ -631,18 +632,20 @@ void ACrowbar(void)
 //	if(GRD_Ut <= 0.9)	kq = 1.5 * (1 - NGS_Udq_p / GRD_UN);	//201205LVRTatZB
 //	else				kq = 0;		//20120531 201205LVRTatZB
 //--------20130225--------
-	if(GRD_Ut <= 0.94)							//20130124	20130303
+	if(GRD_Ut <= 0.94 )							//20130124	20130303
 	{
 		kq = 1.5 * (1.05 - NGS_Udq_p / NGS_Udq_p_ex);	//20130301
 		MAIN_LOOP.cnt_hvlv_kq = 0;				//20130124
 	}
-	else if(GRD_Ut >= 1.05)
+	else if(GRD_Ut >= 1.05 )
 	{
 		kq = 1.5 * (NGS_Udq_p / NGS_Udq_p_ex-1.05);	
 		MAIN_LOOP.cnt_hvlv_kq = 0;				
 	}
 	else if(M_ChkCounter(MAIN_LOOP.cnt_hvlv_kq,30)>0)
 		kq = 0;		//电压恢复正常后无功命令延时30ms清除
+
+	if(kq<0) kq=0;
 //------------------------
 	if(M_ChkFlag(SL_HVLV_DETEC)!=0)	//20120601night
 	{
@@ -657,46 +660,76 @@ void ACrowbar(void)
 			//以下根据幅度检测，负序情况，幅度震荡周期10ms，可保证10ms内检测到故障
 			if(M_ChkFlag(SL_LV_STATE)==0 && (TRS_NPR_U.ampflt<(0.6 * NGS_Udq_p_ex)))//2013-12-6小于0.6立刻置位
 			{
-				M_SetFlag(SL_LV_STATE);
-
-				if((_STDBY9&0x0002)==0)		M_SetFlag(CL_ZKHVLVRT);		//20121107
-			}
-			else if(M_ChkFlag(SL_HV_STATE)==0 && (TRS_NPR_U.ampflt>(1.2 * NGS_Udq_p_ex)))
-			{
-				M_SetFlag(SL_HV_STATE);
-				if((_STDBY9&0x0002)==0)		M_SetFlag(CL_ZKHVLVRT);		
-			}
-			else if(M_ChkFlag(SL_LV_STATE)==0 && (TRS_NPR_U.ampflt<(0.9 * NGS_Udq_p_ex)))//2013-12-6小于0.91延时1ms置位
-			{
-				gridfault_flag_flt++;
-				if(gridfault_flag_flt>=5)
+				gridfault_flag_flt1++;
+				if(gridfault_flag_flt1>=5)
 				{
 					M_SetFlag(SL_LV_STATE);
 					if((_STDBY9&0x0002)==0)		M_SetFlag(CL_ZKHVLVRT);	
-					gridfault_flag_flt=0;
+					gridfault_flag_flt1=0;
 				}
 			}
-			else if(M_ChkFlag(SL_HV_STATE)==0 && (TRS_NPR_U.ampflt>(1.1* NGS_Udq_p_ex)))//2013-12-6小于0.91延时1ms置位
+			else
 			{
-				gridfault_flag_flt++;
-				if(gridfault_flag_flt>=5)
+				gridfault_flag_flt1=0;
+			}
+			
+			if(M_ChkFlag(SL_HV_STATE)==0 && (TRS_NPR_U.ampflt>(1.2 * NGS_Udq_p_ex)))
+			{
+				gridfault_flag_flt2++;
+				if(gridfault_flag_flt2>=5)
 				{
 					M_SetFlag(SL_HV_STATE);
-					if((_STDBY9&0x0002)==0)		M_SetFlag(CL_ZKHVLVRT);	
-					gridfault_flag_flt=0;
+					gridfault_flag_flt2=0;
 				}
 			}
-			else gridfault_flag_flt=0;
+			else
+			{
+				gridfault_flag_flt2=0;
+			}
+			
+			if(M_ChkFlag(SL_LV_STATE)==0 && (TRS_NPR_U.ampflt3<(0.9 * NGS_Udq_p_ex)))//2013-12-6小于0.91延时1ms置位
+			{
+				gridfault_flag_flt3++;
+				if(gridfault_flag_flt3>=10)
+				{
+					M_SetFlag(SL_LV_STATE);
+					if((_STDBY9&0x0002)==0)		M_SetFlag(CL_ZKHVLVRT);	
+					gridfault_flag_flt3=0;
+				}
+			}
+			else
+			{
+				gridfault_flag_flt3=0;
+			}
+			
+			if(M_ChkFlag(SL_HV_STATE)==0 && (TRS_NPR_U.ampflt>(1.1* NGS_Udq_p_ex)))//2013-12-6小于0.91延时1ms置位
+			{
+				gridfault_flag_flt4++;
+				if(gridfault_flag_flt4>=10)
+				{
+					M_SetFlag(SL_HV_STATE);
+					gridfault_flag_flt4=0;
+				}
+			}
+			else gridfault_flag_flt4=0;
 		}
-		else gridfault_flag_flt=0;	
-
+		else 
+		{
+			gridfault_flag_flt1=0;
+			gridfault_flag_flt2=0;
+			gridfault_flag_flt3=0;
+			gridfault_flag_flt4=0;	
+		}
 //		if(M_ChkFlag(SL_LV_STATE)!=0 && (NGS_Udq_p > (0.92 * GRD_UN)))
 		if((M_ChkFlag(SL_LV_STATE)!=0 || M_ChkFlag(SL_HV_STATE)!=0)&& (NGS_Udq_p > (0.92 * NGS_Udq_p_ex)&&(NGS_Udq_p < (1.08 * NGS_Udq_p_ex))))		//恢复正常态的判断
 		{		
 			if(M_ChkCounter(MAIN_LOOP.cnt_hvlv_rcv,DELAY_HVLVRCV)>0)			//10ms 负序震荡周期
 			{
 				M_ClrFlag(SL_LV_STATE);	
-				M_ClrFlag(SL_HV_STATE);			
+				M_ClrFlag(SL_HV_STATE);	
+				M_ClrFlag(SL_HV_QWORKING);			
+				M_ClrFlag(SL_LV_QWORKING);
+				M_ClrFlag(SL_LV_STRICTLV);
 
 				if((_STDBY9&0x0002)==0)		M_ClrFlag(CL_ZKHVLVRT);		//20121107
 
@@ -1008,7 +1041,9 @@ void ACrowbar(void)
 	{
 		M_SetFlag(SL_TRIG_ERRDSAVE);	 	//LVRT触发故障锁存示波器201205LVRTatZB
 		M_SetFlag(SL_LV_QWORKING);												//网侧发无功
+		M_ClrFlag(SL_HV_QWORKING);
 		M_SetFlag(SL_LV_STRICTLV);			//20130222
+		M_ClrFlag(SL_HV_STRICTLV);
 		GIVE.lvwtiqrf = kq * 1775.0;	//BJTULVRT201204
 		if(GIVE.lvwtiqrf > 1775)	GIVE.lvwtiqrf = 1775; //无功电流限幅限幅
 		MAIN_LOOP.cnt_qworking = 0;	
@@ -1025,7 +1060,9 @@ void ACrowbar(void)
 	{
 		M_SetFlag(SL_TRIG_ERRDSAVE);	 			
 		M_SetFlag(SL_HV_QWORKING);			//网侧发无功
-		M_SetFlag(SL_HV_STRICTLV);			
+		M_ClrFlag(SL_LV_QWORKING);
+		M_SetFlag(SL_HV_STRICTLV);
+		M_ClrFlag(SL_LV_STRICTLV);			
 		GIVE.hvwtiqrf = kq * 1775.0;	   
 		if(GIVE.hvwtiqrf > 1775)	GIVE.hvwtiqrf = 1775; //无功电流限幅限幅
 		MAIN_LOOP.cnt_qworking = 0;
@@ -3356,7 +3393,7 @@ void BANK_Datasave(void)
 
 		if(M_ChkFlag(SL_RAMBANKSAVE)==0)  																//PC指令未要求数据锁存，处于刷新状态
 		{
-			if(_STDBY11==0)
+			if(_NPR_ID_Kd==0)
 			{
 			*(BANK_RAMSTART+ BANK_RAMDATA_POS) = (int16)(DIP_STA_I.qflt);							//0=网侧定向角度
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 1 + BANK_RAMDATA_POS)) = (int16)(CAP4.mprtrstheta*1000);	//1=机侧定向嵌?
@@ -3398,7 +3435,7 @@ void BANK_Datasave(void)
 //			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 24 + BANK_RAMDATA_POS)) = (int16)(PHI_DATA_M.Iq);		//24=SCR支路电流 BJTULVRT201204
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 24 + BANK_RAMDATA_POS)) = (int16)(TRS_NPR_U.q * 10);		//24=SCR支路电流 BJTULVRT201204
 			}
-			else if(_STDBY11==1)
+			else if(_NPR_ID_Kd==1000)
 			{
 			*(BANK_RAMSTART+ BANK_RAMDATA_POS) = (int16)(NGS_Udq_p * 10);							        //0=网压正序分量
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 1 +  BANK_RAMDATA_POS)) = (int16)(CAP4.mprtrstheta*1000);	//1=机侧定向角度
@@ -3421,11 +3458,40 @@ void BANK_Datasave(void)
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 18 + BANK_RAMDATA_POS)) = (int16)(PHAI_q);				    //18=定子磁链q轴分量
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 19 + BANK_RAMDATA_POS)) = (int16)(PI_MPR_Id.out);			//19=机侧id电流环输出
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 20 + BANK_RAMDATA_POS)) = (int16)(PI_MPR_Iq.out);			//20=机侧iq电流环输出
-			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 21 + BANK_RAMDATA_POS)) = (int16)(TRS_MPR_U.d * 10);		//21=机侧d轴输出
-			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 22 + BANK_RAMDATA_POS)) = (int16)(TRS_MPR_U.q * 10);		//21=机侧q轴输出
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 21 + BANK_RAMDATA_POS)) = (int16)(TRS_MPR_U.d * 10);		//21=机侧d轴电压输出
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 22 + BANK_RAMDATA_POS)) = (int16)(TRS_MPR_U.q * 10);		//22=机侧q轴电压输出
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 23 + BANK_RAMDATA_POS)) = (int16)(TRS_NPR_U.d * 10);		//23=网侧d轴输出
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 24 + BANK_RAMDATA_POS)) = (int16)(TRS_NPR_U.q * 10);		//24=网侧q轴输出
 			*(BANK_RAMEND) = BANK_RAMDATA_POS;																
+			}
+			else if(_NPR_ID_Kd==2000)
+			{
+			*(BANK_RAMSTART+ BANK_RAMDATA_POS) = (int16)(NGS_Udq_p * 10);							        //0=网压正序分量
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 1 +  BANK_RAMDATA_POS)) = (int16)(CAP4.mprtrstheta*1000);	//1=机侧定向角度
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 2 +  BANK_RAMDATA_POS)) = (int16)(NGS_Udq_n2pex * 10);		//2=网压负序分量与跌落前电压正序分量之比
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 3 +  BANK_RAMDATA_POS)) = (int16)(kq * 100);				//3=无功发生系数
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 4 +  BANK_RAMDATA_POS)) = (int16)(M_ChkFlag(SL_HV_STATE)* 10);	//4=高电压穿越状态
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 5 +  BANK_RAMDATA_POS)) = (int16)(M_ChkFlag(SL_UNBALANCE)* 10);	//5=电网不平衡状态
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 6 +  BANK_RAMDATA_POS)) = (int16)(M_ChkFlag(SL_MSTOP)* 10);		//6=机侧封脉冲
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 7 +  BANK_RAMDATA_POS)) = (int16)(M_ChkFlag(SL_NSTOP)* 10);		//7=网侧封脉冲
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 8 +  BANK_RAMDATA_POS)) = (int16)(DIP_STA_I.qflt * 10);			//8=定子侧q轴无功电流滤波后
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 9 +  BANK_RAMDATA_POS)) = (int16)(PI_NPR_U.reference);			//9=直流电压参考值
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 10 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_U.feedback);			//10=直流电压反馈值
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 11 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_Iq.reference);		 	//11=网侧无功电流参考值
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 12 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_Iq.feedback);			//12=网侧无功电流反馈值
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 13 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_Id.reference);			//13=网侧有功电流参考值
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 14 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_Id.feedback);			//14=网侧无功电流反馈值
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 15 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_Id.out);			//15=网侧id环PI输出
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 16 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_Iq.out);			//16=网侧iq环PI输出
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 17 + BANK_RAMDATA_POS)) = (int16)(PHAI_d);					//17=定子磁链d轴分量
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 18 + BANK_RAMDATA_POS)) = (int16)(PHAI_q);				    //18=定子磁链q轴分量
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 19 + BANK_RAMDATA_POS)) = (int16)(PI_MPR_Id.out);			//19=机侧id电流环输出
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 20 + BANK_RAMDATA_POS)) = (int16)(PI_MPR_Iq.out);			//20=机侧iq电流环输出
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 21 + BANK_RAMDATA_POS)) = (int16)(urdc * 10);		//21=机侧d轴电压输出
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 22 + BANK_RAMDATA_POS)) = (int16)(urqc * 10);		//22=机侧q轴电压输出
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 23 + BANK_RAMDATA_POS)) = (int16)(urdc_dynamic * 10);		//23=网侧d轴输出
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 24 + BANK_RAMDATA_POS)) = (int16)(urqc_dynamic * 10);		//24=网侧q轴输出
+			*(BANK_RAMEND) = BANK_RAMDATA_POS;		
 			}
 			BANK_RAMDATA_POS++;
 			if(BANK_RAMDATA_POS >= RAM_BIAS)  BANK_RAMDATA_POS=0;	

@@ -727,7 +727,17 @@ float   LV_A2;
 float   LV_T1;
 float   LV_T2;
 
-float   gridfault_flag_flt;		//2013-12-6 LVRT标志位延时计数器
+float   gridfault_flag_flt1;		//2013-12-6 LVRT标志位延时计数器
+float   gridfault_flag_flt2;		//2013-12-6 LVRT标志位延时计数器
+float   gridfault_flag_flt3;		//2013-12-6 LVRT标志位延时计数器
+float   gridfault_flag_flt4;		//2013-12-6 LVRT标志位延时计数器
+
+float   urdc;		//
+float   urqc;		//
+float   urdc_steady;		//
+float   urqc_steady;		//
+float   urdc_dynamic;		//
+float   urqc_dynamic;		//
 
 //ModbusRS485
 Uint16  length485;													//modbus
