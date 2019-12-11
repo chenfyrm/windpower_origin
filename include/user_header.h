@@ -687,9 +687,9 @@ Uint16	flag[16];													//标志位变量
 //---2013-12-13--ZZJ增加电机励磁
 //------------------------电机励磁参数识别MagnetCurve200909------------------------------------
 struct	MC_DATA{
-	float   x[8];
-	float   y[8];
-	float   temp[8];
+	float   x[11];
+	float   y[11];
+	float   temp[11];
 	float   k;
 	float   in;
 }MC_DATA;

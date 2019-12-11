@@ -2441,18 +2441,42 @@ void Ad8364Ctrl(void)
 		MC_F_cnt = 0;
 		MC_N_test= 0;
 	}
-	else if(_SC_MSTDBY==6)//Us=120% 
+	else if(_SC_MSTDBY==6)//Us=115% 
 	{
-		MC_U_test =  (float)_SC_Usn * 1.2 * Uns_ft - (0.5 * 1.110721 * (MEAN_DATA.uab2+MEAN_DATA.ubc2));
-		MC_DATA.temp[6] = 1.644;
+		MC_U_test =  (float)_SC_Usn * 1.15 * Uns_ft - (0.5 * 1.110721 * (MEAN_DATA.uab2+MEAN_DATA.ubc2));
+		MC_DATA.temp[6] = _SC_EXISTY5 * 0.001;
 		MAIN_LOOP.cnt_mc_ack=0;	
 		MC_F_cnt = 0;
 		MC_N_test= 0;
 	}
-	else if(_SC_MSTDBY==7)//Us=130% 
+	else if(_SC_MSTDBY==7)//Us=120% 
+	{
+		MC_U_test =  (float)_SC_Usn * 1.2 * Uns_ft - (0.5 * 1.110721 * (MEAN_DATA.uab2+MEAN_DATA.ubc2));
+		MC_DATA.temp[7] = 1.644;
+		MAIN_LOOP.cnt_mc_ack=0;	
+		MC_F_cnt = 0;
+		MC_N_test= 0;
+	}
+	else if(_SC_MSTDBY==8)//Us=125% 
+	{
+		MC_U_test =  (float)_SC_Usn * 1.25 * Uns_ft - (0.5 * 1.110721 * (MEAN_DATA.uab2+MEAN_DATA.ubc2));
+		MC_DATA.temp[8] = 1.644;
+		MAIN_LOOP.cnt_mc_ack=0;	
+		MC_F_cnt = 0;
+		MC_N_test= 0;
+	}
+	else if(_SC_MSTDBY==9)//Us=130% 
 	{
 		MC_U_test =  (float)_SC_Usn * 1.3 * Uns_ft - (0.5 * 1.110721 * (MEAN_DATA.uab2+MEAN_DATA.ubc2));
-		MC_DATA.temp[7] = 2.177;
+		MC_DATA.temp[9] = 2.177;
+		MAIN_LOOP.cnt_mc_ack=0;	
+		MC_F_cnt = 0;
+		MC_N_test= 0;
+	}
+	else if(_SC_MSTDBY==10)//Us=135% 
+	{
+		MC_U_test =  (float)_SC_Usn * 1.35 * Uns_ft - (0.5 * 1.110721 * (MEAN_DATA.uab2+MEAN_DATA.ubc2));
+		MC_DATA.temp[10] = 2.177;
 		MAIN_LOOP.cnt_mc_ack=0;	
 		MC_F_cnt = 0;
 		MC_N_test= 0;
@@ -2469,7 +2493,10 @@ void Ad8364Ctrl(void)
 			MC_DATA.y[4] = 1;
 			MC_DATA.y[5] = 1;
 			MC_DATA.y[6] = 1;
-			MC_DATA.y[7] = 1;		
+			MC_DATA.y[7] = 1;
+			MC_DATA.y[8] = 1;	
+			MC_DATA.y[9] = 1;	
+			MC_DATA.y[10] = 1;			
 		} 
 		else if(M_ChkFlag(SL_MC_OK)==0)
 		{
@@ -2479,10 +2506,13 @@ void Ad8364Ctrl(void)
 			MC_DATA.y[3] = _SC_EXISTY3 * 0.001;
 			MC_DATA.y[4] = _SC_EXISTY4 * 0.001;
 			MC_DATA.y[5] = _SC_EXISTY5 * 0.001; 
-			MC_DATA.y[6] = 1.644; 
-			MC_DATA.y[7] = 2.1765; 
+			MC_DATA.y[6] = _SC_EXISTY5 * 0.001; 
+			MC_DATA.y[7] = 1.644; 
+			MC_DATA.y[8] = 1.644; 
+			MC_DATA.y[9] = 2.1765; 
+			MC_DATA.y[10] = 2.1765; 
 			
-			MC_U_test =  (float)_SC_Usn * (0.5 + MC_N_test * 0.1) * Uns_ft - (0.5 * 1.110721 * (MEAN_DATA.uab2+MEAN_DATA.ubc2));
+			MC_U_test =  (float)_SC_Usn * (0.5 + MC_N_test * 0.05) * Uns_ft - (0.5 * 1.110721 * (MEAN_DATA.uab2+MEAN_DATA.ubc2));
 			MC_F_cnt++;
 
 //			if(MC_F_cnt>32766) MC_F_cnt=32766;//test
@@ -2493,7 +2523,7 @@ void Ad8364Ctrl(void)
 				{
 					MC_F_cnt = 0;
 					MAIN_LOOP.cnt_mc_ack=0;
-					if(MC_N_test < 8)	 MC_N_test++;	//0-6			
+					if(MC_N_test < 17)	 MC_N_test++;	//0-6			
 					else
 					{
 						M_SetFlag(SL_MC_OK);

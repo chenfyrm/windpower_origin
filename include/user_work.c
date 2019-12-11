@@ -764,7 +764,7 @@ void Magnet_Curve(struct MC_DATA *var)	//分段线性插值
 
 //---------------插值点限幅------------------------------------------------    
 	if(var->in < var->x[0])	var->in= var->x[0];
-	else if(var->in > var->x[7])	var->in= var->x[7];
+	else if(var->in > var->x[10])	var->in= var->x[10];
 
 //---------------判断插值点区间[0,4]------------------------------------------------    
 	if(var->in <= var->x[1])	s=0;
@@ -774,6 +774,9 @@ void Magnet_Curve(struct MC_DATA *var)	//分段线性插值
 	else if((var->in > var->x[4])&&(var->in <= var->x[5]))	s=4;
 	else if((var->in > var->x[5])&&(var->in <= var->x[6]))	s=5;
 	else if((var->in > var->x[6])&&(var->in <= var->x[7]))	s=6;
+	else if((var->in > var->x[7])&&(var->in <= var->x[8]))	s=7;
+	else if((var->in > var->x[8])&&(var->in <= var->x[9]))	s=8;
+	else if((var->in > var->x[9])&&(var->in <= var->x[10]))	s=9;
 
 	temp_k = 0;
 	for(i=s;i<(s+2);i++)
@@ -902,8 +905,12 @@ void Give(void)
 			            {
 //					    	GIVE.toqrf  = (int16)_PROSTDBY2;   		//201007BJTULVRT//转矩不修改就是任然接受转矩指令
 							GIVE.anglerf= 0;						//20110829
+							GIVE.toqrf  = Te_feedback_lv;
 			   			}
-						
+						else if(M_ChkFlag(SL_HV_QWORKING)!=0)
+						{
+							GIVE.anglerf= 0;						//20110829
+						}
 					}
 					else
       		   		{
@@ -1246,7 +1253,7 @@ void RunCtrl(void)
 			{								
  				MC_DATA.in = 100 * TRS_NGS_U.dflt * SQRT3 / ((float)_SC_Usn * SQRT2);
 				if(MC_DATA.in < 50)			MC_DATA.in = 50;		//输入限幅[50,110]
-				else if(MC_DATA.in > 130)	MC_DATA.in = 130;		//输入限幅
+				else if(MC_DATA.in > 135)	MC_DATA.in = 135;		//输入限幅
  				Magnet_Curve(&MC_DATA);
         		RUN.mpridrf_exi =  RUN.mpridrf_exi * MC_DATA.k;
         	}
@@ -1259,14 +1266,17 @@ void RunCtrl(void)
 			else if(_SC_MSTDBY==3)	RUN_mpridrf_exi = 0.9  * _SC_EXISTY3 * 0.001 * temp_exi;
 			else if(_SC_MSTDBY==4)	RUN_mpridrf_exi = 1.0  * _SC_EXISTY4 * 0.001 * temp_exi;
 			else if(_SC_MSTDBY==5)	RUN_mpridrf_exi = 1.1  * _SC_EXISTY5 * 0.001 * temp_exi;
-			else if(_SC_MSTDBY==6)	RUN_mpridrf_exi = 1.2  * 1.644  * temp_exi;
-			else if(_SC_MSTDBY==7)	RUN_mpridrf_exi = 1.3  * 2.1765 * temp_exi;
+			else if(_SC_MSTDBY==6)	RUN_mpridrf_exi = 1.15  * _SC_EXISTY5 * 0.001 * temp_exi;
+			else if(_SC_MSTDBY==7)	RUN_mpridrf_exi = 1.2  * 1.644  * temp_exi;
+			else if(_SC_MSTDBY==8)	RUN_mpridrf_exi = 1.25  * 1.644 * temp_exi;
+			else if(_SC_MSTDBY==9)	RUN_mpridrf_exi = 1.3   * 2.1765  * temp_exi;
+			else if(_SC_MSTDBY==10)	RUN_mpridrf_exi = 1.35  * 2.1765 * temp_exi;
 //--------------------校验环节------------------------------------------------------------
 			else if(_SC_MSTDBY==99)
 			{
-				MC_DATA.in = 50 + MC_N_test * 10;	//[MC_test_n , Us]=[0;1;6 , 50;10;110]
+				MC_DATA.in = 50 + MC_N_test * 5;	//[MC_test_n , Us]=[0;1;6 , 50;10;110]
 				Magnet_Curve(&MC_DATA);
-        		RUN_mpridrf_exi =  (0.5 + MC_N_test * 0.1) * temp_exi * MC_DATA.k;
+        		RUN_mpridrf_exi =  (0.5 + MC_N_test * 0.05) * temp_exi * MC_DATA.k;
 			}
 
 //----------------------------------------------------------------------------------------
@@ -2377,7 +2387,6 @@ void MPR_CONTROL(void)
 	else
 	{
 		temp_d = - PI_MPR_Id.out + SIGMA * CAP4.omigaslp * MPR_Lr * PI_MPR_Iq.feedback;	//解耦项计算
-
 	 	temp_q = - PI_MPR_Iq.out - SIGMA * CAP4.omigaslp * MPR_Lr * PI_MPR_Id.feedback;	//解耦项计算
 		temp_q = temp_q	- CAP4.omigaslp * MPR_Lm * PHI_DATA_M.PHIsd / MPR_Ls;
 
