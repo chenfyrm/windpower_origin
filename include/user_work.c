@@ -1266,11 +1266,11 @@ void RunCtrl(void)
 			else if(_SC_MSTDBY==3)	RUN_mpridrf_exi = 0.9  * _SC_EXISTY3 * 0.001 * temp_exi;
 			else if(_SC_MSTDBY==4)	RUN_mpridrf_exi = 1.0  * _SC_EXISTY4 * 0.001 * temp_exi;
 			else if(_SC_MSTDBY==5)	RUN_mpridrf_exi = 1.1  * _SC_EXISTY5 * 0.001 * temp_exi;
-			else if(_SC_MSTDBY==6)	RUN_mpridrf_exi = 1.15  * _SC_EXISTY5 * 0.001 * temp_exi;
-			else if(_SC_MSTDBY==7)	RUN_mpridrf_exi = 1.2  * 1.644  * temp_exi;
-			else if(_SC_MSTDBY==8)	RUN_mpridrf_exi = 1.25  * 1.644 * temp_exi;
-			else if(_SC_MSTDBY==9)	RUN_mpridrf_exi = 1.3   * 2.1765  * temp_exi;
-			else if(_SC_MSTDBY==10)	RUN_mpridrf_exi = 1.35  * 2.1765 * temp_exi;
+			else if(_SC_MSTDBY==6)	RUN_mpridrf_exi = 1.15  * 1.4088 * temp_exi;
+			else if(_SC_MSTDBY==7)	RUN_mpridrf_exi = 1.2   * 1.5904 * temp_exi;
+			else if(_SC_MSTDBY==8)	RUN_mpridrf_exi = 1.25  * 1.8233 * temp_exi;
+			else if(_SC_MSTDBY==9)	RUN_mpridrf_exi = 1.3   * 2.1123 * temp_exi;
+			else if(_SC_MSTDBY==10)	RUN_mpridrf_exi = 1.35  * 2.4714 * temp_exi;
 //--------------------校验环节------------------------------------------------------------
 			else if(_SC_MSTDBY==99)
 			{
@@ -2376,6 +2376,7 @@ void MPR_CONTROL(void)
 		PHI_DATA_M.PHIsd =  - RUN.mpridrf / RUN.mpridrf_g * (TRS_NGS_U.dflt * SQRT3 * STAROTRTO / CAP4.omigasyn);	//慢慢上升
 		temp_ud = RUN.mpridrf / RUN.mpridrf_g * TRS_NGS_U.dflt;
 	}
+
 	if((M_ChkFlag(SL_UNBALANCE)==0) && (M_ChkFlag(SL_LV_STATE)!=0) && (NGS_Udq_p_lv < (0.8 * NGS_Udq_p_ex)))		  //20130223
 	{
 		temp_d = - PI_MPR_Id.out + SIGMA * CAP4.omigaslp * MPR_Lr * PI_MPR_Iq.feedback + TRS_MPR_I.dflt * _stdby02;	//解耦项计算

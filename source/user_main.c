@@ -107,11 +107,11 @@ void main(void)
 	MC_DATA.y[3] = _SC_EXISTY3 * 0.001;
 	MC_DATA.y[4] = _SC_EXISTY4 * 0.001;
 	MC_DATA.y[5] = _SC_EXISTY5 * 0.001;
-	MC_DATA.y[6] = _SC_EXISTY5 * 0.001;
-	MC_DATA.y[7] = 1.644;
-	MC_DATA.y[8] = 1.644;
-	MC_DATA.y[9] = 2.1765;
-	MC_DATA.y[10] = 2.1765;
+	MC_DATA.y[6] = 1.4088;
+	MC_DATA.y[7] = 1.5904;
+	MC_DATA.y[8] = 1.8233;
+	MC_DATA.y[9] = 2.1123;
+	MC_DATA.y[10] = 2.4714;
 
 	MC_DATA.x[0] = 0;
 	MC_DATA.x[1] = 50;
