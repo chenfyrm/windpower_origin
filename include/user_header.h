@@ -1313,7 +1313,7 @@ struct CAP_DATA	{
 					float	    npratitheta;		//网侧算法反变换角度
 					float	    mprtrstheta;		//机嗨惴ㄕ浠唤嵌?
 					float	    mpratitheta;		//机侧算法反变换角度
-					float	    stavectheta;	    //定子磁链相对与A相轴线位置	
+					float	    stavectheta;	    //定子磁链角度	
 					float	    nprtrstheta_lv;		//网侧算法正变换角度 201011LVRT 201011PLL
 				};
 struct CAP_DATA CAP4,CAP5;

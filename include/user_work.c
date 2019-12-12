@@ -2135,11 +2135,11 @@ void RunCtrl(void)
 							
 //	temp = TWOPAI_3 + CAP4.nprtrstheta - temp1;				//正变换角度，未取模，（-1.3PAI---2.7PAI） 
 
-	temp = TWOPAI_3 + CAP4.nprtrstheta_lv ;
-	if		(temp > TWOPAI)	 	temp = temp - TWOPAI;	
+	temp = CAP4.nprtrstheta_lv - PAI_3 ;
+	if(temp < 0)	 	temp = temp + TWOPAI;	
 	CAP4.stavectheta = temp;
 
-	temp = TWOPAI_3 + CAP4.nprtrstheta_lv - temp1;			//正变换角度（-1.3PAI---2.7PAI） 20121103LVRT
+	temp = CAP4.stavectheta - temp1;			//正变换角度（-1.3PAI---2.7PAI） 20121103LVRT
 															//定子绕组角接,B相电压过零时，电压矢量为30degree
 	if		(temp > TWOPAI)	 	temp = temp - TWOPAI;	
 	else if	(temp < 0)	  		temp = temp + TWOPAI;		//取模 (0-TWOPAI)
@@ -2247,7 +2247,7 @@ void RunCtrl(void)
 #pragma CODE_SECTION(MPR_CONTROL, "ramfuncs");
 void MPR_CONTROL(void)
 {
-   float temp_d,temp_q,temp_ud;
+   float temp_d,temp_q,temp_uq;
 //   float temp_d,temp_q,temp_exi;
 //	Uint16 temp_n,temp_ud;
 
@@ -2389,17 +2389,17 @@ void MPR_CONTROL(void)
 	if(M_ChkFlag(SL_MPR_SYNOK)!=0)  //20121103			
 	{
 		PHI_DATA_M.PHIsd =  - (TRS_NGS_U.dflt * SQRT3 * STAROTRTO / CAP4.omigasyn);	////201112fluxobs
-		temp_ud = TRS_STA_U.dflt;
+		temp_uq = TRS_STA_U.qflt;
 	}
 	else
 	{
 		PHI_DATA_M.PHIsd =  - RUN.mpridrf / RUN.mpridrf_g * (TRS_NGS_U.dflt * SQRT3 * STAROTRTO / CAP4.omigasyn);	//慢慢上升
-		temp_ud = RUN.mpridrf / RUN.mpridrf_g * TRS_STA_U.dflt ;
+		temp_uq = RUN.mpridrf / RUN.mpridrf_g * TRS_STA_U.qflt ;
 	}
 
 
-	urdc=STAROTRTO * MPR_Lm/MPR_Ls*(MPR_Rs*PHAI_d/MPR_Ls - QEPDATA.omigarote*PHAI_q-TRS_STA_U.qflt);
-	urqc=STAROTRTO * MPR_Lm/MPR_Ls*(MPR_Rs*PHAI_q/MPR_Ls + QEPDATA.omigarote*PHAI_d+temp_ud);
+	urdc=STAROTRTO * MPR_Lm/MPR_Ls*(MPR_Rs*PHAI_d/MPR_Ls - QEPDATA.omigarote*PHAI_q+TRS_STA_U.dflt);
+	urqc=STAROTRTO * MPR_Lm/MPR_Ls*(MPR_Rs*PHAI_q/MPR_Ls + QEPDATA.omigarote*PHAI_d+temp_uq);
 	urdc_steady=0;
 	urqc_steady=- CAP4.omigaslp * MPR_Lm * PHI_DATA_M.PHIsd / MPR_Ls;
 
