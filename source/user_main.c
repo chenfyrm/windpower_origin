@@ -702,7 +702,7 @@ void ACrowbar(void)
 				gridfault_flag_flt3=0;
 			}
 			
-			if(M_ChkFlag(SL_HV_STATE)==0 && (TRS_NPR_U.ampflt>(1.1* NGS_Udq_p_ex)))//2013-12-6小于0.91延时1ms置位
+			if(M_ChkFlag(SL_HV_STATE)==0 && (TRS_NPR_U.ampflt>(1.15* NGS_Udq_p_ex)))//2013-12-6小于0.91延时1ms置位
 			{
 				gridfault_flag_flt4++;
 				if(gridfault_flag_flt4>=10)
@@ -727,9 +727,7 @@ void ACrowbar(void)
 			{
 				M_ClrFlag(SL_LV_STATE);	
 				M_ClrFlag(SL_HV_STATE);	
-				M_ClrFlag(SL_HV_QWORKING);			
-				M_ClrFlag(SL_LV_QWORKING);
-				M_ClrFlag(SL_LV_STRICTLV);
+
 
 				if((_STDBY9&0x0002)==0)		M_ClrFlag(CL_ZKHVLVRT);		//20121107
 
@@ -737,6 +735,9 @@ void ACrowbar(void)
 				{
 					if(NGS_Udq_n2p < 2.5)	MAIN_LOOP.cnt_gridok_last = 20000;						//应大于DELAY_EQUIP_CD
 					M_SetFlag(SL_LV_CLRERRAM);		//清除RAM内波形		20130306
+					M_ClrFlag(SL_HV_QWORKING);			
+					M_ClrFlag(SL_LV_QWORKING);
+					M_ClrFlag(SL_LV_STRICTLV);
 				}
 			}
 		}
@@ -3401,8 +3402,8 @@ void BANK_Datasave(void)
 			*(BANK_RAMSTART+ BANK_RAMDATA_POS) = (int16)(DIP_STA_I.qflt);							//0=网侧定向角度
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 1 + BANK_RAMDATA_POS)) = (int16)(CAP4.mprtrstheta*1000);	//1=机侧定向嵌?
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 2 + BANK_RAMDATA_POS)) = (int16)(GRD_Utlv*10);		//2=转子角?
-			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 3 + BANK_RAMDATA_POS)) = (int16)(AD_OUT_NGF_U.ab* 10);		//3=电网滤波AB线电压
-			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 4 + BANK_RAMDATA_POS)) = (int16)(AD_OUT_NGF_U.bc* 10);		//4=电网滤波BC线电压
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 3 + BANK_RAMDATA_POS)) = (int16)(AD_OUT_NGS_U.ab* 10);		//3=电网滤波AB线电压
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 4 + BANK_RAMDATA_POS)) = (int16)(AD_OUT_NGS_U.bc* 10);		//4=电网滤波BC线电压
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 5 + BANK_RAMDATA_POS)) = (int16)(AD_OUT_STA_U.ab* 10);		//5=定子滤波AB线电压
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 6 + BANK_RAMDATA_POS)) = (int16)(AD_OUT_STA_U.bc* 10);		//6=定子滤波BC线电压
 

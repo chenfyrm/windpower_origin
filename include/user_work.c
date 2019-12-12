@@ -1015,7 +1015,7 @@ void RunCtrl(void)
 	   {
 		RUN.urf = Give_Integral(GIVE.urf,RUN.ustep,RUN.urf);     				//电压给定积分
        	if(RUN.urf == GIVE.urf)	    M_SetFlag(SL_STEADYGV);        			   //给定积分完成,置稳定标志位
-	   	else						M_ClrFlag(SL_STEADYGV);
+//	   	else						M_ClrFlag(SL_STEADYGV);                    //防止高穿退出sl_hv_qworking清除时，因为电压积分速度慢，无功指令被锁死
 	   }
 	   
        	if(M_ChkFlag(SL_NSTOP)!=0)	RUN.urf=AD_OUT_UDC; 					   //20121103		
