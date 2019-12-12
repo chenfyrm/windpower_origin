@@ -574,9 +574,12 @@ void ACrowbar(void)
 		   else if(PRO.udc <1260)
 		   {
 			 M_ClrFlag(CL_CHOPEN);
-		   }
-		   
+		   }		   
 		}
+		else
+		{
+			M_ClrFlag(CL_CHOPEN);
+		}		
 	}	
 	else
 		M_ClrFlag(CL_CHOPEN);
