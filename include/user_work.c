@@ -1007,10 +1007,11 @@ void RunCtrl(void)
 
 	   if(M_ChkFlag(SL_HV_QWORKING)!= 0)	    
 	   {
-//		RUN.urf = (NGS_Udq_p - NGS_Udq_p_ex)/SQRT3 + GIVE.urf;
-//		if(RUN.urf <= GIVE.urf+50)	    RUN.urf=GIVE.urf+50;        			   
-//	   	else if(RUN.urf >= 1200)	RUN.urf=1200;  
-		RUN.urf = Give_Integral(1200,8,RUN.urf); 		   //1100上升到1200，给定耗时5ms
+		RUN.urf = (NGS_Udq_p - NGS_Udq_p_ex)/SQRT3 + GIVE.urf;
+		if(RUN.urf <= GIVE.urf)	    RUN.urf=GIVE.urf;        			   
+	   	else if(RUN.urf >= 1200)	RUN.urf=1200;  
+//		if(M_ChkFlag(SL_HV_STATE)== 0)  RUN.urf=GIVE.urf;      //高穿退出，电压值给定立即回复，应对网压变化引起的直流过压
+//		else RUN.urf = Give_Integral(1200,8,RUN.urf); 		   //1100上升到1200，给定耗时5ms
 	   }
 	   else
 	   {
@@ -2504,7 +2505,7 @@ void NPR_CONTROL(void)
 	{
 
 //----------运行电压外环----------------------------------------------------------------------------
-	  if(M_ChkFlag(SL_HV_QWORKING)==0)  						//Vdc没有稳定，且采用稳态PI参数
+	  if(M_ChkFlag(SL_HV_QWORKING)!=0)  					//Vdc没有稳定，且采用稳态PI参数
 	  {
 
 		PI_NPR_U.reference     = - RUN.urf;   				//获取中间电压指令

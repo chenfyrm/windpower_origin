@@ -3333,7 +3333,7 @@ if(M_ChkFlag(SL_ENPCOPER)==0)
 	PI_PARA_MPRU.errmax       = _MPR_U_errmax/10.00;		//DOT1属性
 	PI_PARA_MPRU.errmin       = _MPR_U_errmin/1000.00;		//DOT3属性
 	PI_PARA_MPRU.incrementmax = _MPR_U_incrementmax/10.00;  //DOT1属性
-
+*/
 	PI_PARA_DYNU.kp           = _DYN_U_Kp/100.00;			//DOT2属性
     PI_PARA_DYNU.ki           = _DYN_U_Ki/10.00;			//DOT1属性
     PI_PARA_DYNU.kd           = _DYN_U_Kd/1000.00;			//DOT3属性
@@ -3341,9 +3341,9 @@ if(M_ChkFlag(SL_ENPCOPER)==0)
 	PI_PARA_DYNU.errmax       = _DYN_U_errmax/10.00;		//DOT1属性
 	PI_PARA_DYNU.errmin       = _DYN_U_errmin/1000.00;		//DOT3属性
 	PI_PARA_DYNU.incrementmax = _DYN_U_incrementmax/10.00;  //DOT1属性
-*/
+
 //----网侧电压环启动动态PI给固定值BJTULVRT201204
-	PI_PARA_DYNU.kp           = 0.15;						//DOT2属性
+/*	PI_PARA_DYNU.kp           = 0.15;						//DOT2属性
     PI_PARA_DYNU.ki           = 3;							//DOT1属性
     PI_PARA_DYNU.kd           = 0;							//DOT3属性
 	PI_PARA_DYNU.outmax       = 600;   						//动态电压环参数
@@ -3358,6 +3358,7 @@ if(M_ChkFlag(SL_ENPCOPER)==0)
 	PI_PARA_DYMI.errmax       = _DYN_U_errmax/10.00;		//DOT1属性
 	PI_PARA_DYMI.errmin       = _DYN_U_errmin/1000.00;		//DOT3属性
 	PI_PARA_DYMI.incrementmax = _DYN_U_incrementmax/10.00;  //DOT1属性
+*/
 //----同时用作动态PI和PR参数设定
 
 	_eidco   = _EIDCO/1000.00;

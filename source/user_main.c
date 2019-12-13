@@ -1554,7 +1554,7 @@ void Protect(void)
     else if(PRO.speedflt<600)	M_ClrFlag(SL_SPEED_HIGH);   //650r/min测周法PRD=845.测频法POSLAT=887.
 
     if((PRO.speedflt > _SC_MSPEED1) && (PRO.speedflt < _SC_MSPEED2)) 	 
-    		M_SetFlag(SL_SPEED_IN_RANGE);  
+    		M_SetFlag(SL_SPEED_IN_RANGE);
     else if((PRO.speedflt < (_SC_MSPEED1-SC_MSPD_HW)) || (PRO.speedflt > (_SC_MSPEED2 + SC_MSPD_HW))) 	 
 			M_ClrFlag(SL_SPEED_IN_RANGE);					//判断加回差201005atcpc
 
@@ -3464,8 +3464,8 @@ void BANK_Datasave(void)
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 3 +  BANK_RAMDATA_POS)) = (int16)(kq * 100);				//3=无功发生系数
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 4 +  BANK_RAMDATA_POS)) = (int16)(M_ChkFlag(SL_HV_STATE)* 10);	//4=高电压穿越状态
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 5 +  BANK_RAMDATA_POS)) = (int16)(M_ChkFlag(SL_UNBALANCE)* 10);	//5=电网不平衡状态
-			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 6 +  BANK_RAMDATA_POS)) = (int16)(M_ChkFlag(SL_MSTOP)* 10);		//6=机侧封脉冲
-			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 7 +  BANK_RAMDATA_POS)) = (int16)(M_ChkFlag(SL_NSTOP)* 10);		//7=网侧封脉冲
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 6 +  BANK_RAMDATA_POS)) = (int16)(M_ChkFlag(SL_LV_STATE)* 10);		//6=机侧封脉冲
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 7 +  BANK_RAMDATA_POS)) = (int16)(M_ChkFlag(SL_HV_QWORKING)* 10);		//7=网侧封脉冲
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 8 +  BANK_RAMDATA_POS)) = (int16)(DIP_STA_I.qflt * 10);			//8=定子侧q轴无功电流滤波后
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 9 +  BANK_RAMDATA_POS)) = (int16)(PI_NPR_U.reference);			//9=直流电压参考值
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 10 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_U.feedback);			//10=直流电压反馈值
