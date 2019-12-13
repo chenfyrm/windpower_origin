@@ -228,7 +228,7 @@ float	POLEPAIRES;       				//电机极对数
 //---------20121103atsp-----------
 #define	DELAY_QWORKING	100  	 //100ms 20121103
 #define	DELAY_PHICON		50  	 //50ms 
-#define	DELAY_EQUIP_CD		300  	 //5min 2016-1-13
+#define	DELAY_EQUIP_CD		60  	 //5min 2016-1-13
 #define	DELAY_LVTEST3		3  		 //3s 2016-3-31
 
 #define	DELAY_LVUBALNCE		30  	 //30ms 201011LVRT
