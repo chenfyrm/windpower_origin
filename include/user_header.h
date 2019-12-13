@@ -1026,7 +1026,8 @@ struct	MAIN_LOOP{
 	int32 cnt_mpwmrestart;
 	int32 cnt_npwmrestart;
 	int32 cnt_lv_state;
-	int32 cnt_hvlv_rcv;
+	int32 cnt_lv_rcv;
+	int32 cnt_hv_rcv;
 	int32 cnt_lv_time;
 	int32 cnt_hvlv_detect;
 	int32 cnt_hvlv_detect3;//2016-1-13

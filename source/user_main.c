@@ -705,7 +705,7 @@ void ACrowbar(void)
 				gridfault_flag_flt3=0;
 			}
 			
-			if(M_ChkFlag(SL_HV_STATE)==0 && (TRS_NPR_U.ampflt>(1.15* NGS_Udq_p_ex)))//2013-12-6小于0.91延时1ms置位
+			if(M_ChkFlag(SL_HV_STATE)==0 && (TRS_NPR_U.ampflt>(1.10* NGS_Udq_p_ex)))//2013-12-6小于0.91延时1ms置位
 			{
 				gridfault_flag_flt4++;
 				if(gridfault_flag_flt4>=10)
@@ -724,35 +724,48 @@ void ACrowbar(void)
 			gridfault_flag_flt4=0;	
 		}
 //		if(M_ChkFlag(SL_LV_STATE)!=0 && (NGS_Udq_p > (0.92 * GRD_UN)))
-		if((M_ChkFlag(SL_LV_STATE)!=0 || M_ChkFlag(SL_HV_STATE)!=0)&& (NGS_Udq_p > (0.92 * NGS_Udq_p_ex)&&(NGS_Udq_p < (1.08 * NGS_Udq_p_ex))))		//恢复正常态的判断
+		if((M_ChkFlag(SL_LV_STATE)!=0)&& (NGS_Udq_p > (0.92 * NGS_Udq_p_ex)))		//恢复正常态的判断
 		{		
-			if(M_ChkCounter(MAIN_LOOP.cnt_hvlv_rcv,DELAY_HVLVRCV)>0)			//10ms 负序震荡周期
+			if(M_ChkCounter(MAIN_LOOP.cnt_lv_rcv,DELAY_HVLVRCV)>0)			//10ms 负序震荡周期
 			{
 				M_ClrFlag(SL_LV_STATE);	
-				M_ClrFlag(SL_HV_STATE);	
-
 
 				if((_STDBY9&0x0002)==0)		M_ClrFlag(CL_ZKHVLVRT);		//20121107
 
 				if(M_ChkCounter(MAIN_LOOP.cnt_gridfault_last,50)<=0)		//误触发无需延时可立即重新置位20130303
 				{
 					if(NGS_Udq_n2p < 2.5)	MAIN_LOOP.cnt_gridok_last = 20000;						//应大于DELAY_EQUIP_CD
-					M_SetFlag(SL_LV_CLRERRAM);		//清除RAM内波形		20130306
-					M_ClrFlag(SL_HV_QWORKING);			
+					M_SetFlag(SL_LV_CLRERRAM);		//清除RAM内波形		20130306		
 					M_ClrFlag(SL_LV_QWORKING);
 					M_ClrFlag(SL_LV_STRICTLV);
 				}
 			}
 		}
-		else	MAIN_LOOP.cnt_hvlv_rcv = 0;
-		
+		else	MAIN_LOOP.cnt_lv_rcv = 0;
+
+		if((M_ChkFlag(SL_HV_STATE)!=0)&& (NGS_Udq_p < (1.08 * NGS_Udq_p_ex)))		//恢复正常态的判断
+		{		
+			if(M_ChkCounter(MAIN_LOOP.cnt_hv_rcv,DELAY_HVLVRCV)>0)			//10ms 负序震荡周期
+			{
+				M_ClrFlag(SL_HV_STATE);	
+
+				if(M_ChkCounter(MAIN_LOOP.cnt_gridfault_last,50)<=0)		//误触发无需延时可立即重新置位20130303
+				{
+					if(NGS_Udq_n2p < 2.5)	MAIN_LOOP.cnt_gridok_last = 20000;						//应大于DELAY_EQUIP_CD
+					M_SetFlag(SL_LV_CLRERRAM);		//清除RAM内波形		20130306
+					M_ClrFlag(SL_HV_QWORKING);			
+				}
+			}
+		}
+		else	MAIN_LOOP.cnt_hv_rcv = 0;		
 	}
 	else	
 	{
 		M_ClrFlag(SL_LV_STATE);	
 		M_ClrFlag(SL_HV_STATE);	
 		if((_STDBY9&0x0002)==0)		M_ClrFlag(CL_ZKHVLVRT);		//20121107
-		MAIN_LOOP.cnt_hvlv_rcv = 0;
+		MAIN_LOOP.cnt_lv_rcv = 0;
+		MAIN_LOOP.cnt_hv_rcv = 0;
 		MAIN_LOOP.cnt_gridok_last=0;
 		gridfault_flag_flt1=0;
 		gridfault_flag_flt2=0;
@@ -2954,7 +2967,8 @@ void CntCtrl(void)
 
     if(MAIN_LOOP.cnt_npwmrestart!=65535)    MAIN_LOOP.cnt_npwmrestart++;  //201007BJTULVRT     
     if(MAIN_LOOP.cnt_lv_state!=65535)   	MAIN_LOOP.cnt_lv_state++;       
-    if(MAIN_LOOP.cnt_hvlv_rcv!=65535)    		MAIN_LOOP.cnt_hvlv_rcv++;       
+    if(MAIN_LOOP.cnt_hv_rcv!=65535)    		MAIN_LOOP.cnt_hv_rcv++; 
+	if(MAIN_LOOP.cnt_lv_rcv!=65535)    		MAIN_LOOP.cnt_lv_rcv++;           
     if(MAIN_LOOP.cnt_lv_time!=65535)    	MAIN_LOOP.cnt_lv_time++;       
     if(MAIN_LOOP.cnt_hvlv_detect!=65535)    	MAIN_LOOP.cnt_hvlv_detect++;       
     if(MAIN_LOOP.cnt_scrondelay!=65535)    	MAIN_LOOP.cnt_scrondelay++;       
