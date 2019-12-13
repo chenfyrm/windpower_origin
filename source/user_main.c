@@ -623,7 +623,7 @@ void ACrowbar(void)
 	TRS_NPR_U.amp = sqrt(NGS_U_D * NGS_U_D + NGS_U_Q * NGS_U_Q);   //20110328
 	DataFilter(0.443,&TRS_NPR_U.ampflt,TRS_NPR_U.amp); 			//c=0.4,Ts=200us,fh=1.2kHz,滤掉开关频率次
 
-	if(M_ChkFlag(SL_LV_QWORKING)==0&&M_ChkFlag(SL_HV_QWORKING)==0)	DataFilter(0.998,&NGS_Udq_pflt,NGS_Udq_p);		//100ms	20130303
+	if(M_ChkFlag(SL_LV_QWORKING)==0 && M_ChkFlag(SL_HV_QWORKING)==0)	DataFilter(0.998,&NGS_Udq_pflt,NGS_Udq_p);		//100ms	20130303
 
 //-----计算无功补偿系数kq-----BJTULVRT201204
 	if(M_ChkFlag(SL_UNBALANCE)==0)

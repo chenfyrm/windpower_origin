@@ -856,7 +856,7 @@ void Give(void)
 	else
 	{
 //		if(M_ChkFlag(SL_LV_QWORKING)==0) 	NGS_Udq_p_ex = NGS_Udq_p;		//判断LVRT之前网压 20130206
-		if(M_ChkFlag(SL_LV_QWORKING)==0&&M_ChkFlag(SL_HV_QWORKING)==0) 	NGS_Udq_p_ex = NGS_Udq_pflt;		//判断LVRT之前网压 20130301
+		if(M_ChkFlag(SL_LV_QWORKING)==0 && M_ChkFlag(SL_HV_QWORKING)==0) 	NGS_Udq_p_ex = NGS_Udq_pflt;		//判断LVRT之前网压 20130301
 
 /*		if(M_ChkFlag(SL_OCS_NPREIN)!=0)					           //网侧无功并网,网侧给定直流电压和无功电流值
 		{
@@ -901,7 +901,7 @@ void Give(void)
                			GIVE.toqrf  =  (int16) _TOQRF;              //正值为发电
 						GIVE.anglerf=  (int16) _AGLRF;  			//给功率因数角指令赋值,-360 -- 360
 
-					    if(M_ChkFlag(SL_LV_QWORKING)!=0||M_ChkFlag(SL_HV_QWORKING)!=0)  		   	//HVRT LVRT机侧发有功或者无功
+					    if(M_ChkFlag(SL_LV_QWORKING)!=0)  		   	//HVRT LVRT机侧发有功或者无功
 			            {
 //					    	GIVE.toqrf  = (int16)_PROSTDBY2;   		//201007BJTULVRT//转矩不修改就是任然接受转矩指令
 							GIVE.anglerf= 0;						//20110829
@@ -1007,9 +1007,10 @@ void RunCtrl(void)
 
 	   if(M_ChkFlag(SL_HV_QWORKING)!= 0)	    
 	   {
-		RUN.urf = (NGS_Udq_p - NGS_Udq_p_ex)/SQRT3 + GIVE.urf;
-		if(RUN.urf <= GIVE.urf)	    RUN.urf=GIVE.urf;        			   
-	   	else if(RUN.urf >= 1200)	RUN.urf=1200;	   		   
+//		RUN.urf = (NGS_Udq_p - NGS_Udq_p_ex)/SQRT3 + GIVE.urf;
+//		if(RUN.urf <= GIVE.urf+50)	    RUN.urf=GIVE.urf+50;        			   
+//	   	else if(RUN.urf >= 1200)	RUN.urf=1200;  
+		RUN.urf = Give_Integral(1200,8,RUN.urf); 		   //1100上升到1200，给定耗时5ms
 	   }
 	   else
 	   {
