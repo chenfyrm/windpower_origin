@@ -856,7 +856,7 @@ void Give(void)
 	else
 	{
 //		if(M_ChkFlag(SL_LV_QWORKING)==0) 	NGS_Udq_p_ex = NGS_Udq_p;		//判断LVRT之前网压 20130206
-		if(M_ChkFlag(SL_LV_QWORKING)==0||M_ChkFlag(SL_HV_QWORKING)==0) 	NGS_Udq_p_ex = NGS_Udq_pflt;		//判断LVRT之前网压 20130301
+		if(M_ChkFlag(SL_LV_QWORKING)==0&&M_ChkFlag(SL_HV_QWORKING)==0) 	NGS_Udq_p_ex = NGS_Udq_pflt;		//判断LVRT之前网压 20130301
 
 /*		if(M_ChkFlag(SL_OCS_NPREIN)!=0)					           //网侧无功并网,网侧给定直流电压和无功电流值
 		{
