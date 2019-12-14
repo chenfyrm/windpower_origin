@@ -1010,7 +1010,7 @@ void RunCtrl(void)
 
 	   if(M_ChkFlag(SL_HV_QWORKING)!= 0 )	    
 	   {
-		RUN.urf = (NGS_Udq_p - NGS_Udq_p_ex)/SQRT3 + GIVE.urf;
+		RUN.urf = (NGS_Udq_p - NGS_Udq_p_ex)*SQRT3 + GIVE.urf;
 		if(RUN.urf <= GIVE.urf)	    RUN.urf=GIVE.urf;        			   
 	   	else if(RUN.urf >= 1200)	RUN.urf=1200;  
 //		if(M_ChkFlag(SL_HV_STATE)== 0)  RUN.urf=GIVE.urf;      //高穿退出，电压值给定立即回复，应对网压变化引起的直流过压
@@ -1083,7 +1083,7 @@ void RunCtrl(void)
 				GIVE.npriqrf = kq * 1776;
 			}
 			if(GIVE.npriqrf > 850)	    GIVE.npriqrf = 850;
-			else if(GIVE.npriqrf <0)		GIVE.npriqrf=0;
+			else if(GIVE.npriqrf <50)		GIVE.npriqrf=50;
 		}
 
 		if(M_ChkFlag(SL_HV_QWORKING)!=0)

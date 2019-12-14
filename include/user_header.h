@@ -508,7 +508,7 @@ Uint16  ERROR_RAMDATA_POS;						    					//存储变量的存储点位置[0,4999]
 #define SL_CONFIGPWM		0x6B			//=1PWM脉冲配置完成标志位,onfigPwm()只能运行一次
 #define SL_FAN_WORK         0x6C			//=1要求功率风扇开始工作
 #define SL_CHARGEOK			0x6D			//=1预充电完成
-//#define SL_SENSZFSTDY       0x6E            //=1传感器零漂滤波结束 
+//#define SL_SENSZFSTDY     0x6E            //=1传感器零漂滤波结束 
 #define SL_UNBALANCE       	0x6E            //=1电网不平衡标志位 20121103
 #define SL_SPEED_IN_RANGE	0x6F			//=1转速在范围以内
 								
@@ -525,9 +525,9 @@ Uint16  ERROR_RAMDATA_POS;						    					//存储变量的存储点位置[0,4999]
 #define CL_ZKHVLVRT	        0x77			//=1发生网压跌落，发给主控24V信号20121107
 //高八位 HVRT标志位
 #define SL_HV_STATE	        0x78			//=1高电压穿越标志
-#define SL_HV_QWORKING 	    0x78			//=1高压发无功
-#define SL_HV_STRICTLV      0x78			//=1严格HV区间
-//#define SL_HV_STATE	    0x78	        //=1高电压
+#define SL_HV_QWORKING 	    0x79			//=1高压发无功
+#define SL_HV_STRICTLV      0x7A			//=1严格HV区间
+//#define SL_HV_STATE	    0x7B	        //=1高电压
 
 //flag[8]输出标2         0x190000           //继电器输出，=1 输出AC220V
 #define _OUT2_DATA			flag[8]				

@@ -1571,6 +1571,10 @@ void Protect(void)
 	{
 		if(M_ChkCounter(MAIN_LOOP.cnt_sysoff,DELAY_SYSOFF)>=0)		M_ClrFlag(SL_SYSOFF);
 	}
+	else if(M_ChkFlag(SL_OCS_EIN)==0)
+	{
+		M_ClrFlag(SL_SYSOFF);
+	}
 //-------------------------------------
 
 //----------------------------纠正计算并网用功功率,显示---------------------------------------
@@ -3460,7 +3464,7 @@ void BANK_Datasave(void)
 			}
 			else if(_NPR_ID_Kd==1000)
 			{
-			*(BANK_RAMSTART+ BANK_RAMDATA_POS) = (int16)(NGS_Udq_p * 100);							        //0=网压正序分量
+			*(BANK_RAMSTART+ BANK_RAMDATA_POS) = (int16)(NGS_Udq_p * 10);							        //0=网压正序分量
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 1 +  BANK_RAMDATA_POS)) = (int16)(MAIN_LOOP.cnt_gridfault_last);	//1=机侧定向角度
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 2 +  BANK_RAMDATA_POS)) = (int16)(NGS_Udq_n2pex * 10);		//2=网压负序分量与跌落前电压正序分量之比
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 3 +  BANK_RAMDATA_POS)) = (int16)(MAIN_LOOP.cnt_qworking);				//3=无功发生系数
