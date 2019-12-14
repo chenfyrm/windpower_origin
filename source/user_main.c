@@ -642,7 +642,7 @@ void ACrowbar(void)
 	}
 	else if(GRD_Ut >= 1.05 )
 	{
-		kq = 1.5 * (NGS_Udq_p / NGS_Udq_p_ex-1.05);	
+		kq = 1.5 * (NGS_Udq_p / NGS_Udq_p_ex-1.01);
 		MAIN_LOOP.cnt_hvlv_kq = 0;				
 	}
 	else if(M_ChkCounter(MAIN_LOOP.cnt_hvlv_kq,30)>0)
