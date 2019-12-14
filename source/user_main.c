@@ -652,8 +652,10 @@ void ACrowbar(void)
 //------------------------
 	if(M_ChkFlag(SL_HVLV_DETEC)!=0)	//20120601night
 	{
-		if(M_ChkFlag(SL_LV_STATE)!=0||(M_ChkFlag(SL_HV_STATE)!=0))	MAIN_LOOP.cnt_gridok_last=0;//恢复后计时
-		else 		MAIN_LOOP.cnt_gridfault_last = 0; //故障后计时
+		if(M_ChkFlag(SL_LV_STATE)!=0||(M_ChkFlag(SL_HV_STATE)!=0))	
+		MAIN_LOOP.cnt_gridok_last=0;//恢复后计时
+		else 		
+		MAIN_LOOP.cnt_gridfault_last = 0; //故障后计时
 
 		if(M_ChkCounter(MAIN_LOOP.cnt_gridok_last,DELAY_EQUIP_CD)>0)	//进入低穿状态的判断，低穿状态恢复后必须间隔5min才能第二次进入低穿状态
 		{
@@ -745,7 +747,7 @@ void ACrowbar(void)
 
 		if((M_ChkFlag(SL_HV_STATE)!=0)&& (NGS_Udq_p < (1.08 * NGS_Udq_p_ex)))		//恢复正常态的判断
 		{		
-			if(M_ChkCounter(MAIN_LOOP.cnt_hv_rcv,DELAY_HVLVRCV)>0)			//10ms 负序震荡周期
+			if(M_ChkCounter(MAIN_LOOP.cnt_hv_rcv,40)>0)			//10ms 负序震荡周期
 			{
 				M_ClrFlag(SL_HV_STATE);	
 
@@ -753,7 +755,7 @@ void ACrowbar(void)
 				{
 					if(NGS_Udq_n2p < 2.5)	MAIN_LOOP.cnt_gridok_last = 20000;						//应大于DELAY_EQUIP_CD
 					M_SetFlag(SL_LV_CLRERRAM);		//清除RAM内波形		20130306
-					M_ClrFlag(SL_HV_QWORKING);			
+//					M_ClrFlag(SL_HV_QWORKING);			
 				}
 			}
 		}
@@ -3459,9 +3461,9 @@ void BANK_Datasave(void)
 			else if(_NPR_ID_Kd==1000)
 			{
 			*(BANK_RAMSTART+ BANK_RAMDATA_POS) = (int16)(NGS_Udq_p * 10);							        //0=网压正序分量
-			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 1 +  BANK_RAMDATA_POS)) = (int16)(CAP4.mprtrstheta*1000);	//1=机侧定向角度
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 1 +  BANK_RAMDATA_POS)) = (int16)(MAIN_LOOP.cnt_gridfault_last);	//1=机侧定向角度
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 2 +  BANK_RAMDATA_POS)) = (int16)(NGS_Udq_n2pex * 10);		//2=网压负序分量与跌落前电压正序分量之比
-			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 3 +  BANK_RAMDATA_POS)) = (int16)(kq * 100);				//3=无功发生系数
+			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 3 +  BANK_RAMDATA_POS)) = (int16)(MAIN_LOOP.cnt_gridok_last);				//3=无功发生系数
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 4 +  BANK_RAMDATA_POS)) = (int16)(M_ChkFlag(SL_HV_STATE)* 10);	//4=高电压穿越状态
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 5 +  BANK_RAMDATA_POS)) = (int16)(M_ChkFlag(SL_UNBALANCE)* 10);	//5=电网不平衡状态
 			*(BANK_RAMSTART+((Uint32)RAM_BIAS * 6 +  BANK_RAMDATA_POS)) = (int16)(M_ChkFlag(SL_LV_STATE)* 10);		//6=机侧封脉冲
