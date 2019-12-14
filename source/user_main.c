@@ -635,12 +635,12 @@ void ACrowbar(void)
 //	if(GRD_Ut <= 0.9)	kq = 1.5 * (1 - NGS_Udq_p / GRD_UN);	//201205LVRTatZB
 //	else				kq = 0;		//20120531 201205LVRTatZB
 //--------20130225--------
-	if(M_ChkFlag(SL_LV_QWORKING)==0)							//20130124	20130303
+	if(M_ChkFlag(SL_LV_QWORKING)!=0)							//20130124	20130303
 	{
 		kq = 1.5 * (1.05 - NGS_Udq_p / NGS_Udq_p_ex);	//20130301
 		MAIN_LOOP.cnt_hvlv_kq = 0;				//20130124
 	}
-	else if(M_ChkFlag(SL_HV_QWORKING)==0)
+	else if(M_ChkFlag(SL_HV_QWORKING)!=0)
 	{
 		kq = 1.5 * (NGS_Udq_p / NGS_Udq_p_ex-1.01);	
 		MAIN_LOOP.cnt_hvlv_kq = 0;				
