@@ -721,6 +721,7 @@ float   NGS_Udq_n2pex;
 float   NGS_Udq_p_ex;		//20130206
 float   NGS_Udq_n2p_lv;	    //20130301
 float   NGS_Udq_pflt;		//20130301
+float   NGS_Udq_p_longflt;	//20130301
 
 float   LV_A1;				//201011LVRT
 float   LV_A2;

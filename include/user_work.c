@@ -577,6 +577,9 @@ void PLLCtrl(void)
 	NGS_Udq_n2p = 100 * NGS_Udq_n / NGS_Udq_p;
 	NGS_Udq_n2pex = 100 * NGS_Udq_n / NGS_Udq_p_ex;
 
+	DataFilter(0.9876,&NGS_Udq_p_longflt,NGS_Udq_p); //10HzÂË²¨
+	
+
 } 
 
 /*********************************************************************************************************
@@ -1005,7 +1008,7 @@ void RunCtrl(void)
        MAIN_LOOP.cnt_isteady0= 0;
 	                
 
-	   if(M_ChkFlag(SL_HV_QWORKING)!= 0)	    
+	   if(M_ChkFlag(SL_HV_QWORKING)!= 0 )	    
 	   {
 		RUN.urf = (NGS_Udq_p - NGS_Udq_p_ex)/SQRT3 + GIVE.urf;
 		if(RUN.urf <= GIVE.urf)	    RUN.urf=GIVE.urf;        			   
@@ -1073,7 +1076,7 @@ void RunCtrl(void)
 		}
 		else if (M_ChkFlag(SL_HV_QWORKING)!=0)
 		{
-			if(M_ChkCounter(MAIN_LOOP.cnt_gridfault_last,100)<=0)
+			if(M_ChkCounter(MAIN_LOOP.cnt_gridfault_last,40)<=0)
 			GIVE.npriqrf = (NGS_Udq_p - NGS_Udq_p_ex) /(CAP4.omigasyn * NPR_L); 
 			else
 			{
