@@ -929,17 +929,23 @@ void Give(void)
                			temp_toqrf     =  (int16)SCI_canopen.rx_torque;               //正值为发电
       		   			GIVE.toqrf     =  temp_toqrf * CAN_TEN / 16383.0;             //机侧转矩指令实际值  _TOQRF == -200%-200%
 
-						if(GIVE.toqrf<0)	GIVE.toqrf=0;    //变流器对主控的负转矩指令不予响应 20090815
+						if(GIVE.toqrf<0)	GIVE.toqrf=0;    	//变流器对主控的负转矩指令不予响应 20090815
 						if(GIVE.toqrf>9500)	GIVE.toqrf=9500;    //变流器对主控的超限转矩指令不予响应 20130801
 
                			temp_aglrf     =  (int16)SCI_canopen.rx_angle;               
       		   			GIVE.anglerf   =  temp_aglrf * CAN_ANGLEN / 16383.0;  
 
-					    if(M_ChkFlag(SL_LV_QWORKING)!=0||M_ChkFlag(SL_HV_QWORKING)!=0)  		   	//LVRT机侧发有功或者无功
+      		   			/*20191220-chenf 主控高低穿转矩指令控制*/
+					    if(M_ChkFlag(SL_LV_QWORKING)!=0)
 			            {
-//					    	GIVE.toqrf  = (int16)_PROSTDBY2;   		//201007BJTULVRT
-							GIVE.anglerf= 0;						//20110829
+							GIVE.anglerf= 0;
+							GIVE.toqrf  = Te_feedback_lv;
 			   			}
+					    else if(M_ChkFlag(SL_HV_QWORKING)!=0)
+			            {
+							GIVE.anglerf= 0;
+			   			}
+					    /*20191220-chenf*/
       		   		}
       		   		else
       		   		{
