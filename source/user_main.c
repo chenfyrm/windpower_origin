@@ -2445,7 +2445,7 @@ void Scout(void)
 				 _BA_ENIQRF = (int16)(RUN.npriqrf * 10);					//q轴电流给定
 				 _BA_EMIQRF = (int16)(RUN.mpriqrf * 10);					//q轴电流给定
 				 _BA_ETOQRF = (int16)RUN.toqrf;							//转矩电流给定
-				 _BA_EAGLRF = (int16)RUN.aglrf;            			 //无功角度指令
+				 _BA_EAGLRF = (int16)RUN.aglrf;            			    //无功角度指令
 
 				 _BA_EIA1  = (int16)(AD_OUT_NPR_I.a * 10);				//网侧变流器,A相电流瞬时值
 				 _BA_EIB1  = (int16)(AD_OUT_NPR_I.b * 10);				//网侧变流器,B相电流瞬时值
