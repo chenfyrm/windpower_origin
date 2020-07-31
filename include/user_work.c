@@ -1272,8 +1272,8 @@ void RunCtrl(void)
    		if(_SC_MSTDBY==0)
    		{
    			//-----------------------chenf 20200704---------------------
-//			RUN_mpridrf_exi  = - (TRS_NGS_U.dflt * SQRT3 * STAROTRTO / (MPR_Lm * 314.15926));
-			RUN_mpridrf_exi  = - ((float)_SC_Usn * SQRT2 * STAROTRTO / (MPR_Lm * 314.15926));
+			RUN_mpridrf_exi  = - (TRS_NGS_U.dflt * SQRT3 * STAROTRTO / (MPR_Lm * 314.15926));
+//			RUN_mpridrf_exi  = - ((float)_SC_Usn * SQRT2 * STAROTRTO / (MPR_Lm * 314.15926));
         	RUN.mpridrf_exi  =  RUN_mpridrf_exi * _eidco;
         	//------------------------chenf 20200704-----------------------
 
