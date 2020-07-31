@@ -24,8 +24,9 @@
  **
  **------------------------------------------------------------------------------------------------------
  ********************************************************************************************************/
+#include "math.h"
 /*---------------------自带头文件-----------------------------*/
-#include "C28x_FPU_FastRTS.h"
+//#include "C28x_FPU_FastRTS.h"
 #include "DSP2833x_Device.h"     				// DSP2833x Headerfile Include File
 #include "DSP2833x_Examples.h"   				// DSP2833x Examples Include File
 /*--------------------自定义头文件----------------------------*/
@@ -34,7 +35,7 @@
 #include "user_database.h"						//数据库   
 #include "user_interface.c"						//接口层
 #include "user_work.c"							//工作控制
-#include "math.h"
+
 
 /*-----------------------中断声明-----------------------------*/
 #pragma CODE_SECTION(CpuTimer0Isr, "ramfuncs");
@@ -113,17 +114,17 @@ void main(void)
 	MC_DATA.y[9] = 2.1123;
 	MC_DATA.y[10] = 2.4714;
 
-	MC_DATA.x[0] = 0;
-	MC_DATA.x[1] = 50;
-	MC_DATA.x[2] = 75;
-	MC_DATA.x[3] = 90;
-	MC_DATA.x[4] = 100;
-	MC_DATA.x[5] = 110;
-	MC_DATA.x[6] = 115;
-	MC_DATA.x[7] = 120;
-	MC_DATA.x[8] = 125;
-	MC_DATA.x[9] = 130;
-	MC_DATA.x[10] = 135;
+	MC_DATA.x[0] = 0.0;
+	MC_DATA.x[1] = 50.0;
+	MC_DATA.x[2] = 75.0;
+	MC_DATA.x[3] = 90.0;
+	MC_DATA.x[4] = 100.0;
+	MC_DATA.x[5] = 110.0;
+	MC_DATA.x[6] = 115.0;
+	MC_DATA.x[7] = 120.0;
+	MC_DATA.x[8] = 125.0;
+	MC_DATA.x[9] = 130.0;
+	MC_DATA.x[10] = 135.0;
 
 	_MC_OK = 1;
 	//--------2013-12-13--------
@@ -2445,7 +2446,7 @@ void Scout(void)
 				 _BA_ENIQRF = (int16)(RUN.npriqrf * 10);					//q轴电流给定
 				 _BA_EMIQRF = (int16)(RUN.mpriqrf * 10);					//q轴电流给定
 				 _BA_ETOQRF = (int16)RUN.toqrf;							//转矩电流给定
-				 _BA_EAGLRF = (int16)RUN.aglrf;            			    //无功角度指令
+				 _BA_EAGLRF = (int16)RUN.aglrf;            			 //无功角度指令
 
 				 _BA_EIA1  = (int16)(AD_OUT_NPR_I.a * 10);				//网侧变流器,A相电流瞬时值
 				 _BA_EIB1  = (int16)(AD_OUT_NPR_I.b * 10);				//网侧变流器,B相电流瞬时值
@@ -3522,7 +3523,7 @@ void BANK_Datasave(void)
 			}
 			else if(_NPR_ID_Kd==3000)
 			{
-				*(BANK_RAMSTART+ BANK_RAMDATA_POS) = (int16)(NGS_Udq_p * 100);							        //0=网压正序分量
+				*(BANK_RAMSTART+ BANK_RAMDATA_POS) = (int16)(NGS_Udq_p * 10);							        //0=网压正序分量
 				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 1 +  BANK_RAMDATA_POS)) = (int16)(CAP4.mprtrstheta*1000);	//1=机侧定向角度
 				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 2 +  BANK_RAMDATA_POS)) = (int16)(NGS_Udq_n2pex * 10);		//2=网压负序分量与跌落前电压正序分量之比
 				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 3 +  BANK_RAMDATA_POS)) = (int16)(kq * 100);				//3=无功发生系数
@@ -3549,6 +3550,38 @@ void BANK_Datasave(void)
 				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 24 + BANK_RAMDATA_POS)) = (int16)(TRS_MPR_I.qflt*10);		//24=网侧q轴输出
 				*(BANK_RAMEND) = BANK_RAMDATA_POS;
 			}
+			//-------------------------------chenf 2020-07-30---------------------
+//			else if(_NPR_ID_Kd==4000)
+//			{
+//				*(BANK_RAMSTART+ BANK_RAMDATA_POS) = (int16)(NGS_Udq_p * 10);							        //0=网压正序分量
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 1 +  BANK_RAMDATA_POS)) = (int16)(MAIN_LOOP.cnt_gridfault_last);	//1=机侧定向角度
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 2 +  BANK_RAMDATA_POS)) = (int16)(NGS_Udq_n2pex * 1000);		//2=网压负序分量与跌落前电压正序分量之比
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 3 +  BANK_RAMDATA_POS)) = (int16)(MAIN_LOOP.cnt_qworking);				//3=无功发生系数
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 4 +  BANK_RAMDATA_POS)) = (int16)(M_ChkFlag(SL_HV_STATE)* 10);	//4=高电压穿越状态
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 5 +  BANK_RAMDATA_POS)) = (int16)(M_ChkFlag(SL_UNBALANCE)* 10);	//5=电网不平衡状态
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 6 +  BANK_RAMDATA_POS)) = (int16)(M_ChkFlag(SL_LV_STATE)* 10);		//6=机侧封脉冲
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 7 +  BANK_RAMDATA_POS)) = (int16)(M_ChkFlag(SL_HV_QWORKING)* 10);		//7=网侧封脉冲
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 8 +  BANK_RAMDATA_POS)) = (int16)(DIP_STA_I.qflt * 10);			//8=定子侧q轴无功电流滤波后
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 9 +  BANK_RAMDATA_POS)) = (int16)(PI_NPR_U.reference*(-10));			//9=直流电压参考值
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 10 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_U.feedback*(-10));			//10=直流电压反馈值
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 11 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_Iq.reference*10);		 	//11=网侧无功电流参考值
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 12 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_Iq.feedback *10);			//12=网侧无功电流反馈值
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 13 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_Id.reference*10);			//13=网侧有功电流参考值
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 14 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_Id.feedback*10);			//14=网侧无功电流反馈值
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 15 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_Id.out * 10);			//15=网侧id环PI输出
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 16 + BANK_RAMDATA_POS)) = (int16)(PI_NPR_Iq.out * 10);			//16=网侧iq环PI输出
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 17 + BANK_RAMDATA_POS)) = (int16)(TRS_NGS_U.dflt *10);					//17=
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 18 + BANK_RAMDATA_POS)) = (int16)(TRS_NGS_U.qflt*10);				    //18=
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 19 + BANK_RAMDATA_POS)) = (int16)(-10);			//19=
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 20 + BANK_RAMDATA_POS)) = (int16)(10);			//20=
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 21 + BANK_RAMDATA_POS)) = (int16)(TRS_NPR_U.d * 10);		//21=
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 22 + BANK_RAMDATA_POS)) = (int16)(TRS_NPR_U.q * 10);		//22=
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 23 + BANK_RAMDATA_POS)) = (int16)(TRS_NGS_U.d * 10);		//23=
+//				*(BANK_RAMSTART+((Uint32)RAM_BIAS * 24 + BANK_RAMDATA_POS)) = (int16)(TRS_NGS_U.q * 10);		//24=
+//				*(BANK_RAMEND) = BANK_RAMDATA_POS;
+//			}
+			//-------------------------------chenf 2020-07-30---------------------
+
 			BANK_RAMDATA_POS++;
 			if(BANK_RAMDATA_POS >= RAM_BIAS)  BANK_RAMDATA_POS=0;	
 

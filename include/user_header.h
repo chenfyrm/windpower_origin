@@ -585,7 +585,7 @@ Uint16   _OUT4_DATA;		//该标志位无用改为宏定义20130222
 #define SL_IN1_CBSTS 			0x90			//=1 主断处于闭合状态P4.1
 #define SL_IN1_CBRESET			0x91			//=1 检测到骺匾笾鞫蟁ESET指令(需要延时一段时间后才能合主断)，P4.2
 #define SL_IN1_STATORK			0x92			//=1 定子接触器处于合闸态，P4.3  
-#define SL_IN1_MIANK   			0x93			//=1 主接触器处于合闸状琍4.4
+#define SL_IN1_MIANK   			0x93			//=1 主接触器处于合闸状态，P4.4
 #define SL_IN1_MIANFILTER		0x94			//=1 主滤波器处于合闸状态，P4.5
 #define SL_IN1_EXFAULTOK	   	0x95			//=1 外部故障链正常，0=故障发生	P4.6		
 #define SL_IN1_MIANFAN	    	0x96	        //=1 功缁＃?0=超温障   P4.7 
@@ -1743,8 +1743,8 @@ Uint16 _BA_UAB1;													//网侧AB线电压有效值(V)
 Uint16 _BA_UBC1;													//网侧BC线电压行е?(V)
 Uint16 _BA_UAB2;													//电机侧AB线电压有效值(V)
 Uint16 _BA_UBC2;													//电机侧BC线电流有效值(V)
-Uint16 _BA_UAB0;												    	//主断前AB线电压有效值(V)
-Uint16 _BA_UBC0;												    	//主断前BC线电流有效值(V) 
+Uint16 _BA_UAB0;												    //主断前AB线电压有效值(V)
+Uint16 _BA_UBC0;												    //主断前BC线电流有效值(V)
 Uint16 _BA_FREQ;													//电网频?(hz)
 Uint16 _BA_SPEED;													//电机转速(rpm)
 Uint16 _BA_TA1;														//网侧变流器A桥畚露

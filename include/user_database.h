@@ -177,27 +177,28 @@ const struct PARA FUNC[PARA_NUM]={
 	{&_URF,			1100,		0,			1200,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//中间直流电压给定值
 	{&_MIDRF,		0,			0,		    550,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},	//机侧无功电流给定值
 	
-	{&_NIQRF,		65,			-200,		200,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},	//并网无功电流给定值 20140503LJD电能质量
+	{&_NIQRF,		65,			(Uint16)-200,		200,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},	//并网无功电流给定值 20140503LJD电能质量
 	{&_MIQRF,		0,			0,			700,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},	//机网有功电流给定值
     {&_TOQRF,		0,			0,			9000,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},   //机侧转矩给定值
-    {&_AGLRF,		0,			-36,		36,	   		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},   //机侧功率因数角给定值
+    {&_AGLRF,		0,			(Uint16)-36,		36,	   		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},   //机侧功率因数角给定值
 	{&_EIDCO,		1000,		0,			10000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3},	//机侧励磁?
 
 	{&_ENCODPOS,	4569,		0,			6283,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3},	//肫鞒跏嘉恢媒嵌? 0--2PIE 201005atcpc 20140503LJD电能质量	
 	{&_STDBY1,		5000,  	    0,			65535,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3},	//备用1
 	{&_STDBY2,		12,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT2},	//备用2 20140503LJD电能质量 20150204XD
 	{&_STDBY3,		5500,	    0,			65535,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1},	//备用3
-	{&_STDBY4,		5,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},	//备用4
+	{&_STDBY4,		5,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},	//备用4
 
-	{&_STDBY5,		10,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},	//备用5
-	{&_STDBY6,		604,		-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},	//备用6
-	{&_STDBY7,		10,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},	//备用7
+	{&_STDBY5,		10,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},	//备用5
+	{&_STDBY6,		604,		(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},	//备用6
+	{&_STDBY7,		10,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},	//备用7
 //	{&_STDBY8,		0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},	//备用8
-	{&_MC_OK,		1,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},	//备用8励磁完成标志MagnetCurve2013-12-13--ZZJ
+	{&_MC_OK,		1,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	WR0+SIG},	//备用8励磁完成标志MagnetCurve2013-12-13--ZZJ
 	
 //-------------------------------'PI参数'---------------------------------------------------------
 //--42/29-70
-	{&_NPR_U_Kp,			40,		1,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT2},	//网侧电压环比例系数
+//	{&_NPR_U_Kp,			40,		1,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT2},	//网侧电压环比例系数
+	{&_NPR_U_Kp,			200,	1,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT2},	//网侧电压环比例系数 //20200707
 	{&_NPR_U_Ki,			1000,	1,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1+VA0},//网侧电压环积分系数
 	{&_NPR_U_Kd,			0,		0,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3+VA0},//网侧电压环积分系数
 	{&_NPR_U_outmax,		600,	1,		1000,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//网侧电压闭环输出限幅
@@ -205,6 +206,7 @@ const struct PARA FUNC[PARA_NUM]={
 	{&_NPR_U_errmin,		0,		0,		2000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3},	//网侧电压环下限误差
 	{&_NPR_U_incrementmax,  1000,	1,		10000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1},	//网侧电压环增量限幅
 
+	/*用做低穿工況其它参数*/
 	{&_NPR_ID_Kp,			7000, 	1,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT2},	//网侧电流闭环比例系数
 	{&_NPR_ID_Ki,			1000,	1,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1+VA0},//网侧电流闭环积分系数
 	{&_NPR_ID_Kd,			0,		0,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3+VA0},//网侧电流闭环积分系数
@@ -245,7 +247,8 @@ const struct PARA FUNC[PARA_NUM]={
 	{&_DYN_U_errmin,		0,		0,		2000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3},	  //动态电压闭环误钭钚〉 
 	{&_DYN_U_incrementmax,	1000, 	1,		10000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1},	  //动态电压闭环增量限幅
 */
-	{&_DYN_U_Kp,			40,		1,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT2},	  //动态电压闭环比例系数
+//	{&_DYN_U_Kp,			40,		1,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT2},	  //动态电压闭环比例系数
+	{&_DYN_U_Kp,			200,	1,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT2},	  //动态电压闭环比例系数//20200707
 	{&_DYN_U_Ki,			1000,	1,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT1+VA0},//动态电压闭环积分系数//201007BJTULVRT
 	{&_DYN_U_Kd,			0,		0,		20000,		&_NULL_VAL,	&_NULL_VAL,	WR0+DOT3+VA0},//动态电压闭环积分系数
 	{&_DYN_U_outmax,		600,	1,		1000,		&_NULL_VAL,	&_NULL_VAL,	WR0},		  //动态电压闭环输出限幅 
@@ -298,8 +301,8 @@ const struct PARA FUNC[PARA_NUM]={
 	{&_SC_Lm,		17870,		1,			50000,		&_NULL_VAL,	&_NULL_VAL,	WR1+DOT3},	//励磁电抗(mH)
 
 	{&_SC_POLES,	2,		    1,			8,			&_NULL_VAL,	&_NULL_VAL,	WR1},		//极对数
-	{&_SC_Usn,		690,		380,		690,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//定子额定电压(V)
-	{&_SC_Uro,		2018,		380,		10000,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//转子开路电压(V)	
+	{&_SC_Usn,		690,		380,		690,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//定子额定电压(V)线
+	{&_SC_Uro,		2018,		380,		10000,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//转子开路电压(V)线
 	{&_SC_PLSPRVL,	2048,		1,			10000,		&_NULL_VAL,	&_NULL_VAL,	WR1},		//编码器每圈光栅数量
 	{&_SC_MSTDBY,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	WR0},		//电机参数备用 MagnetCurve2013-12-13--ZZJ
 
@@ -340,11 +343,11 @@ const struct PARA FUNC[PARA_NUM]={
 
 //-------------------------------运行监控----------------------------------------------------------
 //--53/134-186
-	{&_BA_MIDRF,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//d轴电流指令(A)
-	{&_BA_NIQRF,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//q轴电流指令(A)
-	{&_BA_MIQRF,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//q轴电流指令(A)
-	{&_BA_TOQRF,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},	//转矩指令(NM)
-	{&_BA_AGLRF,	0,			-90,		90,	    	&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},	//无功角度指令()
+	{&_BA_MIDRF,	0,			(Uint16)(-32767),		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//d轴电流指令(A)
+	{&_BA_NIQRF,	0,			(Uint16)(-32767),		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//q轴电流指令(A)
+	{&_BA_MIQRF,	0,			(Uint16)(-32767),		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//q轴电流指令(A)
+	{&_BA_TOQRF,	0,			(Uint16)(-32767),		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},	//转矩指令(NM)
+	{&_BA_AGLRF,	0,			(Uint16)(-90),		90,	    	&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},	//无功角度指令()
 
 	{&_BA_URF,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//中间直流电压给定值(V)
 	{&_BA_UDC,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//中间直流电压(V)	
@@ -364,70 +367,70 @@ const struct PARA FUNC[PARA_NUM]={
 	{&_BA_UAB0,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//主断前AB线电压有效值(V)
 	{&_BA_UBC0,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//主断前BC线电压有效值(V)
 
-	{&_BA_TLAC,		0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},	//网侧电感温度(摄氏度)20091019atzy
-	{&_BA_TLDUDT,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},	//机侧电感温度(摄氏度)20091019atzy
+	{&_BA_TLAC,		0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},	//网侧电感温度(摄氏度)20091019atzy
+	{&_BA_TLDUDT,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},	//机侧电感温度(摄氏度)20091019atzy
 	{&_BA_TNSKIIP,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//网侧SKIIP温度(摄氏度) CPC
 	{&_BA_TMSKIIP,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//机侧SKIIP温度(摄氏度) cpc
 	{&_BA_SPEED,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},		//电?(rpm)
 
-	{&_BA_PIONU,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//网侧缪够肥涑?
-	{&_BA_PIONID,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//网侧d轴电流环输出
-	{&_BA_PIONIQ,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//网侧q轴电流环输出
-	{&_BA_MEXI,	    0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//
-	{&_BA_PIOMID,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//机侧d轴电流环输出
+	{&_BA_PIONU,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//网侧缪够肥涑?
+	{&_BA_PIONID,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//网侧d轴电流环输出
+	{&_BA_PIONIQ,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//网侧q轴电流环输出
+	{&_BA_MEXI,	    0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//
+	{&_BA_PIOMID,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//机侧d轴电流环输出
 
-	{&_BA_PIOMIQ,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//机侧q轴电流环输出
-	{&_BA_GRDUD,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//d轴主断后网压反馈 滤波后
+	{&_BA_PIOMIQ,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//机侧q轴电流环输出
+	{&_BA_GRDUD,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//d轴主断后网压反馈 滤波后
 	{&_BA_MC_IN,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO+DOT2},		//励磁校正输入MagnetCurve2013-12-13--ZZJ
 //	{&_BA_STAUD,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//定子电压d
-	{&_BA_GRDUQ,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//q轴主断后网压反馈 滤波后
+	{&_BA_GRDUQ,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//q轴主断后网压反馈 滤波后
 	{&_BA_MC_K,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO+DOT3},		//励磁校正输出MagnetCurve2013-12-13--ZZJ
 //	{&_BA_STAUQ,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//定子电压q
 
 
-	{&_BA_NPRID,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//d轴电流反馈 滤波后 201005atcpc
-	{&_BA_NPRIQ,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//q轴电流反馈 滤波后 201005atcpc
+	{&_BA_NPRID,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//d轴电流反馈 滤波后 201005atcpc
+	{&_BA_NPRIQ,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//q轴电流反馈 滤波后 201005atcpc
 //	{&_BA_EXCID,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//机侧励磁电流d轴
 //	{&_BA_EXCIQ,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	 //机侧励磁电流q轴
-	{&_BA_SCRIA,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//SCR-A	20110906
-	{&_BA_SCRIB,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//SCR-B	20110906
+	{&_BA_SCRIA,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//SCR-A	20110906
+	{&_BA_SCRIB,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//SCR-B	20110906
 //	{&_BA_STAUABD,	0,			0,    		65535,		&_NULL_VAL,	&_NULL_VAL,	RDO+DOT1},		//20091027atzy挪用作网压跌落检测 定子同步并网前定子前后电压差
-	{&_BA_STAUABD,	0,			-10000,		10000,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//定子励磁电压差--用于校正励磁曲线MagnetCurve2013-12-13--ZZJ
+	{&_BA_STAUABD,	0,			(Uint16)-10000,		10000,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//定子励磁电压差--用于校正励磁曲线MagnetCurve2013-12-13--ZZJ
 
 	{&_BA_STAUBCD,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO+DOT1},	    //20091027atzy挪用作网压跌落检测 定子同步并网前定子前后电压差
 	{&_BA_STAIAC,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO+DOT1},		//定子线电流有效值显示 cpc
 	{&_BA_STAIBA,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO+DOT1},		//定子线电流有效值显示cpc
-	{&_BA_TOQFB,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//矩反馈(NM)
-	{&_BA_PSTA,		0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//定子侧有功功率显示kW
+	{&_BA_TOQFB,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//矩反馈(NM)
+	{&_BA_PSTA,		0,			(Uint16)-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//定子侧有功功率显示kW
 
-	{&_BA_PNPR,		0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//网侧有功功率显示
-	{&_BA_PGRID,	0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//并网总的有功功率显示 
-	{&_BA_QSTA,		0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//定子侧无功功率显示kVAR
-	{&_BA_QNPR,		0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//网侧无功功率显示
-	{&_BA_QGRID,	0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//并网总的无功功率显示
+	{&_BA_PNPR,		0,			(Uint16)-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//网侧有功功率显示
+	{&_BA_PGRID,	0,			(Uint16)-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//并网总的有功功率显示
+	{&_BA_QSTA,		0,			(Uint16)-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//定子侧无功功率显示kVAR
+	{&_BA_QNPR,		0,			(Uint16)-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//网侧无功功率显示
+	{&_BA_QGRID,	0,			(Uint16)-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//并网总的无功功率显示
 
-	{&_BA_SSTA,		0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//定子侧视在功率显示
-	{&_BA_SNPR,		0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//网侧视在功率显示
-	{&_BA_SGRID,	0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//并网总的有功功率显示 
+	{&_BA_SSTA,		0,			(Uint16)-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//定子侧视在功率显示
+	{&_BA_SNPR,		0,			(Uint16)-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//网侧视在功率显示
+	{&_BA_SGRID,	0,			(Uint16)-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//并网总的有功功率显示
 
 
 //-------------------------------'报警信息'--------------------------------------------------------
 //--42/187-228
-	{&_BA_EMIDRF,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 d轴电髦噶?(A)
-	{&_BA_ENIQRF,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 q轴电流(A)
-	{&_BA_EMIQRF,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 q轴电流指令(A)
+	{&_BA_EMIDRF,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 d轴电髦噶?(A)
+	{&_BA_ENIQRF,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 q轴电流(A)
+	{&_BA_EMIQRF,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 q轴电流指令(A)
 	{&_BA_ETOQRF,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},			//最新故障时刻 转矩指令(A)
 	{&_BA_EURF,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},			//最新故障时刻 中间直流电压给定值(V)
 
-	{&_BA_EAGLRF,	0,			-90,		90,	    	&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//最新故障时刻 无功角度指令()   07.27
+	{&_BA_EAGLRF,	0,			(Uint16)-90,		90,	    	&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//最新故障时刻 无功角度指令()   07.27
 	{&_BA_EUDC,		0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},			//最新故障时刻 中间直流缪(V)	
-	{&_BA_EIA1,		0,			-32767,     32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 网侧变髌鰽相并网电流有效值(A)
-	{&_BA_EIB1,		0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 网侧变流器B相并网电流有效值(A)
-	{&_BA_EIC1,		0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 网侧变流器C相并网电流有效值(A)
+	{&_BA_EIA1,		0,			(Uint16)-32767,     32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 网侧变髌鰽相并网电流有效值(A)
+	{&_BA_EIB1,		0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 网侧变流器B相并网电流有效值(A)
+	{&_BA_EIC1,		0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 网侧变流器C相并网电流有效值(A)
 
-	{&_BA_EIA2,		0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 电机侧变髌鰽相并网电流有效值(A)
-	{&_BA_EIB2,		0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 电机侧变流器B相并网电流有效值(A)	
-	{&_BA_EIC2,		0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 电机侧变流器C相并网电流有效值(A)
+	{&_BA_EIA2,		0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 电机侧变髌鰽相并网电流有效值(A)
+	{&_BA_EIB2,		0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 电机侧变流器B相并网电流有效值(A)
+	{&_BA_EIC2,		0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 电机侧变流器C相并网电流有效值(A)
 	{&_BA_EUAB1,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},			//最新故障时刻 网侧AB线电压有值(V)
 	{&_BA_EUBC1,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},			//最新故障笨? 网侧BC线电压行е?(V)
 
@@ -437,32 +440,32 @@ const struct PARA FUNC[PARA_NUM]={
 	{&_BA_EUAB0,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},			//最新故障时刻 主断前AB线电压有效值(V)
 	{&_BA_EUBC0,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},			//最新故障时刻 主断前BC线电压有效值(V)
 
-	{&_BA_ETLAC,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//最新故障时刻 网侧电感温度(摄氏度) 20091019atzy
-	{&_BA_ETLDUDT,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//最新故障时刻 机侧电感温度(摄氏度)	20091019atzy
+	{&_BA_ETLAC,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//最新故障时刻 网侧电感温度(摄氏度) 20091019atzy
+	{&_BA_ETLDUDT,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//最新故障时刻 机侧电感温度(摄氏度)	20091019atzy
 	{&_BA_ETSKIIP,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},			//最新故障时刻 SKIPP温度(摄氏度)
 	{&_BA_ESPEED,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO},			//最新故障时刻 电机转速(rpm)
-	{&_BA_ENPRUD,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//最新故障时刻 d轴主断后网压反馈	20091019atzy
+	{&_BA_ENPRUD,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//最新故障时刻 d轴主断后网压反馈	20091019atzy
 
-	{&_BA_ENPRUQ,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//最新故障时刻 q轴主断后网压反馈	20091019atzy
-	{&_BA_ENPRUD2,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//最新故障时刻 d轴主断后网压反馈 滤波后	20091019atzy
-	{&_BA_ENPRUQ2,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//最新故障时刻 q轴主断后网压反馈 滤波后	20091019atzy
-	{&_BA_ENUDOUT,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//最新故障时刻 网侧d轴电压输出	20091019atzy
-	{&_BA_ENUQOUT,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//最新故障时刻 网侧q轴电压输出	20091019atzy
+	{&_BA_ENPRUQ,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//最新故障时刻 q轴主断后网压反馈	20091019atzy
+	{&_BA_ENPRUD2,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//最新故障时刻 d轴主断后网压反馈 滤波后	20091019atzy
+	{&_BA_ENPRUQ2,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//最新故障时刻 q轴主断后网压反馈 滤波后	20091019atzy
+	{&_BA_ENUDOUT,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//最新故障时刻 网侧d轴电压输出	20091019atzy
+	{&_BA_ENUQOUT,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//最新故障时刻 网侧q轴电压输出	20091019atzy
 
-	{&_BA_EPIONU,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 网侧电压环输出
-	{&_BA_EPIONID,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 网侧d轴电流环输
-	{&_BA_EPIONIQ,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 网侧q轴电流环输出
-	{&_BA_EMEXI,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 机侧励磁理论计算值显示 07.27
-	{&_BA_EPIOMID,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 机侧d轴电流环输出
+	{&_BA_EPIONU,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 网侧电压环输出
+	{&_BA_EPIONID,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 网侧d轴电流环输
+	{&_BA_EPIONIQ,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 网侧q轴电流环输出
+	{&_BA_EMEXI,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 机侧励磁理论计算值显示 07.27
+	{&_BA_EPIOMID,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 机侧d轴电流环输出
 
-	{&_BA_EPIOMIQ,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 机侧q轴电流环输出
+	{&_BA_EPIOMIQ,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 机侧q轴电流环输出
 	{&_BA_ESTAIAC,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO+DOT1},		//最新故障时刻 定子线电流有效值显示 cpc 07.27
 	{&_BA_ESTAIBA,	0,			0,			65535,		&_NULL_VAL,	&_NULL_VAL,	RDO+DOT1},		//最新故障时刻 定子线电流有效值显示cpc 07.27
-	{&_BA_ETOQFB,	0,			-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//最新故障时刻 转矩反馈(NM) 07.27
-	{&_BA_EPSTA,	0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 定子侧有功功率显示kW 07.27
+	{&_BA_ETOQFB,	0,			(Uint16)-32767,		32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG},		//最新故障时刻 转矩反馈(NM) 07.27
+	{&_BA_EPSTA,	0,			(Uint16)-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 定子侧有功功率显示kW 07.27
 
-	{&_BA_EPNPR,	0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 网侧有功功率显示 07.27
-	{&_BA_EPGRID,	0,			-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 并网总的有功功率显示  07.27
+	{&_BA_EPNPR,	0,			(Uint16)-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 网侧有功功率显示 07.27
+	{&_BA_EPGRID,	0,			(Uint16)-32767,	    32767,		&_NULL_VAL,	&_NULL_VAL,	RDO+SIG+DOT1},	//最新故障时刻 并网总的有功功率显示  07.27
 
 	
 

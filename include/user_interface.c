@@ -25,9 +25,7 @@
 **
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-#include "DSP2833x_Device.h"     // Headerfile Include File
-#include "DSP2833x_Examples.h"   // Examples Include File
-#include "math.h"				//20121103
+
 //函数声明
 Uint16 		CheckCode(Uint16 index);
 Uint16 		SciDatpro(void);
@@ -1869,7 +1867,7 @@ void Sci_canopentx(void)
 //CPC通讯协议120507	
 		SCI_canopen.txb[0]= CANOPENCOM_HEAD;						//报头
 		SCI_canopen.txb[1]= 0x0010;									//写命令字
-		SCI_canopen.txb[2]= 17;										//命令信息长度=地址偏移量+数据字节数量
+		SCI_canopen.txb[2]= 0x0011;										//命令信息长度=地址偏移量+数据字节数量
 		SCI_canopen.txb[3]= 0x0011;									//特定参数 恒为0x11
 		SCI_canopen.txb[4]= 0x0000;									//地址偏移量 设为0
 

@@ -24,17 +24,16 @@
 **
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-#include "DSP2833x_Device.h"     // Headerfile Include File
-#include "DSP2833x_Examples.h"   // Examples Include File
-#include "math.h"
 
-//函数声明systest201005atcpc
-void RUN_SYN(void);
-void NOR_STOP(void);
-void SER_STOP(void);
-void ERR_STOP(void);
-void CB_ON(void); 
-//void CONTACTOR_TEST(void);
+void InitWork(void);
+void PwmDrive(void);
+void SVPWM_NPR(float alfa, float beta);
+void SVPWM_MPR(float alfa, float beta);
+
+void Transform_3s_2s_2r(struct TRANS_DATA *var1);
+void Anti_Transform_2r_2s(struct TRANS_DATA *var2);
+void PI_Loop(struct PI_DATA *var,struct PI_PARA PI_var);
+void PLLCtrl(void);
 
 //--------20121103--------
 void PTransform_3s_2s_2r(struct TRANS_DATA *var2);		//201011PLL
@@ -44,6 +43,14 @@ void De_ONE_N_2r(struct TRANS_DATA *var5);
 void PLL_PI_Loop(struct PI_DATA *var,struct PI_PARA PI_var,struct TRANS_DATA *var1);
 void I_Loop(struct PI_DATA *var6); 
 //--------20121103--------
+
+//函数声明systest201005atcpc
+void RUN_SYN(void);
+void NOR_STOP(void);
+void SER_STOP(void);
+void ERR_STOP(void);
+void CB_ON(void);
+
 
 /*********************************************************************************************************
 ** 函数名称: InitWork
@@ -1082,8 +1089,15 @@ void RunCtrl(void)
 		}
 		else if (M_ChkFlag(SL_HV_QWORKING)!=0)
 		{
+
 			if(M_ChkCounter(MAIN_LOOP.cnt_gridfault_last,40)<=0)
-			GIVE.npriqrf = (NGS_Udq_p - NGS_Udq_p_ex) /(CAP4.omigasyn * NPR_L); 
+			{
+				GIVE.npriqrf = (NGS_Udq_p - NGS_Udq_p_ex) /(CAP4.omigasyn * NPR_L);//
+
+				//-------------------------chenf 20200725---------------------------------------
+				if(GIVE.npriqrf > 600)	    GIVE.npriqrf = 600; //到保风场箱变饱和叠加5次7次谐波电流导致网侧变流器过流封脉冲，直流中间电压失控故障保护；限制一进入高穿状态40ms内无功电流的大小，由850降为600。
+				//-------------------------chenf 20200725---------------------------------------
+			}
 			else
 			{
 				GIVE.npriqrf = kq * 1776;
@@ -1257,8 +1271,11 @@ void RunCtrl(void)
 
    		if(_SC_MSTDBY==0)
    		{
-			RUN_mpridrf_exi  = - (TRS_NGS_U.dflt * SQRT3 * STAROTRTO / (MPR_Lm * 314.15926));
+   			//-----------------------chenf 20200704---------------------
+//			RUN_mpridrf_exi  = - (TRS_NGS_U.dflt * SQRT3 * STAROTRTO / (MPR_Lm * 314.15926));
+			RUN_mpridrf_exi  = - ((float)_SC_Usn * SQRT2 * STAROTRTO / (MPR_Lm * 314.15926));
         	RUN.mpridrf_exi  =  RUN_mpridrf_exi * _eidco;
+        	//------------------------chenf 20200704-----------------------
 
  			if(_MC_OK==1)				//电机励磁曲线绘制完成
 			{								
@@ -2234,7 +2251,6 @@ void RunCtrl(void)
 
 	TRS_STA_I.sintheta = sin(CAP4.stavectheta);				//转子控制电压角度 
 	TRS_STA_I.costheta = cos(CAP4.stavectheta);
-
 	TRS_STA_U.sintheta = TRS_STA_I.sintheta;				//转子控制电压角度
 	TRS_STA_U.costheta = TRS_STA_I.costheta;	
 
