@@ -1023,11 +1023,26 @@ void RunCtrl(void)
 
 	   if(M_ChkFlag(SL_HV_QWORKING)!= 0 )	    
 	   {
-		RUN.urf = (NGS_Udq_p - NGS_Udq_p_ex)*SQRT3 + GIVE.urf;
-		if(RUN.urf <= GIVE.urf)	    RUN.urf=GIVE.urf;        			   
-	   	else if(RUN.urf >= 1200)	RUN.urf=1200;  
+//		RUN.urf = (NGS_Udq_p - NGS_Udq_p_ex)*SQRT3 + GIVE.urf;
+
+//		if(RUN.urf <= GIVE.urf)	    RUN.urf=GIVE.urf;
+//	   	else if(RUN.urf >= 1200)	RUN.urf=1200;
 //		if(M_ChkFlag(SL_HV_STATE)== 0)  RUN.urf=GIVE.urf;      //高穿退出，电压值给定立即回复，应对网压变化引起的直流过压
-//		else RUN.urf = Give_Integral(1200,8,RUN.urf); 		   //1100上升到1200，给定耗时5ms
+//		else RUN.urf = Give_Integral(1000,8,RUN.urf); 		   //1100上升到1200，给定耗时5ms
+
+		Uint16 temp = _DYN_U_Kd;
+		if(temp <= 950)	    temp=950;
+		else if(temp >= 1300)	temp=1300;
+		if(M_ChkFlag(SL_HV_STATE)== 0)  RUN.urf=GIVE.urf;      //高穿退出，电压值给定立即回复，应对网压变化引起的直流过压
+//		else RUN.urf = Give_Integral(temp,8,RUN.urf); 		   //1100上升到1200，给定耗时5ms
+		else if(M_ChkCounter(MAIN_LOOP.cnt_gridfault_last,80)<=0)
+		{
+			RUN.urf = Give_Integral(temp,8,RUN.urf);
+		}
+		else
+		{
+			RUN.urf = Give_Integral(GIVE.urf,8,RUN.urf);
+		}
 	   }
 	   else
 	   {
@@ -1092,15 +1107,21 @@ void RunCtrl(void)
 
 			if(M_ChkCounter(MAIN_LOOP.cnt_gridfault_last,40)<=0)
 			{
-				GIVE.npriqrf = (NGS_Udq_p - NGS_Udq_p_ex) /(CAP4.omigasyn * NPR_L);//
-
-				//-------------------------chenf 20200725---------------------------------------
-				if(GIVE.npriqrf > 600)	    GIVE.npriqrf = 600; //到保风场箱变饱和叠加5次7次谐波电流导致网侧变流器过流封脉冲，直流中间电压失控故障保护；限制一进入高穿状态40ms内无功电流的大小，由850降为600。
-				//-------------------------chenf 20200725---------------------------------------
+//				GIVE.npriqrf = (NGS_Udq_p - NGS_Udq_p_ex) /(CAP4.omigasyn * NPR_L);//
+//
+//				//-------------------------chenf 20200725---------------------------------------
+//				if(GIVE.npriqrf > 600)	    GIVE.npriqrf = 600; //到保风场箱变饱和叠加5次7次谐波电流导致网侧变流器过流封脉冲，直流中间电压失控故障保护；限制一进入高穿状态40ms内无功电流的大小，由850降为600。
+//				//-------------------------chenf 20200725---------------------------------------
+				GIVE.npriqrf = 65;
+			}
+			else if(M_ChkCounter(MAIN_LOOP.cnt_gridfault_last,80)<=0)
+			{
+				GIVE.npriqrf = 600;
 			}
 			else
 			{
-				GIVE.npriqrf = kq * 1776;
+//				GIVE.npriqrf = kq * 1776;
+				GIVE.npriqrf = 400;
 			}
 			if(GIVE.npriqrf > 850)	    GIVE.npriqrf = 850;
 			else if(GIVE.npriqrf <50)		GIVE.npriqrf=50;
@@ -1108,7 +1129,7 @@ void RunCtrl(void)
 
 		if(M_ChkFlag(SL_HV_QWORKING)!=0)
 		   RUN.npriqrf = Give_Integral(GIVE.npriqrf,100,RUN.npriqrf); //每ms 100A
- 	   	else if(M_ChkFlag(SL_STEADYGV)!=0)											//待电压给定完成后再给定无功电流
+ 	   	else if(M_ChkFlag(SL_STEADYGV)!=0)									 //待电压给定完成后再给定无功电流
 	 	   RUN.npriqrf = Give_Integral(GIVE.npriqrf,RUN.npriqstep,RUN.npriqrf); //网侧无功电流给定积分	         
 						
 	   if(M_ChkFlag(SL_NSTOP)!=0)  
@@ -2701,7 +2722,7 @@ void RUN_SYN(void)
 	}
 	else if(M_ChkFlag(SL_SYN_S3)!=0)								//S3=启动机侧定子并网
 	{
-		M_SetFlag(SL_MPR_START);									//机侧变流器运行
+//		M_SetFlag(SL_MPR_START);									//机侧变流器运行
 
 		if(MEAN_DATA.uab_d <= _SC_UDSTAC && MEAN_DATA.ubc_d <= _SC_UDSTAC)    //定子符合并网条件    					//定子接触器前后半波平均值差在40V以内
 		{
@@ -2757,12 +2778,19 @@ void RUN_SYN(void)
 	}
 	else															//S0=合预充电接触器
 	{
-      	if(M_ChkFlag(SL_SPEED_IN_RANGE)!=0)     					//转速在范围内
-		{
+//      	if(M_ChkFlag(SL_SPEED_IN_RANGE)!=0)     					//转速在范围内
+//		{
+//			M_SetFlag(CL_PRE);          	 						//闭合こ涞缃哟テ?
+//			M_SetFlag(SL_SYN_S1);									//置步骤标志位
+//			MAIN_LOOP.cnt_synrun=0;           						//清计数器
+//		}
+
+//      	if(M_ChkFlag(SL_SPEED_IN_RANGE)!=0)     					//转速在范围内
+//		{
 			M_SetFlag(CL_PRE);          	 						//闭合こ涞缃哟テ?
 			M_SetFlag(SL_SYN_S1);									//置步骤标志位
 			MAIN_LOOP.cnt_synrun=0;           						//清计数器	
-		}
+//		}
 	}
 }
 
